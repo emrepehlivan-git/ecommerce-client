@@ -1,4 +1,6 @@
-module.exports = {
+import { defineConfig } from "orval";
+
+export default defineConfig({
   ecommerce: {
     input: {
       target: "http://localhost:4000/swagger/v1/swagger.json",
@@ -25,4 +27,4 @@ module.exports = {
       },
     },
   },
-};
+});

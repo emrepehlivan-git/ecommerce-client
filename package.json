@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate-api": "orval --config orval.config.ts"
+    "generate:api": "orval --config orval.config.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
@@ -37,12 +37,16 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@stoplight/spectral-core": "1.18.3",
+    "@stoplight/spectral-functions": "1.10.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "ajv": "^8.17.1",
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
+    "orval": "^7.9.0",
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.4",
     "typescript": "^5"

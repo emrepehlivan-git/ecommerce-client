@@ -13,21 +13,21 @@ export const authOptions: NextAuthConfig = {
       type: "oauth",
       clientId,
       clientSecret: "",
-      wellKnown: `${issuer}/.well-known/openid-configuration`,
       issuer,
+      wellKnown: `${issuer}.well-known/openid-configuration`,
       authorization: {
         params: {
-          scope: "openid profile email roles",
+          scope: "openid profile email roles api",
           response_type: "code",
           code_challenge_method: "S256",
         },
-        url: `${issuer}/connect/authorize`,
+        url: `${issuer}connect/authorize`,
       },
       userinfo: {
-        url: `${issuer}/connect/userinfo`,
+        url: `${issuer}connect/userinfo`,
       },
       token: {
-        url: `${issuer}/connect/token`,
+        url: `${issuer}connect/token`,
       },
       profile: async (profile: any) => {
         return {
@@ -74,7 +74,7 @@ export const authOptions: NextAuthConfig = {
 };
 
 const getUserInfo = async (accessToken: string) => {
-  const { data } = await axiosClient.get(`${issuer}/connect/userinfo`, {
+  const { data } = await axiosClient.get(`${issuer}connect/userinfo`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
