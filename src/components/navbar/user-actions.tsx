@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { User, Heart, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -79,7 +77,7 @@ export function UserActions({ cartItemCount }: UserActionsProps) {
             <DropdownMenuLabel>Hesabım</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href="/hesabim">Hesap Bilgilerim</Link>
+              <Link href="/profile">Hesap Bilgilerim</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link href="/siparislerim">Siparişlerim</Link>
@@ -89,7 +87,7 @@ export function UserActions({ cartItemCount }: UserActionsProps) {
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <LogoutButton />
+              <LogoutButton className="w-full" variant="ghost" />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

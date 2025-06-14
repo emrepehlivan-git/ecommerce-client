@@ -12,13 +12,17 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { Logo } from "./logo";
-import { categories } from "./category-data";
+import type { CategoryDto } from "@/api/generated/model";
 
 interface MobileNavigationProps {
   cartItemCount: number;
+  categories: CategoryDto[];
 }
 
-export function MobileNavigation({ cartItemCount }: MobileNavigationProps) {
+export function MobileNavigation({
+  cartItemCount,
+  categories,
+}: MobileNavigationProps) {
   const pathname = usePathname();
 
   return (
@@ -62,11 +66,11 @@ export function MobileNavigation({ cartItemCount }: MobileNavigationProps) {
             </Link>
             {categories.map((category) => (
               <Link
-                key={category.name}
-                href={category.href}
+                key={category.id}
+                href={`/kategori/${category.id}`}
                 className={cn(
                   "flex items-center rounded-md px-2 py-1.5 text-sm font-medium",
-                  pathname === category.href
+                  pathname === `/kategori/${category.id}`
                     ? "bg-accent text-accent-foreground"
                     : "hover:bg-accent/50"
                 )}
@@ -74,21 +78,10 @@ export function MobileNavigation({ cartItemCount }: MobileNavigationProps) {
                 {category.name}
               </Link>
             ))}
-            <Link
-              href="/kampanyalar"
-              className={cn(
-                "flex items-center rounded-md px-2 py-1.5 text-sm font-medium text-destructive",
-                pathname === "/kampanyalar"
-                  ? "bg-accent text-accent-foreground"
-                  : "hover:bg-accent/50"
-              )}
-            >
-              Kampanyalar
-            </Link>
           </nav>
           <div className="flex flex-col gap-2">
             <Button variant="outline" asChild className="w-full justify-start">
-              <Link href="/hesabim">
+              <Link href="/profile">
                 <User className="mr-2 h-4 w-4" />
                 Hesabım
               </Link>

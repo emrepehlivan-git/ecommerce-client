@@ -2,10 +2,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { CategoryDropdown } from "./category-dropdown";
-import { categories } from "./category-data";
 import { Home } from "lucide-react";
+import type { CategoryDto } from "@/api/generated/model";
 
-export function DesktopNavigation() {
+interface DesktopNavigationProps {
+  categories: CategoryDto[];
+}
+
+export function DesktopNavigation({ categories }: DesktopNavigationProps) {
   const pathname = usePathname();
 
   return (
@@ -20,19 +24,8 @@ export function DesktopNavigation() {
         <Home className="size-5 text-muted-foreground" />
       </Link>
       {categories.map((category) => (
-        <CategoryDropdown key={category.name} category={category} />
+        <CategoryDropdown key={category.id} category={category} />
       ))}
-      <Link
-        href="/kampanyalar"
-        className={cn(
-          "text-sm font-medium text-destructive transition-colors hover:text-destructive/80",
-          pathname === "/kampanyalar"
-            ? "text-destructive/80"
-            : "text-destructive"
-        )}
-      >
-        Kampanyalar
-      </Link>
     </nav>
   );
 }

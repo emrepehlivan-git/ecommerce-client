@@ -1,6 +1,7 @@
 import { type DefaultSession, NextAuthConfig } from "next-auth";
 import { axiosClient } from "@/lib/axiosClient";
 import { auth } from "./auth";
+import { UserDto } from "@/api/generated/model";
 
 const issuer = process.env.NEXT_PUBLIC_AUTH_SERVER_URL;
 const clientId = process.env.NEXT_PUBLIC_OPENIDDICT_CLIENT_ID;
@@ -56,6 +57,7 @@ export const authOptions: NextAuthConfig = {
         token.name = user.fullName;
         token.email = user.email;
         token.role = user.role;
+        token.birthDate = user.birthDate;
       }
 
       return token;
@@ -67,6 +69,7 @@ export const authOptions: NextAuthConfig = {
         name: token.name,
         role: token.role as string[],
         emailVerified: token.emailVerified as Date,
+        birthDate: token.birthDate as Date,
       };
       return session;
     },
@@ -85,13 +88,13 @@ const getUserInfo = async (accessToken: string) => {
 declare module "next-auth" {
   interface Session {
     user: {
-      id?: string | null;
-      role?: string[] | null;
+      role: string[];
+      birthDate: Date;
     } & DefaultSession["user"];
   }
 }
 
 export const isAuthenticated = async (): Promise<boolean> => {
   const session = await auth();
-  return session ? true : false;
+  return session?.user ? true : false;
 };

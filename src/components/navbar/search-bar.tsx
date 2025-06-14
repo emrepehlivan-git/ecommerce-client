@@ -9,7 +9,7 @@ export function SearchBar() {
       <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
       <Input
         type="search"
-        placeholder="Ürün, kategori veya marka ara..."
+        placeholder="Ürün ara..."
         className="w-full pl-8 pr-4 h-9"
       />
     </div>

@@ -1,13 +1,22 @@
-"use client";
-import { signOut } from "@/lib/auth";
-import { Button } from "@/components/ui/button";
+import { logoutServerAction } from "./logout-server-action";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { VariantProps } from "class-variance-authority";
 
-export default function LogoutButton() {
+export default function LogoutButton({
+  className,
+  variant = "ghost",
+}: {
+  className?: string;
+  variant?: VariantProps<typeof buttonVariants>["variant"];
+}) {
   return (
-    <Button onClick={() => signOut()} variant="ghost" className="w-full">
-      <LogOut className="mr-2 size-3.5" />
-      Logout
-    </Button>
+    <form action={logoutServerAction}>
+      <Button type="submit" variant={variant} className={cn(className)}>
+        <LogOut className="mr-2 size-3.5" />
+        Çıkış Yap
+      </Button>
+    </form>
   );
 }
