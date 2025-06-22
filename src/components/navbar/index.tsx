@@ -11,14 +11,14 @@ import { useGetApiCategory } from "@/api/generated/category/category";
 
 export function Navbar() {
   const [cartItemCount, setCartItemCount] = React.useState(3);
-  const { data: categories, isLoading } = useGetApiCategory();
+  const { data: categories } = useGetApiCategory();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full bg-white border-b shadow-sm">
       <TopBar />
-
-      <SearchBar />
-      <div className="flex h-16 items-center px-5">
+      
+      {/* Main navbar */}
+      <div className="flex h-16 items-center px-4 lg:px-6">
         <div className="flex items-center gap-4">
           <MobileNavigation
             cartItemCount={cartItemCount}
@@ -27,13 +27,18 @@ export function Navbar() {
           <Logo />
         </div>
 
-        <div className="hidden md:flex flex-1 justify-center mx-8">
-          <DesktopNavigation categories={categories?.data || []} />
+        <div className="flex-1 flex justify-center mx-8">
+          <SearchBar />
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center">
           <UserActions cartItemCount={cartItemCount} />
         </div>
+      </div>
+
+      {/* Category navigation */}
+      <div className="border-t bg-white px-4 lg:px-6 py-2">
+        <DesktopNavigation categories={categories?.data || []} />
       </div>
     </header>
   );

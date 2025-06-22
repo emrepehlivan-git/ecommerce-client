@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Search, User, Heart, ShoppingCart } from "lucide-react";
+import { Menu, X, Search, User, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -30,7 +30,7 @@ export function MobileNavigation({
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="md:hidden">
           <Menu className="h-5 w-5" />
-          <span className="sr-only">Menü</span>
+          <span className="sr-only">Menu</span>
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="w-[300px] sm:w-[350px]">
@@ -40,15 +40,15 @@ export function MobileNavigation({
             <SheetClose asChild>
               <Button variant="ghost" size="icon">
                 <X className="h-5 w-5" />
-                <span className="sr-only">Kapat</span>
+                <span className="sr-only">Close</span>
               </Button>
             </SheetClose>
           </div>
           <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
             <Input
               type="search"
-              placeholder="Ürün, kategori veya marka ara..."
+              placeholder="Search essentials, groceries and more..."
               className="w-full pl-8"
             />
           </div>
@@ -58,11 +58,11 @@ export function MobileNavigation({
               className={cn(
                 "flex items-center rounded-md px-2 py-1.5 text-sm font-medium",
                 pathname === "/"
-                  ? "bg-accent text-accent-foreground"
-                  : "hover:bg-accent/50"
+                  ? "bg-blue-50 text-blue-600"
+                  : "hover:bg-gray-50"
               )}
             >
-              Ana Sayfa
+              Home
             </Link>
             {categories.map((category) => (
               <Link
@@ -71,8 +71,8 @@ export function MobileNavigation({
                 className={cn(
                   "flex items-center rounded-md px-2 py-1.5 text-sm font-medium",
                   pathname === `/kategori/${category.id}`
-                    ? "bg-accent text-accent-foreground"
-                    : "hover:bg-accent/50"
+                    ? "bg-blue-50 text-blue-600"
+                    : "hover:bg-gray-50"
                 )}
               >
                 {category.name}
@@ -83,23 +83,17 @@ export function MobileNavigation({
             <Button variant="outline" asChild className="w-full justify-start">
               <Link href="/profile">
                 <User className="mr-2 h-4 w-4" />
-                Hesabım
+                My Account
               </Link>
             </Button>
-            <Button variant="outline" asChild className="w-full justify-start">
-              <Link href="/favoriler">
-                <Heart className="mr-2 h-4 w-4" />
-                Favorilerim
-              </Link>
-            </Button>
-            <Button asChild className="w-full justify-start">
+            <Button asChild className="w-full justify-start bg-blue-600 hover:bg-blue-700">
               <Link href="/sepet">
                 <ShoppingCart className="mr-2 h-4 w-4" />
-                Sepetim
+                Cart
                 {cartItemCount > 0 && (
                   <Badge
                     variant="outline"
-                    className="ml-2 bg-primary text-primary-foreground"
+                    className="ml-2 bg-white text-blue-600 border-white"
                   >
                     {cartItemCount}
                   </Badge>

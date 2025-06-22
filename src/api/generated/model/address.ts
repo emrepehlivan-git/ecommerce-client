@@ -6,15 +6,15 @@
  * OpenAPI spec version: v1
  */
 
-export interface ProductDto {
-  id?: string;
+export interface Address {
   /** @nullable */
-  name?: string | null;
+  street?: string | null;
   /** @nullable */
-  description?: string | null;
-  price?: number;
+  city?: string | null;
   /** @nullable */
-  categoryName?: string | null;
-  stockQuantity?: number;
-  isActive?: boolean;
+  state?: string | null;
+  /** @nullable */
+  zipCode?: string | null;
+  /** @nullable */
+  country?: string | null;
 }

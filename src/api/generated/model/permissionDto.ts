@@ -6,15 +6,14 @@
  * OpenAPI spec version: v1
  */
 
-export interface ProductDto {
+export interface PermissionDto {
   id?: string;
   /** @nullable */
   name?: string | null;
   /** @nullable */
   description?: string | null;
-  price?: number;
   /** @nullable */
-  categoryName?: string | null;
-  stockQuantity?: number;
-  isActive?: boolean;
+  module?: string | null;
+  /** @nullable */
+  action?: string | null;
 }

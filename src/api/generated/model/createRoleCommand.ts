@@ -6,9 +6,7 @@
  * OpenAPI spec version: v1
  */
 
-export type GetApiProductParams = {
-Page?: number;
-PageSize?: number;
-includeCategory?: boolean;
-orderBy?: string;
-};
+export interface CreateRoleCommand {
+  /** @nullable */
+  name?: string | null;
+}

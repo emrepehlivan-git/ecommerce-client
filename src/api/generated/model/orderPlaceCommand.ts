@@ -5,14 +5,18 @@
  * ECommerce API with OpenIddict Authentication
  * OpenAPI spec version: v1
  */
+import type { Address } from './address';
 import type { OrderItemRequest } from './orderItemRequest';
 
 export interface OrderPlaceCommand {
   userId?: string;
+  shippingAddress?: Address;
+  billingAddress?: Address;
   /** @nullable */
-  shippingAddress?: string | null;
+  shippingAddressId?: string | null;
   /** @nullable */
-  billingAddress?: string | null;
+  billingAddressId?: string | null;
+  useSameForBilling?: boolean;
   /** @nullable */
   items?: OrderItemRequest[] | null;
 }

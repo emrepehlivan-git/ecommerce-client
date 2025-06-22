@@ -5,16 +5,12 @@
  * ECommerce API with OpenIddict Authentication
  * OpenAPI spec version: v1
  */
+import type { PermissionDto } from './permissionDto';
 
-export interface ProductDto {
+export interface RoleDto {
   id?: string;
   /** @nullable */
   name?: string | null;
   /** @nullable */
-  description?: string | null;
-  price?: number;
-  /** @nullable */
-  categoryName?: string | null;
-  stockQuantity?: number;
-  isActive?: boolean;
+  permissions?: PermissionDto[] | null;
 }

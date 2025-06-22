@@ -1,10 +1,23 @@
 import { type DefaultSession, NextAuthConfig } from "next-auth";
 import { axiosClient } from "@/lib/axiosClient";
 import { auth } from "./auth";
-import { UserDto } from "@/api/generated/model";
 
 const issuer = process.env.NEXT_PUBLIC_AUTH_SERVER_URL;
 const clientId = process.env.NEXT_PUBLIC_OPENIDDICT_CLIENT_ID;
+
+// Environment variable validation
+if (!issuer) {
+  throw new Error("NEXT_PUBLIC_AUTH_SERVER_URL environment variable is required");
+}
+
+if (!clientId) {
+  throw new Error("NEXT_PUBLIC_OPENIDDICT_CLIENT_ID environment variable is required");
+}
+
+// Ensure issuer URL has trailing slash
+const normalizedIssuer = issuer.endsWith('/') ? issuer : `${issuer}/`;
+
+console.log("normalizedIssuer", normalizedIssuer);
 
 export const authOptions: NextAuthConfig = {
   providers: [
@@ -14,21 +27,21 @@ export const authOptions: NextAuthConfig = {
       type: "oauth",
       clientId,
       clientSecret: "",
-      issuer,
-      wellKnown: `${issuer}.well-known/openid-configuration`,
+      issuer: normalizedIssuer,
+      wellKnown: `${normalizedIssuer}.well-known/openid-configuration`,
       authorization: {
         params: {
           scope: "openid profile email roles api",
           response_type: "code",
           code_challenge_method: "S256",
         },
-        url: `${issuer}connect/authorize`,
+        url: `${normalizedIssuer}connect/authorize`,
       },
       userinfo: {
-        url: `${issuer}connect/userinfo`,
+        url: `${normalizedIssuer}connect/userinfo`,
       },
       token: {
-        url: `${issuer}connect/token`,
+        url: `${normalizedIssuer}connect/token`,
       },
       profile: async (profile: any) => {
         return {
@@ -52,12 +65,16 @@ export const authOptions: NextAuthConfig = {
   callbacks: {
     async jwt({ token, account }) {
       if (account?.access_token) {
-        const user = await getUserInfo(account?.access_token as string);
-        token.id = user.sub;
-        token.name = user.fullName;
-        token.email = user.email;
-        token.role = user.role;
-        token.birthDate = user.birthDate;
+        try {
+          const user = await getUserInfo(account?.access_token as string);
+          token.id = user.sub;
+          token.name = user.fullName;
+          token.email = user.email;
+          token.role = user.role;
+          token.birthDate = user.birthDate;
+        } catch (error) {
+          console.error("Error fetching user info:", error);
+        }
       }
 
       return token;
@@ -77,12 +94,17 @@ export const authOptions: NextAuthConfig = {
 };
 
 const getUserInfo = async (accessToken: string) => {
-  const { data } = await axiosClient.get(`${issuer}connect/userinfo`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-  return data;
+  try {
+    const { data } = await axiosClient.get(`${normalizedIssuer}connect/userinfo`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return data;
+  } catch (error) {
+    console.error("Error fetching user info from userinfo endpoint:", error);
+    throw error;
+  }
 };
 
 declare module "next-auth" {

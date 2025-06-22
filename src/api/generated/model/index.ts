@@ -6,12 +6,17 @@
  * OpenAPI spec version: v1
  */
 
+export * from './addUserAddressCommand';
+export * from './address';
 export * from './categoryDto';
 export * from './createCategoryCommand';
 export * from './createProductCommand';
+export * from './createRoleCommand';
+export * from './deleteUserAddressRequest';
 export * from './getApiCategoryParams';
 export * from './getApiOrderParams';
 export * from './getApiProductParams';
+export * from './getApiUserAddressesUserUserIdParams';
 export * from './getApiUsersParams';
 export * from './orderDto';
 export * from './orderItemAddCommand';
@@ -20,9 +25,17 @@ export * from './orderItemRequest';
 export * from './orderPlaceCommand';
 export * from './orderStatus';
 export * from './orderStatusUpdateCommand';
+export * from './permissionDto';
 export * from './problemDetails';
 export * from './productDto';
+export * from './roleDto';
+export * from './setDefaultRequest';
 export * from './updateCategoryCommand';
+export * from './updateEmailSettingsCommand';
 export * from './updateProductCommand';
 export * from './updateProductStock';
+export * from './updateRoleCommand';
+export * from './updateUserAddressRequest';
+export * from './userAddressDto';
 export * from './userDto';
+export * from './userRoleDto';

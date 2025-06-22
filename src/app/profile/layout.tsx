@@ -21,9 +21,9 @@ export default async function ProfileLayout({
   }
 
   return (
-    <div className="min-h-screen flex justify-center py-10">
+    <div className="min-h-screen flex justify-center pt-10">
       <ProfileSidebar user={session?.user as User} />
-      <div className="flex-1 max-w-xl">
+      <div className="flex-1 max-w-3xl">
         {orders}
         {addresses}
         {reviews}

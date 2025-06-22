@@ -6,15 +6,8 @@
  * OpenAPI spec version: v1
  */
 
-export interface ProductDto {
+export interface UpdateRoleCommand {
   id?: string;
   /** @nullable */
   name?: string | null;
-  /** @nullable */
-  description?: string | null;
-  price?: number;
-  /** @nullable */
-  categoryName?: string | null;
-  stockQuantity?: number;
-  isActive?: boolean;
 }

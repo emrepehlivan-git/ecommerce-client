@@ -11,7 +11,7 @@ export function Logo({ className }: LogoProps) {
       href="/"
       className={cn("flex items-center gap-2 font-bold", className)}
     >
-      <span className="text-xl">MARKA</span>
+      <span className="text-2xl text-blue-600">MegaMart</span>
     </Link>
   );
 }
