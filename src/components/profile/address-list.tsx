@@ -19,6 +19,7 @@ import {
 import { UserAddressDto } from "@/api/generated/model";
 import { MapPin, Trash2, Star, StarOff, Edit } from "lucide-react";
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { ErrorHelper } from "@/lib/errorHelper";
 import { EditAddressModal } from "./edit-address-modal";
 import { Hint } from "@/components/ui/hint";
 
@@ -44,7 +45,8 @@ export function AddressList({ userId }: AddressListProps) {
         setAddressToDelete(null);
       },
       onError: (error) => {
-        handleError(error, 'Adres silinirken bir hata oluştu');
+        const customMessage = ErrorHelper.getAddressOperationErrorMessage(error, 'delete');
+        handleError(error, customMessage);
       },
     },
   });
@@ -56,7 +58,8 @@ export function AddressList({ userId }: AddressListProps) {
         refetch();
       },
       onError: (error) => {
-        handleError(error, 'Varsayılan adres güncellenirken bir hata oluştu');
+        const customMessage = ErrorHelper.getAddressOperationErrorMessage(error, 'setDefault');
+        handleError(error, customMessage);
       },
     },
   });
@@ -67,15 +70,33 @@ export function AddressList({ userId }: AddressListProps) {
   };
 
   const confirmDelete = () => {
-    if (addressToDelete) {
-      deleteMutation.mutate({
-        id: addressToDelete,
-        data: { userId },
-      });
+    if (!addressToDelete) {
+      handleError('Silinecek adres ID\'si bulunamadı', 'Silme işlemi gerçekleştirilemedi');
+      return;
     }
+
+    if (!userId) {
+      handleError('Kullanıcı ID\'si bulunamadı', 'Silme işlemi gerçekleştirilemedi');
+      return;
+    }
+
+    deleteMutation.mutate({
+      id: addressToDelete,
+      data: { userId },
+    });
   };
 
   const handleSetDefault = (addressId: string) => {
+    if (!addressId) {
+      handleError('Adres ID\'si bulunamadı', 'Varsayılan adres güncelleme işlemi gerçekleştirilemedi');
+      return;
+    }
+
+    if (!userId) {
+      handleError('Kullanıcı ID\'si bulunamadı', 'Varsayılan adres güncelleme işlemi gerçekleştirilemedi');
+      return;
+    }
+
     setDefaultMutation.mutate({
       id: addressId,
       data: { userId },
@@ -97,7 +118,7 @@ export function AddressList({ userId }: AddressListProps) {
     );
   }
 
-  if (!addresses?.data || addresses.data.length === 0) {
+  if (!addresses?.data?.value || addresses.data.value.length === 0) {
     return (
       <Card>
         <CardHeader>
@@ -113,7 +134,7 @@ export function AddressList({ userId }: AddressListProps) {
   return (
     <>
       <div className="grid gap-4">
-        {addresses.data.map((address: UserAddressDto) => (
+        {addresses.data.value.map((address: UserAddressDto) => (
           <Card key={address.id} className="relative">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">

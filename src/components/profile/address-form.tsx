@@ -62,7 +62,6 @@ export function AddressForm({ userId }: AddressFormProps) {
         router.refresh();
       },
       onError: (error) => {
-        console.log(error);
         toast.error((error as Error).message);
       },
     },

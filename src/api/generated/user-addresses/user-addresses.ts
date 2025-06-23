@@ -34,8 +34,7 @@ import type {
   DeleteUserAddressRequest,
   GetApiUserAddressesUserUserIdParams,
   SetDefaultRequest,
-  UpdateUserAddressRequest,
-  UserAddressDto
+  UpdateUserAddressRequest
 } from '.././model';
 
 import { axiosClientMutator } from '../../../lib/axiosClient';
@@ -50,7 +49,7 @@ export const getApiUserAddressesUserUserId = (
 ) => {
       
       
-      return axiosClientMutator<UserAddressDto[]>(
+      return axiosClientMutator<void>(
       {url: `/api/UserAddresses/user/${userId}`, method: 'GET',
         params, signal
     },

@@ -92,7 +92,7 @@ export class ErrorHelper {
   private static handleBadRequest(data: ApiErrorResponse): string {
     // Data boş ise spesifik mesaj döndür
     if (!data || Object.keys(data).length === 0) {
-      return 'İşlem gerçekleştirilemedi. Geçersiz veri gönderildi veya sunucu hatası oluştu.';
+      return 'İşlem gerçekleştirilemedi. Sunucu boş yanıt döndürdü. Lütfen daha sonra tekrar deneyin.';
     }
 
     // Backend'den gelen ValidationErrors (büyük harfle)
@@ -117,7 +117,23 @@ export class ErrorHelper {
       }
     }
 
-    return this.extractErrorMessage(data) || 'Geçersiz istek';
+    // ProblemDetails standard fields kontrolü
+    const extractedMessage = this.extractErrorMessage(data);
+    if (extractedMessage) {
+      return extractedMessage;
+    }
+
+    // Son çare: data'nın kendisinde hata mesajı var mı kontrol et
+    if (typeof data === 'string') {
+      return data;
+    }
+
+    // Eğer data bir object ise ve message field'i varsa
+    if (data && typeof data === 'object' && 'message' in data) {
+      return (data as any).message;
+    }
+
+    return 'Geçersiz istek. Gönderilen veriler sunucu tarafından kabul edilmedi.';
   }
 
   /**
@@ -234,6 +250,20 @@ export class ErrorHelper {
         console.error('Request URL:', error.config?.url);
         console.error('Request Method:', error.config?.method?.toUpperCase());
         console.error('Request Data:', error.config?.data);
+        console.error('Request Headers:', error.config?.headers);
+        
+        // 400 Bad Request için özel debugging
+        if (response?.status === 400) {
+          console.warn('🔍 400 Bad Request Debug Bilgileri:');
+          console.warn('   - Gönderilen veri türü:', typeof error.config?.data);
+          console.warn('   - Gönderilen veri:', error.config?.data);
+          console.warn('   - Content-Type:', error.config?.headers?.['Content-Type'] || error.config?.headers?.['content-type']);
+          
+          if (response.data) {
+            console.warn('   - Sunucu yanıt türü:', typeof response.data);
+            console.warn('   - Sunucu yanıt keys:', Object.keys(response.data));
+          }
+        }
         
         // Boş response data uyarısı
         if (response?.data && Object.keys(response.data).length === 0) {
@@ -252,5 +282,47 @@ export class ErrorHelper {
   static getToastErrorMessage(error: unknown, fallbackMessage?: string): string {
     const message = this.parseApiError(error);
     return message || fallbackMessage || 'Bir hata oluştu';
+  }
+
+  /**
+   * Adres işlemleri için özel hata mesajları
+   */
+  static getAddressOperationErrorMessage(error: unknown, operation: 'delete' | 'update' | 'create' | 'setDefault'): string {
+    const baseMessage = this.parseApiError(error);
+    
+    // Eğer backend'den anlamlı bir mesaj geliyorsa onu kullan
+    if (baseMessage && !baseMessage.includes('HTTP') && !baseMessage.includes('Geçersiz istek')) {
+      return baseMessage;
+    }
+
+    // Operation'a göre spesifik mesajlar
+    switch (operation) {
+      case 'delete':
+        if (this.isAxiosError(error) && error.response?.status === 400) {
+          return 'Adres silinemedi. Bu adres başka bir işlemde kullanılıyor olabilir veya yetkiniz bulunmuyor.';
+        }
+        return 'Adres silme işlemi başarısız oldu. Lütfen tekrar deneyin.';
+        
+      case 'setDefault':
+        if (this.isAxiosError(error) && error.response?.status === 400) {
+          return 'Varsayılan adres güncellenemedi. Adres bulunamadı veya yetkiniz bulunmuyor.';
+        }
+        return 'Varsayılan adres güncelleme işlemi başarısız oldu. Lütfen tekrar deneyin.';
+        
+      case 'update':
+        if (this.isAxiosError(error) && error.response?.status === 400) {
+          return 'Adres güncellenemedi. Girilen bilgileri kontrol edin.';
+        }
+        return 'Adres güncelleme işlemi başarısız oldu. Lütfen tekrar deneyin.';
+        
+      case 'create':
+        if (this.isAxiosError(error) && error.response?.status === 400) {
+          return 'Adres eklenemedi. Girilen bilgileri kontrol edin.';
+        }
+        return 'Adres ekleme işlemi başarısız oldu. Lütfen tekrar deneyin.';
+        
+      default:
+        return baseMessage || 'Adres işlemi başarısız oldu. Lütfen tekrar deneyin.';
+    }
   }
 } 

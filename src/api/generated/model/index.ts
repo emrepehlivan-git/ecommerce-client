@@ -6,8 +6,12 @@
  * OpenAPI spec version: v1
  */
 
+export * from './addToCartCommand';
 export * from './addUserAddressCommand';
 export * from './address';
+export * from './cartDto';
+export * from './cartItemDto';
+export * from './cartSummaryDto';
 export * from './categoryDto';
 export * from './createCategoryCommand';
 export * from './createProductCommand';
@@ -25,11 +29,15 @@ export * from './orderItemRequest';
 export * from './orderPlaceCommand';
 export * from './orderStatus';
 export * from './orderStatusUpdateCommand';
+export * from './pagedInfo';
 export * from './permissionDto';
 export * from './problemDetails';
 export * from './productDto';
+export * from './productDtoListPagedResult';
+export * from './resultStatus';
 export * from './roleDto';
 export * from './setDefaultRequest';
+export * from './updateCartItemQuantityCommand';
 export * from './updateCategoryCommand';
 export * from './updateEmailSettingsCommand';
 export * from './updateProductCommand';
@@ -39,3 +47,5 @@ export * from './updateUserAddressRequest';
 export * from './userAddressDto';
 export * from './userDto';
 export * from './userRoleDto';
+export * from './validationError';
+export * from './validationSeverity';

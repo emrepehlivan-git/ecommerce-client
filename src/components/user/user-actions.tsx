@@ -26,10 +26,10 @@ export function UserActions({ cartItemCount }: UserActionsProps) {
 
   if (status === "loading") {
     return (
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" disabled className="text-gray-600">
+      <div className="flex items-center gap-2 sm:gap-4">
+        <Button variant="ghost" disabled className="text-gray-600 hidden sm:flex">
           <User className="h-5 w-5 mr-2" />
-          Sign Up/Sign In
+          Giriş Yap
         </Button>
         <Button variant="ghost" size="icon" className="relative" disabled>
           <ShoppingCart className="h-5 w-5" />
@@ -40,19 +40,31 @@ export function UserActions({ cartItemCount }: UserActionsProps) {
 
   if (!session) {
     return (
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         <Button 
           variant="ghost" 
           onClick={handleSignIn}
-          className="text-gray-600 hover:text-blue-600"
+          className="text-gray-600 hover:text-blue-600 hidden sm:flex"
         >
           <User className="h-5 w-5 mr-2" />
-          Sign Up/Sign In
+          Giriş Yap
         </Button>
+        
+        {/* Mobile user icon */}
+        <Button 
+          variant="ghost" 
+          size="icon"
+          onClick={handleSignIn}
+          className="text-gray-600 hover:text-blue-600 sm:hidden"
+        >
+          <User className="h-5 w-5" />
+          <span className="sr-only">Giriş Yap</span>
+        </Button>
+        
         <Button variant="ghost" size="icon" className="relative" asChild>
-          <Link href="/sepet">
+          <Link href="/cart">
             <ShoppingCart className="h-5 w-5" />
-            <span className="sr-only">Cart</span>
+            <span className="sr-only">Sepet</span>
             {cartItemCount > 0 && (
               <Badge
                 className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full p-0 text-xs bg-blue-600"
@@ -68,25 +80,52 @@ export function UserActions({ cartItemCount }: UserActionsProps) {
   }
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-2 sm:gap-4">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="text-gray-600 hover:text-blue-600">
+          <Button variant="ghost" className="text-gray-600 hover:text-blue-600 hidden sm:flex">
             <User className="h-5 w-5 mr-2" />
-            My Account
+            Hesabım
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuLabel>Hesabım</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
-            <Link href="/profile">Account Information</Link>
+            <Link href="/profile">Hesap Bilgileri</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href="/siparislerim">My Orders</Link>
+            <Link href="/profile/orders">Siparişlerim</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href="/favoriler">My Favorites</Link>
+            <Link href="/favoriler">Favorilerim</Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <LogoutButton className="w-full" variant="ghost" />
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {/* Mobile user dropdown */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" className="text-gray-600 hover:text-blue-600 sm:hidden">
+            <User className="h-5 w-5" />
+            <span className="sr-only">Hesabım</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Hesabım</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link href="/profile">Hesap Bilgileri</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/profile/orders">Siparişlerim</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/favoriler">Favorilerim</Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
@@ -96,9 +135,9 @@ export function UserActions({ cartItemCount }: UserActionsProps) {
       </DropdownMenu>
 
       <Button variant="ghost" size="icon" className="relative" asChild>
-        <Link href="/sepet">
+        <Link href="/cart">
           <ShoppingCart className="h-5 w-5" />
-          <span className="sr-only">Cart</span>
+          <span className="sr-only">Sepet</span>
           {cartItemCount > 0 && (
             <Badge
               className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full p-0 text-xs bg-blue-600"

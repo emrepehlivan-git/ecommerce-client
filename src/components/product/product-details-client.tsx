@@ -1,0 +1,66 @@
+"use client";
+
+import { ProductDto } from "@/api/generated/model";
+import { ProductImageGallery } from "./product-image-gallery";
+import { ProductInfo } from "./product-info";
+import { ProductActions } from "./product-actions";
+import { ProductStockInfo } from "./product-stock-info";
+import { ProductDescription } from "./product-description";
+import { ProductPurchase } from "./product-purchase";
+import { OutOfStockNotice } from "./out-of-stock-notice";
+import { Separator } from "../ui/separator";
+
+interface ProductDetailsClientProps {
+  product: ProductDto;
+}
+
+export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
+  const isOutOfStock = !product.isActive || (product.stockQuantity || 0) === 0;
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <ProductImageGallery 
+        productName={product.name || "Ürün"} 
+        isOutOfStock={isOutOfStock}
+      />
+
+      <div className="space-y-6">
+        <ProductInfo
+          name={product.name || "Ürün"}
+          price={product.price || 0}
+          categoryName={product.categoryName || undefined}
+          actions={
+            <ProductActions 
+              productName={product.name || "Ürün"}
+              productDescription={product.description || undefined}
+            />
+          }
+        />
+
+        <Separator />
+
+        <ProductStockInfo 
+          stockQuantity={product.stockQuantity || 0}
+          isActive={product.isActive || false}
+        />
+
+        <Separator />
+
+        <ProductDescription description={product.description || ""} />
+
+        <Separator />
+
+        {!isOutOfStock ? (
+          <ProductPurchase 
+            productId={product.id || ""}
+            productName={product.name || "Ürün"}
+            price={product.price || 0}
+            stockQuantity={product.stockQuantity || 0}
+          />
+        ) : (
+          <OutOfStockNotice />
+        )}
+      </div>
+    </div>
+  );
+} 

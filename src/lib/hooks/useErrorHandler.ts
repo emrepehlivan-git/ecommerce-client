@@ -17,7 +17,10 @@ export function useErrorHandler(options: UseErrorHandlerOptions = {}) {
     }
 
     if (showToast) {
-      const message = ErrorHelper.getToastErrorMessage(error, fallbackMessage);
+      // Eğer fallbackMessage spesifik bir mesaj ise onu kullan, yoksa API'den gelen mesajı parse et
+      const message = fallbackMessage && fallbackMessage !== 'Bir hata oluştu' 
+        ? fallbackMessage 
+        : ErrorHelper.getToastErrorMessage(error, fallbackMessage);
       toast.error(message);
     }
 

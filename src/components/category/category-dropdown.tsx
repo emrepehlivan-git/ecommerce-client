@@ -15,10 +15,10 @@ export function CategoryDropdown({ category }: CategoryDropdownProps) {
   return (
     <Button
       asChild
-      variant="link"
+      variant="ghost"
       className={cn(
-        "text-sm font-medium transition-colors hover:text-primary",
-        pathname?.startsWith(href) ? "text-primary" : "text-foreground"
+        "text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 px-3 py-2 h-auto",
+        pathname?.startsWith(href) ? "text-blue-600 bg-blue-50" : "text-gray-700"
       )}
     >
       <Link href={href}>{category.name}</Link>

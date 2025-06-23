@@ -5,19 +5,8 @@ import { auth } from "./auth";
 const issuer = process.env.NEXT_PUBLIC_AUTH_SERVER_URL;
 const clientId = process.env.NEXT_PUBLIC_OPENIDDICT_CLIENT_ID;
 
-// Environment variable validation
-if (!issuer) {
-  throw new Error("NEXT_PUBLIC_AUTH_SERVER_URL environment variable is required");
-}
+const normalizedIssuer = issuer?.endsWith('/') ? issuer : `${issuer}/`;
 
-if (!clientId) {
-  throw new Error("NEXT_PUBLIC_OPENIDDICT_CLIENT_ID environment variable is required");
-}
-
-// Ensure issuer URL has trailing slash
-const normalizedIssuer = issuer.endsWith('/') ? issuer : `${issuer}/`;
-
-console.log("normalizedIssuer", normalizedIssuer);
 
 export const authOptions: NextAuthConfig = {
   providers: [

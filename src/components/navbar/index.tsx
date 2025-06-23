@@ -3,42 +3,47 @@
 import * as React from "react";
 import { TopBar } from "./top-bar";
 import { Logo } from "./logo";
-import { DesktopNavigation } from "./desktop-navigation";
 import { MobileNavigation } from "./mobile-navigation";
 import { SearchBar } from "./search-bar";
-import { UserActions } from "./user-actions";
+import { UserActions } from "../user/user-actions";
+import { CategoryNavigation } from "../category/category-navigation";
 import { useGetApiCategory } from "@/api/generated/category/category";
+import { useCart } from "@/contexts/cart-context";
 
 export function Navbar() {
-  const [cartItemCount, setCartItemCount] = React.useState(3);
-  const { data: categories } = useGetApiCategory();
+  const { totalItems: cartItemCount } = useCart();
+  const { data } = useGetApiCategory();
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b shadow-sm">
       <TopBar />
       
-      {/* Main navbar */}
       <div className="flex h-16 items-center px-4 lg:px-6">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
           <MobileNavigation
             cartItemCount={cartItemCount}
-            categories={categories?.data || []}
+            categories={data?.data.value || []}
           />
           <Logo />
         </div>
 
-        <div className="flex-1 flex justify-center mx-8">
+        <div className="hidden md:flex flex-1 justify-center mx-8">
           <SearchBar />
         </div>
 
-        <div className="flex items-center">
+        <div className="flex items-center ml-auto">
           <UserActions cartItemCount={cartItemCount} />
         </div>
       </div>
 
-      {/* Category navigation */}
-      <div className="border-t bg-white px-4 lg:px-6 py-2">
-        <DesktopNavigation categories={categories?.data || []} />
+      <div className="md:hidden px-4 pb-3 border-t bg-white">
+        <SearchBar />
+      </div>
+
+      <div className="border-t bg-white px-4 lg:px-6 py-3">
+        <div className="hidden md:block">
+          <CategoryNavigation categories={data?.data.value || []} maxVisible={10} />
+        </div>
       </div>
     </header>
   );

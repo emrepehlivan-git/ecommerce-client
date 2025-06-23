@@ -7,7 +7,9 @@ import { QueryProvider } from "@/providers/query-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { Navbar } from "@/components/navbar";
 import AuthSessionProvider from "@/providers/auth-session-provider";
+import { CartProvider } from "@/contexts/cart-context";
 import { auth } from "@/lib/auth";
+import { BackToTop } from "@/components/ui/back-to-top";
 
 const font = Inter({
   subsets: ["latin"],
@@ -15,8 +17,8 @@ const font = Inter({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | ECommerce",
-    default: "ECommerce app",
+    template: "%s",
+    default: "ECommerce",
   },
   description: "ECommerce app",
   keywords: ["ECommerce"],
@@ -35,16 +37,18 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
-  
   return (
     <html lang="en">
       <body className={`${font.className} antialiased`}>
         <QueryProvider>
           <AuthSessionProvider session={session}>
-            <Navbar />
-            {children}
+            <CartProvider>
+              <Navbar />
+              {children}
+            </CartProvider>
           </AuthSessionProvider>
         </QueryProvider>
+        <BackToTop />
         <Toaster />
       </body>
     </html>
