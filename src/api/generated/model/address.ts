@@ -12,8 +12,6 @@ export interface Address {
   /** @nullable */
   city?: string | null;
   /** @nullable */
-  state?: string | null;
-  /** @nullable */
   zipCode?: string | null;
   /** @nullable */
   country?: string | null;

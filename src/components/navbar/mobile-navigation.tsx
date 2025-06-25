@@ -53,7 +53,7 @@ export function MobileNavigation({
                     className={cn(
                       "flex items-center p-3 rounded-lg text-sm font-medium transition-colors",
                       pathname === "/"
-                        ? "bg-blue-100 text-blue-700"
+                        ? "bg-primary/10 text-primary"
                         : "text-gray-700 hover:bg-gray-100"
                     )}
                   >
@@ -73,15 +73,15 @@ export function MobileNavigation({
                     {categories.map((category) => (
                       <SheetClose key={category.id} asChild>
                         <Link
-                          href={`/kategori/${category.id}`}
+                          href={`/category/${category.id}`}
                           className={cn(
                             "flex items-center p-3 rounded-lg text-sm font-medium transition-colors",
-                            pathname === `/kategori/${category.id}`
-                              ? "bg-blue-100 text-blue-700"
+                            pathname === `/category/${category.id}`
+                              ? "bg-primary/10 text-primary"
                               : "text-gray-700 hover:bg-gray-100"
                           )}
                         >
-                          <div className="w-2 h-2 rounded-full bg-blue-400 mr-3" />
+                          <div className="w-2 h-2 rounded-full bg-primary mr-3" />
                           {category.name}
                         </Link>
                       </SheetClose>
@@ -104,12 +104,12 @@ export function MobileNavigation({
             </SheetClose>
             
             <SheetClose asChild>
-              <Button asChild className="w-full justify-start bg-blue-600 hover:bg-blue-700 h-12">
+              <Button asChild className="w-full justify-start bg-primary hover:bg-primary/90 h-12">
                 <Link href="/cart">
                   <ShoppingCart className="mr-3 h-4 w-4" />
                   Sepetim
                   {cartItemCount > 0 && (
-                    <Badge variant="secondary" className="ml-auto bg-white text-blue-600 font-semibold">
+                    <Badge variant="secondary" className="ml-auto bg-white text-primary font-semibold">
                       {cartItemCount}
                     </Badge>
                   )}

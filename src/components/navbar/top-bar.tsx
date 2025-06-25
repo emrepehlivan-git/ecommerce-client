@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { MapPin, Truck } from "lucide-react";
 
@@ -21,11 +20,11 @@ export function TopBar() {
           </div>
           <div className="flex items-center gap-2">
             <Truck className="h-4 w-4 text-gray-500" />
-            <Link href="/siparis-takip" className="text-gray-600 hover:text-blue-600 text-xs sm:text-sm">
+            <Link href="/siparis-takip" className="text-xs sm:text-sm">
               Siparişini takip et
             </Link>
           </div>
-          <Link href="/kampanyalar" className="text-gray-600 hover:text-blue-600 text-xs sm:text-sm hidden sm:inline">
+          <Link href="/kampanyalar" className="text-xs sm:text-sm hidden sm:inline">
             Tüm Kampanyalar
           </Link>
         </div>

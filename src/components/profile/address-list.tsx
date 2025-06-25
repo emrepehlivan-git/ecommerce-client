@@ -191,7 +191,7 @@ export function AddressList({ userId }: AddressListProps) {
               <div className="text-sm text-muted-foreground space-y-1">
                 <p>{address.street}</p>
                 <p>
-                  {address.city}, {address.state} {address.zipCode}
+                  {address.city} {address.zipCode}
                 </p>
                 <p>{address.country}</p>
               </div>

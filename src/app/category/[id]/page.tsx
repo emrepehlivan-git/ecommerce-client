@@ -34,12 +34,6 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/kategoriler">
-                Kategoriler
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
               <BreadcrumbPage>
                 {category?.name}
               </BreadcrumbPage>
@@ -50,7 +44,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         {/* Category Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <Package className="h-8 w-8 text-blue-600" />
+            <Package className="h-8 w-8 text-primary" />
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
                 {category?.name}

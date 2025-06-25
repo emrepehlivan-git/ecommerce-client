@@ -28,11 +28,11 @@ export default function ProductsPage() {
       {/* Page Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
-          <Package className="h-8 w-8 text-blue-600" />
+          <Package className="h-8 w-8 text-primary" />
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h3 className="text-3xl font-bold text-gray-900">
               Tüm Ürünler
-            </h1>
+            </h3>
             <p className="text-gray-600 mt-1">
               Geniş ürün yelpazemizi keşfedin ve ihtiyacınız olan her şeyi bulun
             </p>

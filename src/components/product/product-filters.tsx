@@ -33,7 +33,6 @@ export function ProductFilters() {
   const clearFilters = () => {
     const params = new URLSearchParams();
     
-    // Sadece page parametresini koru
     const currentPage = searchParams.get("page");
     
     if (currentPage && currentPage !== "1") {
@@ -47,9 +46,7 @@ export function ProductFilters() {
 
   const hasFilters = (() => {
     const params = new URLSearchParams(searchParams);
-    // Page parametresini kaldır
     params.delete("page");
-    // Geriye kalan parametreler varsa filtre var demektir
     return params.toString() !== "";
   })();
 
@@ -57,10 +54,9 @@ export function ProductFilters() {
     <Card className="mb-6 shadow-sm border-gray-200">
       <CardContent className="p-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          {/* Sıralama Dropdown */}
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <ArrowUpDown className="h-4 w-4 text-blue-600" />
+              <ArrowUpDown className="h-4 w-4" />
               <label className="text-sm font-semibold text-gray-800">Sıralama</label>
             </div>
             <Select value={currentSort || undefined} onValueChange={(value) => updateURL("orderBy", value)}>
@@ -72,7 +68,6 @@ export function ProductFilters() {
                   <SelectItem 
                     key={option.value} 
                     value={option.value}
-                    className="hover:bg-blue-50 hover:text-blue-900"
                   >
                     {option.label}
                   </SelectItem>
@@ -81,7 +76,6 @@ export function ProductFilters() {
             </Select>
           </div>
 
-          {/* Clear Filters Button */}
           {hasFilters && (
             <Button 
               variant="outline" 

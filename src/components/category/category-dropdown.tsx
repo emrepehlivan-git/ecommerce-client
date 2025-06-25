@@ -10,15 +10,15 @@ interface CategoryDropdownProps {
 
 export function CategoryDropdown({ category }: CategoryDropdownProps) {
   const pathname = usePathname();
-  const href = `/kategori/${category.id}`;
+  const href = `/category/${category.id}`;
 
   return (
     <Button
       asChild
       variant="ghost"
       className={cn(
-        "text-sm font-medium transition-colors hover:text-blue-600 hover:bg-blue-50 px-3 py-2 h-auto",
-        pathname?.startsWith(href) ? "text-blue-600 bg-blue-50" : "text-gray-700"
+        "text-sm font-medium transition-colors hover:text-primary hover:bg-primary/10 px-3 py-2 h-auto",
+        pathname?.startsWith(href) ? "text-primary bg-primary/10" : "text-gray-700"
       )}
     >
       <Link href={href}>{category.name}</Link>

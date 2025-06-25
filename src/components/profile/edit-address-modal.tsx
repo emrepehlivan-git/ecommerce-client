@@ -29,7 +29,6 @@ const editAddressSchema = z.object({
   label: z.string().min(1, "Adres etiketi gereklidir"),
   street: z.string().min(1, "Sokak adresi gereklidir"),
   city: z.string().min(1, "Şehir gereklidir"),
-  state: z.string().min(1, "İl/Eyalet gereklidir"),
   zipCode: z.string().min(1, "Posta kodu gereklidir"),
   country: z.string().min(1, "Ülke gereklidir"),
 });
@@ -59,7 +58,6 @@ export function EditAddressModal({
       label: "",
       street: "",
       city: "",
-      state: "",
       zipCode: "",
       country: "Türkiye",
     },
@@ -85,7 +83,6 @@ export function EditAddressModal({
         label: address.label || "",
         street: address.street || "",
         city: address.city || "",
-        state: address.state || "",
         zipCode: address.zipCode || "",
         country: address.country || "Türkiye",
       });
@@ -100,7 +97,6 @@ export function EditAddressModal({
       label: values.label,
       street: values.street,
       city: values.city,
-      state: values.state,
       zipCode: values.zipCode,
       country: values.country,
     };
@@ -155,27 +151,13 @@ export function EditAddressModal({
               )}
             />
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <FormField
                 control={form.control}
                 name="city"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Şehir</FormLabel>
-                    <FormControl>
-                      <Input placeholder="İstanbul" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="state"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>İl/Eyalet</FormLabel>
                     <FormControl>
                       <Input placeholder="İstanbul" {...field} />
                     </FormControl>

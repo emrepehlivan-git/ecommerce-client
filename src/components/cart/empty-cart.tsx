@@ -14,7 +14,7 @@ export function EmptyCart() {
             <ShoppingCart className="h-16 w-16 text-gray-400" />
           </div>
           <div className="absolute -bottom-2 -right-2 bg-blue-100 rounded-full p-2">
-            <Package className="h-6 w-6 text-blue-600" />
+            <Package className="h-6 w-6" />
           </div>
         </div>
 
@@ -51,7 +51,7 @@ export function EmptyCart() {
           
           <div className="text-center space-y-2">
             <div className="bg-blue-100 rounded-full p-3 w-fit mx-auto">
-              <ShoppingCart className="h-6 w-6 text-blue-600" />
+              <ShoppingCart className="h-6 w-6" />
             </div>
             <h3 className="font-medium text-gray-900">Kolay İade</h3>
             <p className="text-sm text-gray-600">30 gün içinde ücretsiz</p>

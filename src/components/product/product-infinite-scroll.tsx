@@ -28,10 +28,9 @@ export function ProductInfiniteScroll({
     includeCategory: searchParams.get("includeCategory") === 'true',
   }), [searchParams, initialPageSize]);
 
-  // Kategoriye göre farklı hook kullan
   const allProductsQuery = useGetApiProductInfinite(queryParams, {
     query: {
-      enabled: !categoryId, // Sadece kategori yoksa çalışsın
+      enabled: !categoryId,
       getNextPageParam: (lastPage: { data: ProductDtoListPagedResult }) => {
         const pagedInfo = lastPage.data.pagedInfo;
         if (pagedInfo && pagedInfo.pageNumber && pagedInfo.totalPages && pagedInfo.pageNumber < pagedInfo.totalPages) {
@@ -43,26 +42,21 @@ export function ProductInfiniteScroll({
     }
   });
 
-  // Kategori ürünleri için normal query kullan (pagination yok)
   const categoryProductsQuery = useGetApiProductCategoryCategoryId(
     categoryId || '', 
     {
       query: {
-        enabled: !!categoryId, // Sadece kategori varsa çalışsın
+        enabled: !!categoryId,
       }
     }
   );
 
-  // Aktif query'ye göre verileri işle
   const { isLoading, isError, error } = categoryId ? categoryProductsQuery : allProductsQuery;
   
-  // Infinite scroll için gerekli değerler (sadece all products için)
   const { data: infiniteData, fetchNextPage, hasNextPage, isFetchingNextPage } = allProductsQuery;
   
-  // Category products için data
   const { data: categoryData } = categoryProductsQuery;
 
-  // Intersection Observer ile otomatik yükleme (sadece all products için)
   const handleIntersection = useCallback((entries: IntersectionObserverEntry[]) => {
     const [entry] = entries;
     if (!categoryId && entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
@@ -71,11 +65,11 @@ export function ProductInfiniteScroll({
   }, [categoryId, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   useEffect(() => {
-    if (categoryId) return; // Kategori varsa infinite scroll'u deaktif et
+    if (categoryId) return;
     
     const observer = new IntersectionObserver(handleIntersection, {
       root: null,
-      rootMargin: '100px', // 100px önce tetikle
+      rootMargin: '100px',
       threshold: 0.1,
     });
 
@@ -86,13 +80,10 @@ export function ProductInfiniteScroll({
     return () => observer.disconnect();
   }, [categoryId, handleIntersection]);
 
-  // Ürünleri al
   const allProducts = useMemo(() => {
     if (categoryId && categoryData?.data?.value) {
-      // Kategori ürünleri
       return Array.isArray(categoryData.data.value) ? categoryData.data.value : [];
     } else if (!categoryId && infiniteData?.pages) {
-      // Tüm ürünler (infinite scroll)
       return infiniteData.pages.reduce((acc: ProductDto[], page) => {
         const products = page.data?.value || [];
         if (Array.isArray(products)) {

@@ -44,7 +44,7 @@ export function CartSummary({ totalItems, totalAmount }: CartSummaryProps) {
           </div>
           
           {totalAmount < 500 && (
-            <div className="bg-blue-50 p-3 rounded-md text-sm text-blue-700">
+            <div className="bg-primary/10 p-3 rounded-md text-sm">
               ₺{(500 - totalAmount).toLocaleString('tr-TR')} daha alışveriş yapın, kargo ücretsiz olsun!
             </div>
           )}

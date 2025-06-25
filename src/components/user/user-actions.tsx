@@ -44,7 +44,7 @@ export function UserActions({ cartItemCount }: UserActionsProps) {
         <Button 
           variant="ghost" 
           onClick={handleSignIn}
-          className="text-gray-600 hover:text-blue-600 hidden sm:flex"
+          className="text-gray-600  hidden sm:flex"
         >
           <User className="h-5 w-5 mr-2" />
           Giriş Yap
@@ -55,7 +55,7 @@ export function UserActions({ cartItemCount }: UserActionsProps) {
           variant="ghost" 
           size="icon"
           onClick={handleSignIn}
-          className="text-gray-600 hover:text-blue-600 sm:hidden"
+          className="text-gray-600  sm:hidden"
         >
           <User className="h-5 w-5" />
           <span className="sr-only">Giriş Yap</span>
@@ -83,7 +83,7 @@ export function UserActions({ cartItemCount }: UserActionsProps) {
     <div className="flex items-center gap-2 sm:gap-4">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="text-gray-600 hover:text-blue-600 hidden sm:flex">
+          <Button variant="ghost" className="text-gray-600  hidden sm:flex">
             <User className="h-5 w-5 mr-2" />
             Hesabım
           </Button>
@@ -110,7 +110,7 @@ export function UserActions({ cartItemCount }: UserActionsProps) {
       {/* Mobile user dropdown */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="text-gray-600 hover:text-blue-600 sm:hidden">
+          <Button variant="ghost" size="icon" className="text-gray-600 sm:hidden">
             <User className="h-5 w-5" />
             <span className="sr-only">Hesabım</span>
           </Button>

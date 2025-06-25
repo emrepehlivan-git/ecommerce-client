@@ -27,7 +27,7 @@ export function CategoryNavigation({
       <ScrollArea className="w-full">
         <div className="flex items-center gap-2 pb-2 min-w-max">
           {displayCategories.map((category) => {
-            const href = `/kategori/${category.id}`;
+            const href = `/category/${category.id}`;
             const isActive = pathname?.startsWith(href);
             
             return (
@@ -38,8 +38,8 @@ export function CategoryNavigation({
                 className={cn(
                   "flex-shrink-0 transition-all duration-200 whitespace-nowrap",
                   isActive 
-                    ? "bg-blue-600 hover:bg-blue-700 text-white" 
-                    : "hover:bg-blue-50 hover:text-blue-600 text-gray-700"
+                    ? "bg-primary hover:bg-primary/90 text-white" 
+                    : "hover:bg-primary/10 hover:text-primary text-gray-700"
                 )}
                 asChild
               >

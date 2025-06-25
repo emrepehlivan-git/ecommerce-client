@@ -1,9 +1,6 @@
 import { Suspense } from "react";
 import { FeaturedProducts } from "@/components/product/products-list";
 import { ProductGridSkeleton } from "@/components/product/product-grid-skeleton";
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
 
 export default async function Home() {
   return (
