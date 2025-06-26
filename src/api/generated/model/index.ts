@@ -19,6 +19,7 @@ export * from './createRoleCommand';
 export * from './deleteUserAddressRequest';
 export * from './getApiCategoryParams';
 export * from './getApiOrderParams';
+export * from './getApiProductCategoryCategoryIdParams';
 export * from './getApiProductParams';
 export * from './getApiUserAddressesUserUserIdParams';
 export * from './getApiUsersParams';

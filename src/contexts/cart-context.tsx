@@ -12,18 +12,15 @@ import { CartDto, AddToCartCommand, UpdateCartItemQuantityCommand } from '@/api/
 import { useErrorHandler } from '@/lib/hooks/useErrorHandler';
 
 interface CartContextType {
-  // Data
   cart: CartDto | undefined;
   isLoading: boolean;
   error: Error | null;
   
-  // Actions
   addToCart: (productId: string, quantity: number) => Promise<void>;
   updateQuantity: (productId: string, quantity: number) => Promise<void>;
   removeFromCart: (productId: string) => Promise<void>;
   clearCart: () => Promise<void>;
   
-  // Computed values
   totalItems: number;
   totalAmount: number;
   isCartEmpty: boolean;
@@ -44,16 +41,14 @@ interface CartProviderProps {
 }
 
 export function CartProvider({ children }: CartProviderProps) {
-  // Error handler
   const { handleError, handleSuccess } = useErrorHandler({
     context: 'CartProvider'
   });
 
-  // Fetch cart data
   const { data: cartResponse, isLoading, error, refetch } = useGetApiCart();
-  const cart = cartResponse as CartDto | undefined;
+
+  const cart = cartResponse?.data as CartDto | undefined;
   
-  // Mutations
   const addToCartMutation = usePostApiCartAdd({
     mutation: {
       onSuccess: () => {
@@ -102,7 +97,6 @@ export function CartProvider({ children }: CartProviderProps) {
     }
   });
 
-  // Actions
   const addToCart = async (productId: string, quantity: number) => {
     const command: AddToCartCommand = { productId, quantity };
     await addToCartMutation.mutateAsync({ data: command });
@@ -121,24 +115,21 @@ export function CartProvider({ children }: CartProviderProps) {
     await clearCartMutation.mutateAsync();
   };
 
-  // Computed values
   const totalItems = cart?.totalItems || 0;
   const totalAmount = cart?.totalAmount || 0;
   const isCartEmpty = !cart?.items || cart.items.length === 0;
 
+
   const value: CartContextType = {
-    // Data
     cart,
     isLoading,
     error: error as Error | null,
     
-    // Actions
     addToCart,
     updateQuantity,
     removeFromCart,
     clearCart,
     
-    // Computed values
     totalItems,
     totalAmount,
     isCartEmpty

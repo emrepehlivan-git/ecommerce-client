@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
+import { getSession } from "next-auth/react";
 
 const getBaseURL = () => {
   if (typeof window === 'undefined') {
@@ -11,6 +12,28 @@ export const axiosClient = axios.create({
   baseURL: getBaseURL(),
   withCredentials: true,
 });
+
+axiosClient.interceptors.request.use(
+  async (config) => {
+    if (typeof window !== 'undefined') {
+      const session = await getSession();
+      if (session?.accessToken) {
+        config.headers.Authorization = `Bearer ${session.accessToken}`;
+      }
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+axiosClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export const axiosClientMutator = (config: AxiosRequestConfig) =>
   axiosClient(config);

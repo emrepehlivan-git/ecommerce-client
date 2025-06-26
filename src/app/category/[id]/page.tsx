@@ -1,7 +1,6 @@
-import { notFound } from "next/navigation";
+
 import { getApiCategoryId } from "@/api/generated/category/category";
 import { ProductInfiniteScroll } from "@/components/product/product-infinite-scroll";
-import { Badge } from "@/components/ui/badge";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Home, Package } from "lucide-react";
 import { Suspense } from "react";
@@ -17,7 +16,6 @@ interface CategoryPageProps {
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { id } = await params;
 
-  try {
     const categoryResponse = await getApiCategoryId(id);
     const category = categoryResponse.data;
 
@@ -46,9 +44,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           <div className="flex items-center gap-3 mb-4">
             <Package className="h-8 w-8 text-primary" />
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h2 className="text-3xl font-bold text-gray-900">
                 {category?.name}
-              </h1>
+              </h2>
               {category?.description && (
                 <p className="text-gray-600 mt-1">{category.description}</p>
               )}
@@ -59,14 +57,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         {/* Products with Infinite Scroll */}
         <Suspense fallback={<ProductGridSkeleton count={12} />}>
           <ProductInfiniteScroll 
-            initialPageSize={12} 
             categoryId={id}
           />
         </Suspense>
       </div>
     );
-  } catch (error) {
-    console.error("Category page error:", error);
-    notFound();
-  }
 } 

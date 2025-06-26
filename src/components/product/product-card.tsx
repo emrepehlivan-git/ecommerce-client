@@ -2,7 +2,6 @@ import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProductDto } from "@/api/generated/model";
-import { QuickAddToCart } from "@/components/cart/quick-add-to-cart";
 import Link from "next/link";
 
 interface ProductCardProps {
@@ -26,15 +25,6 @@ export function ProductCard({ product }: ProductCardProps) {
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
               <Badge variant="secondary">Stokta Yok</Badge>
             </div>
-          )}
-          
-          {/* Quick Add to Cart - Sadece stokta varsa göster */}
-          {!isOutOfStock && (
-            <QuickAddToCart 
-              productId={product.id || ""}
-              productName={product.name || "Ürün"}
-              variant="icon"
-            />
           )}
         </div>
         

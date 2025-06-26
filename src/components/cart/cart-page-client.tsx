@@ -15,6 +15,15 @@ export function CartPageClient() {
   const { data: session } = useSession();
   const { cart, isLoading, isCartEmpty, clearCart, totalItems, totalAmount } = useCart();
 
+  console.log('CartPageClient Debug:', {
+    cart,
+    cartItems: cart?.items,
+    cartItemsLength: cart?.items?.length,
+    isLoading,
+    isCartEmpty,
+    session: !!session
+  });
+
   if (!session) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -66,12 +75,18 @@ export function CartPageClient() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Cart Items */}
         <div className="lg:col-span-2 space-y-4">
-          {cart?.items?.map((item) => (
-            <div key={item.id}>
-              <CartItem item={item} />
-              <Separator className="mt-4" />
+          {cart?.items && cart.items.length > 0 ? (
+            cart.items.map((item) => (
+              <div key={item.id}>
+                <CartItem item={item} />
+                <Separator className="mt-4" />
+              </div>
+            ))
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-500">Sepetinizde ürün bulunmuyor.</p>
             </div>
-          ))}
+          )}
         </div>
 
         {/* Cart Summary */}

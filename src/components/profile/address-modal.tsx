@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { 
   Dialog, 
   DialogContent, 
@@ -21,45 +22,73 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { usePutApiUserAddressesId } from "@/api/generated/user-addresses/user-addresses";
-import { UserAddressDto, UpdateUserAddressRequest } from "@/api/generated/model";
+import { 
+  usePostApiUserAddresses, 
+  usePutApiUserAddressesId,
+  getGetApiUserAddressesUserUserIdQueryKey
+} from "@/api/generated/user-addresses/user-addresses";
+import { UserAddressDto, AddUserAddressCommand, UpdateUserAddressRequest } from "@/api/generated/model";
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useQueryClient } from "@tanstack/react-query";
 
-const editAddressSchema = z.object({
+const addressSchema = z.object({
   label: z.string().min(1, "Adres etiketi gereklidir"),
   street: z.string().min(1, "Sokak adresi gereklidir"),
   city: z.string().min(1, "Şehir gereklidir"),
   zipCode: z.string().min(1, "Posta kodu gereklidir"),
   country: z.string().min(1, "Ülke gereklidir"),
+  isDefault: z.boolean().optional(),
 });
 
-type EditAddressFormValues = z.infer<typeof editAddressSchema>;
+type AddressFormValues = z.infer<typeof addressSchema>;
 
-interface EditAddressModalProps {
+interface AddressModalProps {
   isOpen: boolean;
   onClose: () => void;
-  address: UserAddressDto | null;
   userId: string;
   onSuccess: () => void;
+  address?: UserAddressDto | null;
+  mode: 'add' | 'edit';
 }
 
-export function EditAddressModal({ 
+export function AddressModal({ 
   isOpen, 
   onClose, 
-  address, 
   userId, 
-  onSuccess 
-}: EditAddressModalProps) {
-  const { handleError, handleSuccess } = useErrorHandler({ context: 'EditAddressModal' });
+  onSuccess,
+  address = null,
+  mode = 'add'
+}: AddressModalProps) {
+  const { handleError, handleSuccess } = useErrorHandler({ context: 'AddressModal' });
+  const queryClient = useQueryClient();
 
-  const form = useForm<EditAddressFormValues>({
-    resolver: zodResolver(editAddressSchema),
+  const form = useForm<AddressFormValues>({
+    resolver: zodResolver(addressSchema),
     defaultValues: {
       label: "",
       street: "",
       city: "",
       zipCode: "",
       country: "Türkiye",
+      isDefault: false,
+    },
+  });
+
+  const addMutation = usePostApiUserAddresses({
+    mutation: {
+      onSuccess: () => {
+        handleSuccess("Adres başarıyla eklendi!");
+        // Cache'i invalidate et
+        queryClient.invalidateQueries({
+          queryKey: getGetApiUserAddressesUserUserIdQueryKey(userId)
+        });
+        onSuccess();
+        onClose();
+        form.reset();
+      },
+      onError: (error) => {
+        handleError(error, 'Adres eklenirken bir hata oluştu');
+      },
     },
   });
 
@@ -67,6 +96,10 @@ export function EditAddressModal({
     mutation: {
       onSuccess: () => {
         handleSuccess("Adres başarıyla güncellendi!");
+        // Cache'i invalidate et
+        queryClient.invalidateQueries({
+          queryKey: getGetApiUserAddressesUserUserIdQueryKey(userId)
+        });
         onSuccess();
         onClose();
         form.reset();
@@ -78,33 +111,58 @@ export function EditAddressModal({
   });
 
   useEffect(() => {
-    if (address && isOpen) {
-      form.reset({
-        label: address.label || "",
-        street: address.street || "",
-        city: address.city || "",
-        zipCode: address.zipCode || "",
-        country: address.country || "Türkiye",
+    if (isOpen) {
+      if (mode === 'edit' && address) {
+        form.reset({
+          label: address.label || "",
+          street: address.street || "",
+          city: address.city || "",
+          zipCode: address.zipCode || "",
+          country: address.country || "Türkiye",
+          isDefault: address.isDefault || false,
+        });
+      } else {
+        form.reset({
+          label: "",
+          street: "",
+          city: "",
+          zipCode: "",
+          country: "Türkiye",
+          isDefault: false,
+        });
+      }
+    }
+  }, [isOpen, mode, address, form]);
+
+  const onSubmit = (values: AddressFormValues) => {
+    if (mode === 'add') {
+      const data: AddUserAddressCommand = {
+        userId,
+        label: values.label,
+        street: values.street,
+        city: values.city,
+        zipCode: values.zipCode,
+        country: values.country,
+        isDefault: values.isDefault || false,
+      };
+      addMutation.mutate({ data });
+    } else {
+      if (!address?.id) return;
+      
+      const data: UpdateUserAddressRequest = {
+        userId,
+        label: values.label,
+        street: values.street,
+        city: values.city,
+        zipCode: values.zipCode,
+        country: values.country,
+      };
+      
+      editMutation.mutate({
+        id: address.id,
+        data,
       });
     }
-  }, [address, isOpen, form]);
-
-  const onSubmit = (values: EditAddressFormValues) => {
-    if (!address?.id) return;
-    
-    const data: UpdateUserAddressRequest = {
-      userId,
-      label: values.label,
-      street: values.street,
-      city: values.city,
-      zipCode: values.zipCode,
-      country: values.country,
-    };
-    
-    editMutation.mutate({
-      id: address.id,
-      data,
-    });
   };
 
   const handleClose = () => {
@@ -112,13 +170,19 @@ export function EditAddressModal({
     form.reset();
   };
 
+  const isLoading = addMutation.isPending || editMutation.isPending;
+  const title = mode === 'add' ? 'Yeni Adres Ekle' : 'Adresi Düzenle';
+  const description = mode === 'add' ? 'Teslimat için yeni bir adres ekleyin' : 'Adres bilgilerinizi güncelleyin';
+  const submitText = mode === 'add' ? 'Kaydet' : 'Güncelle';
+  const loadingText = mode === 'add' ? 'Ekleniyor...' : 'Güncelleniyor...';
+
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Adresi Düzenle</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
           <DialogDescription>
-            Adres bilgilerinizi güncelleyin
+            {description}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -197,6 +261,28 @@ export function EditAddressModal({
               />
             </div>
 
+            {mode === 'add' && (
+              <FormField
+                control={form.control}
+                name="isDefault"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>
+                        Bu adresi varsayılan adres olarak ayarla
+                      </FormLabel>
+                    </div>
+                  </FormItem>
+                )}
+              />
+            )}
+
             <div className="flex gap-2 justify-end pt-4">
               <Button
                 type="button"
@@ -207,9 +293,9 @@ export function EditAddressModal({
               </Button>
               <Button
                 type="submit"
-                disabled={editMutation.isPending}
+                disabled={isLoading}
               >
-                {editMutation.isPending ? "Güncelleniyor..." : "Güncelle"}
+                {isLoading ? loadingText : submitText}
               </Button>
             </div>
           </form>

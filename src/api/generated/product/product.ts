@@ -31,6 +31,7 @@ import type {
 
 import type {
   CreateProductCommand,
+  GetApiProductCategoryCategoryIdParams,
   GetApiProductParams,
   ProblemDetails,
   ProductDto,
@@ -506,75 +507,83 @@ const {mutation: mutationOptions} = options ?
     }
     export const getApiProductCategoryCategoryId = (
     categoryId: string,
+    params?: GetApiProductCategoryCategoryIdParams,
  signal?: AbortSignal
 ) => {
       
       
       return axiosClientMutator<ProductDtoListPagedResult>(
-      {url: `/api/Product/category/${categoryId}`, method: 'GET', signal
+      {url: `/api/Product/category/${categoryId}`, method: 'GET',
+        params, signal
     },
       );
     }
   
 
-export const getGetApiProductCategoryCategoryIdQueryKey = (categoryId: string,) => {
-    return [`/api/Product/category/${categoryId}`] as const;
+export const getGetApiProductCategoryCategoryIdQueryKey = (categoryId: string,
+    params?: GetApiProductCategoryCategoryIdParams,) => {
+    return [`/api/Product/category/${categoryId}`, ...(params ? [params]: [])] as const;
     }
 
     
-export const getGetApiProductCategoryCategoryIdInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>>, TError = ProblemDetails>(categoryId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError, TData>>, }
+export const getGetApiProductCategoryCategoryIdInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, GetApiProductCategoryCategoryIdParams['page']>, TError = ProblemDetails>(categoryId: string,
+    params?: GetApiProductCategoryCategoryIdParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError, TData, Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, QueryKey, GetApiProductCategoryCategoryIdParams['page']>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetApiProductCategoryCategoryIdQueryKey(categoryId);
+  const queryKey =  queryOptions?.queryKey ?? getGetApiProductCategoryCategoryIdQueryKey(categoryId,params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>> = ({ signal }) => getApiProductCategoryCategoryId(categoryId, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, QueryKey, GetApiProductCategoryCategoryIdParams['page']> = ({ signal, pageParam }) => getApiProductCategoryCategoryId(categoryId,{...params, 'page': pageParam || params?.['page']}, signal);
 
       
 
       
 
-   return  { queryKey, queryFn, enabled: !!(categoryId),  staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: !!(categoryId),  staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError, TData, Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, QueryKey, GetApiProductCategoryCategoryIdParams['page']> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetApiProductCategoryCategoryIdInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>>
 export type GetApiProductCategoryCategoryIdInfiniteQueryError = ProblemDetails
 
 
-export function useGetApiProductCategoryCategoryIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>>, TError = ProblemDetails>(
- categoryId: string, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError, TData>> & Pick<
+export function useGetApiProductCategoryCategoryIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, GetApiProductCategoryCategoryIdParams['page']>, TError = ProblemDetails>(
+ categoryId: string,
+    params: undefined |  GetApiProductCategoryCategoryIdParams, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError, TData, Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, QueryKey, GetApiProductCategoryCategoryIdParams['page']>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>,
           TError,
-          Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>
+          Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, QueryKey
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiProductCategoryCategoryIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>>, TError = ProblemDetails>(
- categoryId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError, TData>> & Pick<
+export function useGetApiProductCategoryCategoryIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, GetApiProductCategoryCategoryIdParams['page']>, TError = ProblemDetails>(
+ categoryId: string,
+    params?: GetApiProductCategoryCategoryIdParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError, TData, Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, QueryKey, GetApiProductCategoryCategoryIdParams['page']>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>,
           TError,
-          Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>
+          Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, QueryKey
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiProductCategoryCategoryIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>>, TError = ProblemDetails>(
- categoryId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError, TData>>, }
+export function useGetApiProductCategoryCategoryIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, GetApiProductCategoryCategoryIdParams['page']>, TError = ProblemDetails>(
+ categoryId: string,
+    params?: GetApiProductCategoryCategoryIdParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError, TData, Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, QueryKey, GetApiProductCategoryCategoryIdParams['page']>>, }
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useGetApiProductCategoryCategoryIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>>, TError = ProblemDetails>(
- categoryId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError, TData>>, }
+export function useGetApiProductCategoryCategoryIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, GetApiProductCategoryCategoryIdParams['page']>, TError = ProblemDetails>(
+ categoryId: string,
+    params?: GetApiProductCategoryCategoryIdParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError, TData, Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, QueryKey, GetApiProductCategoryCategoryIdParams['page']>>, }
  , queryClient?: QueryClient 
  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetApiProductCategoryCategoryIdInfiniteQueryOptions(categoryId,options)
+  const queryOptions = getGetApiProductCategoryCategoryIdInfiniteQueryOptions(categoryId,params,options)
 
   const query = useInfiniteQuery(queryOptions , queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -585,16 +594,17 @@ export function useGetApiProductCategoryCategoryIdInfinite<TData = InfiniteData<
 
 
 
-export const getGetApiProductCategoryCategoryIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError = ProblemDetails>(categoryId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError, TData>>, }
+export const getGetApiProductCategoryCategoryIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError = ProblemDetails>(categoryId: string,
+    params?: GetApiProductCategoryCategoryIdParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetApiProductCategoryCategoryIdQueryKey(categoryId);
+  const queryKey =  queryOptions?.queryKey ?? getGetApiProductCategoryCategoryIdQueryKey(categoryId,params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>> = ({ signal }) => getApiProductCategoryCategoryId(categoryId, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>> = ({ signal }) => getApiProductCategoryCategoryId(categoryId,params, signal);
 
       
 
@@ -608,7 +618,8 @@ export type GetApiProductCategoryCategoryIdQueryError = ProblemDetails
 
 
 export function useGetApiProductCategoryCategoryId<TData = Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError = ProblemDetails>(
- categoryId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError, TData>> & Pick<
+ categoryId: string,
+    params: undefined |  GetApiProductCategoryCategoryIdParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>,
           TError,
@@ -618,7 +629,8 @@ export function useGetApiProductCategoryCategoryId<TData = Awaited<ReturnType<ty
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetApiProductCategoryCategoryId<TData = Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError = ProblemDetails>(
- categoryId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError, TData>> & Pick<
+ categoryId: string,
+    params?: GetApiProductCategoryCategoryIdParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>,
           TError,
@@ -628,16 +640,18 @@ export function useGetApiProductCategoryCategoryId<TData = Awaited<ReturnType<ty
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetApiProductCategoryCategoryId<TData = Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError = ProblemDetails>(
- categoryId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError, TData>>, }
+ categoryId: string,
+    params?: GetApiProductCategoryCategoryIdParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetApiProductCategoryCategoryId<TData = Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError = ProblemDetails>(
- categoryId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError, TData>>, }
+ categoryId: string,
+    params?: GetApiProductCategoryCategoryIdParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiProductCategoryCategoryId>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetApiProductCategoryCategoryIdQueryOptions(categoryId,options)
+  const queryOptions = getGetApiProductCategoryCategoryIdQueryOptions(categoryId,params,options)
 
   const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

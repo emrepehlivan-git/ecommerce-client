@@ -1,6 +1,6 @@
 "use client";
 
-import { useGetApiProductInfinite, useGetApiProductCategoryCategoryId } from "@/api/generated/product/product";
+import { useGetApiProductInfinite } from "@/api/generated/product/product";
 import { ProductCard } from "./product-card";
 import { ProductGridSkeleton } from "./product-grid-skeleton";
 import { ProductSortDropdown } from "./product-sort-dropdown";
@@ -26,11 +26,19 @@ export function ProductInfiniteScroll({
     PageSize: initialPageSize,
     orderBy: searchParams.get("orderBy") || undefined,
     includeCategory: searchParams.get("includeCategory") === 'true',
-  }), [searchParams, initialPageSize]);
+    categoryId: categoryId || undefined,
+  }), [searchParams, initialPageSize, categoryId]);
 
-  const allProductsQuery = useGetApiProductInfinite(queryParams, {
+  const {
+    data: infiniteData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError,
+    error
+  } = useGetApiProductInfinite(queryParams, {
     query: {
-      enabled: !categoryId,
       getNextPageParam: (lastPage: { data: ProductDtoListPagedResult }) => {
         const pagedInfo = lastPage.data.pagedInfo;
         if (pagedInfo && pagedInfo.pageNumber && pagedInfo.totalPages && pagedInfo.pageNumber < pagedInfo.totalPages) {
@@ -42,31 +50,14 @@ export function ProductInfiniteScroll({
     }
   });
 
-  const categoryProductsQuery = useGetApiProductCategoryCategoryId(
-    categoryId || '', 
-    {
-      query: {
-        enabled: !!categoryId,
-      }
-    }
-  );
-
-  const { isLoading, isError, error } = categoryId ? categoryProductsQuery : allProductsQuery;
-  
-  const { data: infiniteData, fetchNextPage, hasNextPage, isFetchingNextPage } = allProductsQuery;
-  
-  const { data: categoryData } = categoryProductsQuery;
-
   const handleIntersection = useCallback((entries: IntersectionObserverEntry[]) => {
     const [entry] = entries;
-    if (!categoryId && entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+    if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
-  }, [categoryId, hasNextPage, isFetchingNextPage, fetchNextPage]);
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   useEffect(() => {
-    if (categoryId) return;
-    
     const observer = new IntersectionObserver(handleIntersection, {
       root: null,
       rootMargin: '100px',
@@ -78,12 +69,10 @@ export function ProductInfiniteScroll({
     }
 
     return () => observer.disconnect();
-  }, [categoryId, handleIntersection]);
+  }, [handleIntersection]);
 
   const allProducts = useMemo(() => {
-    if (categoryId && categoryData?.data?.value) {
-      return Array.isArray(categoryData.data.value) ? categoryData.data.value : [];
-    } else if (!categoryId && infiniteData?.pages) {
+    if (infiniteData?.pages) {
       return infiniteData.pages.reduce((acc: ProductDto[], page) => {
         const products = page.data?.value || [];
         if (Array.isArray(products)) {
@@ -93,11 +82,9 @@ export function ProductInfiniteScroll({
       }, []);
     }
     return [];
-  }, [categoryId, categoryData, infiniteData]);
+  }, [infiniteData]);
 
-  const totalRecords = categoryId 
-    ? (categoryData?.data?.pagedInfo?.totalRecords || allProducts.length)
-    : (infiniteData?.pages[0]?.data?.pagedInfo?.totalRecords || 0);
+  const totalRecords = infiniteData?.pages[0]?.data?.pagedInfo?.totalRecords || 0;
 
   if (isLoading) {
     return <ProductGridSkeleton count={initialPageSize} />;
@@ -142,7 +129,6 @@ export function ProductInfiniteScroll({
 
   return (
     <div className="space-y-6">
-      {/* Product Header with Sort and Count */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-gray-200">
         <div className="text-sm text-gray-600 font-medium">
           <span className="text-gray-900 font-semibold">{allProducts.length}</span> / {" "}
@@ -152,15 +138,13 @@ export function ProductInfiniteScroll({
         <ProductSortDropdown />
       </div>
 
-      {/* Ürün listesi */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {allProducts.map((product: ProductDto) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
 
-      {/* Loading trigger point - sadece infinite scroll için */}
-      {!categoryId && hasNextPage && (
+      {hasNextPage && (
         <div 
           ref={loadingRef}
           className="flex justify-center py-8"
@@ -174,10 +158,9 @@ export function ProductInfiniteScroll({
         </div>
       )}
 
-      {/* Tüm ürünler yüklendi mesajı - sadece infinite scroll için */}
-      {!categoryId && !hasNextPage && allProducts.length > 0 && allProducts.length === totalRecords && (
+      {!hasNextPage && allProducts.length > 0 && allProducts.length === totalRecords && (
         <div className="text-center py-8 text-gray-500">
-          🎉 Tüm ürünler yüklendi!
+          🎉 {categoryId ? "Bu kategorideki" : "Tüm"} ürünler yüklendi!
         </div>
       )}
     </div>

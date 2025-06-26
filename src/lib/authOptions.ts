@@ -26,7 +26,7 @@ export const authOptions: NextAuthConfig = {
       type: "oauth",
       clientId,
       clientSecret: "",
-      issuer: normalizedIssuer,
+      issuer: typeof window === 'undefined' ? getInternalIssuer() : normalizedIssuer,
       wellKnown: typeof window === 'undefined' 
         ? `${getInternalIssuer()}.well-known/openid-configuration`
         : `${normalizedIssuer}.well-known/openid-configuration`,

@@ -14,13 +14,15 @@ import {
 import { 
   useGetApiUserAddressesUserUserId, 
   useDeleteApiUserAddressesId,
-  usePatchApiUserAddressesIdSetDefault 
+  usePatchApiUserAddressesIdSetDefault,
+  getGetApiUserAddressesUserUserIdQueryKey
 } from "@/api/generated/user-addresses/user-addresses";
 import { UserAddressDto } from "@/api/generated/model";
 import { MapPin, Trash2, Star, StarOff, Edit } from "lucide-react";
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useQueryClient } from "@tanstack/react-query";
 import { ErrorHelper } from "@/lib/errorHelper";
-import { EditAddressModal } from "./edit-address-modal";
+import { AddressModal } from "./address-modal";
 import { Hint } from "@/components/ui/hint";
 
 interface AddressListProps {
@@ -35,12 +37,16 @@ export function AddressList({ userId }: AddressListProps) {
 
   const { data: addresses, isLoading, refetch } = useGetApiUserAddressesUserUserId(userId);
   const { handleError, handleSuccess } = useErrorHandler({ context: 'AddressList' });
+  const queryClient = useQueryClient();
 
   const deleteMutation = useDeleteApiUserAddressesId({
     mutation: {
       onSuccess: () => {
         handleSuccess("Adres başarıyla silindi!");
-        refetch();
+        // Cache'i invalidate et
+        queryClient.invalidateQueries({
+          queryKey: getGetApiUserAddressesUserUserIdQueryKey(userId)
+        });
         setDeleteDialogOpen(false);
         setAddressToDelete(null);
       },
@@ -55,7 +61,10 @@ export function AddressList({ userId }: AddressListProps) {
     mutation: {
       onSuccess: () => {
         handleSuccess("Varsayılan adres güncellendi!");
-        refetch();
+        // Cache'i invalidate et
+        queryClient.invalidateQueries({
+          queryKey: getGetApiUserAddressesUserUserIdQueryKey(userId)
+        });
       },
       onError: (error) => {
         const customMessage = ErrorHelper.getAddressOperationErrorMessage(error, 'setDefault');
@@ -109,7 +118,7 @@ export function AddressList({ userId }: AddressListProps) {
   };
 
   const handleEditSuccess = () => {
-    refetch();
+    // Cache invalidation AddressModal içinde yapılıyor
   };
 
   if (isLoading) {
@@ -226,12 +235,13 @@ export function AddressList({ userId }: AddressListProps) {
         </DialogContent>
       </Dialog>
 
-      <EditAddressModal
+      <AddressModal
         isOpen={editDialogOpen}
         onClose={() => setEditDialogOpen(false)}
         address={addressToEdit}
         userId={userId}
         onSuccess={handleEditSuccess}
+        mode="edit"
       />
     </>
   );
