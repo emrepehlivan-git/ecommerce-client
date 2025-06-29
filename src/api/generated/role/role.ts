@@ -31,6 +31,7 @@ import type {
 
 import type {
   CreateRoleCommand,
+  GetApiRoleParams,
   ProblemDetails,
   RoleDto,
   UpdateRoleCommand,
@@ -43,76 +44,77 @@ import { axiosClientMutator } from '../../../lib/axiosClient';
 
 
 export const getApiRole = (
-    
+    params?: GetApiRoleParams,
  signal?: AbortSignal
 ) => {
       
       
       return axiosClientMutator<RoleDto[]>(
-      {url: `/api/Role`, method: 'GET', signal
+      {url: `/api/Role`, method: 'GET',
+        params, signal
     },
       );
     }
   
 
-export const getGetApiRoleQueryKey = () => {
-    return [`/api/Role`] as const;
+export const getGetApiRoleQueryKey = (params?: GetApiRoleParams,) => {
+    return [`/api/Role`, ...(params ? [params]: [])] as const;
     }
 
     
-export const getGetApiRoleInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiRole>>>, TError = ProblemDetails>( options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiRole>>, TError, TData>>, }
+export const getGetApiRoleInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiRole>>, GetApiRoleParams['page']>, TError = ProblemDetails>(params?: GetApiRoleParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiRole>>, TError, TData, Awaited<ReturnType<typeof getApiRole>>, QueryKey, GetApiRoleParams['page']>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetApiRoleQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetApiRoleQueryKey(params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiRole>>> = ({ signal }) => getApiRole(signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiRole>>, QueryKey, GetApiRoleParams['page']> = ({ signal, pageParam }) => getApiRole({...params, 'page': pageParam || params?.['page']}, signal);
 
       
 
       
 
-   return  { queryKey, queryFn,   staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiRole>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn,   staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiRole>>, TError, TData, Awaited<ReturnType<typeof getApiRole>>, QueryKey, GetApiRoleParams['page']> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetApiRoleInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiRole>>>
 export type GetApiRoleInfiniteQueryError = ProblemDetails
 
 
-export function useGetApiRoleInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiRole>>>, TError = ProblemDetails>(
-  options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiRole>>, TError, TData>> & Pick<
+export function useGetApiRoleInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiRole>>, GetApiRoleParams['page']>, TError = ProblemDetails>(
+ params: undefined |  GetApiRoleParams, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiRole>>, TError, TData, Awaited<ReturnType<typeof getApiRole>>, QueryKey, GetApiRoleParams['page']>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiRole>>,
           TError,
-          Awaited<ReturnType<typeof getApiRole>>
+          Awaited<ReturnType<typeof getApiRole>>, QueryKey
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiRoleInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiRole>>>, TError = ProblemDetails>(
-  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiRole>>, TError, TData>> & Pick<
+export function useGetApiRoleInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiRole>>, GetApiRoleParams['page']>, TError = ProblemDetails>(
+ params?: GetApiRoleParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiRole>>, TError, TData, Awaited<ReturnType<typeof getApiRole>>, QueryKey, GetApiRoleParams['page']>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiRole>>,
           TError,
-          Awaited<ReturnType<typeof getApiRole>>
+          Awaited<ReturnType<typeof getApiRole>>, QueryKey
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiRoleInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiRole>>>, TError = ProblemDetails>(
-  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiRole>>, TError, TData>>, }
+export function useGetApiRoleInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiRole>>, GetApiRoleParams['page']>, TError = ProblemDetails>(
+ params?: GetApiRoleParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiRole>>, TError, TData, Awaited<ReturnType<typeof getApiRole>>, QueryKey, GetApiRoleParams['page']>>, }
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useGetApiRoleInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiRole>>>, TError = ProblemDetails>(
-  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiRole>>, TError, TData>>, }
+export function useGetApiRoleInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiRole>>, GetApiRoleParams['page']>, TError = ProblemDetails>(
+ params?: GetApiRoleParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiRole>>, TError, TData, Awaited<ReturnType<typeof getApiRole>>, QueryKey, GetApiRoleParams['page']>>, }
  , queryClient?: QueryClient 
  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetApiRoleInfiniteQueryOptions(options)
+  const queryOptions = getGetApiRoleInfiniteQueryOptions(params,options)
 
   const query = useInfiniteQuery(queryOptions , queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -123,16 +125,16 @@ export function useGetApiRoleInfinite<TData = InfiniteData<Awaited<ReturnType<ty
 
 
 
-export const getGetApiRoleQueryOptions = <TData = Awaited<ReturnType<typeof getApiRole>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiRole>>, TError, TData>>, }
+export const getGetApiRoleQueryOptions = <TData = Awaited<ReturnType<typeof getApiRole>>, TError = ProblemDetails>(params?: GetApiRoleParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiRole>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetApiRoleQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetApiRoleQueryKey(params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiRole>>> = ({ signal }) => getApiRole(signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiRole>>> = ({ signal }) => getApiRole(params, signal);
 
       
 
@@ -146,7 +148,7 @@ export type GetApiRoleQueryError = ProblemDetails
 
 
 export function useGetApiRole<TData = Awaited<ReturnType<typeof getApiRole>>, TError = ProblemDetails>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiRole>>, TError, TData>> & Pick<
+ params: undefined |  GetApiRoleParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiRole>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiRole>>,
           TError,
@@ -156,7 +158,7 @@ export function useGetApiRole<TData = Awaited<ReturnType<typeof getApiRole>>, TE
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetApiRole<TData = Awaited<ReturnType<typeof getApiRole>>, TError = ProblemDetails>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiRole>>, TError, TData>> & Pick<
+ params?: GetApiRoleParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiRole>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiRole>>,
           TError,
@@ -166,16 +168,16 @@ export function useGetApiRole<TData = Awaited<ReturnType<typeof getApiRole>>, TE
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetApiRole<TData = Awaited<ReturnType<typeof getApiRole>>, TError = ProblemDetails>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiRole>>, TError, TData>>, }
+ params?: GetApiRoleParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiRole>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetApiRole<TData = Awaited<ReturnType<typeof getApiRole>>, TError = ProblemDetails>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiRole>>, TError, TData>>, }
+ params?: GetApiRoleParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiRole>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetApiRoleQueryOptions(options)
+  const queryOptions = getGetApiRoleQueryOptions(params,options)
 
   const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

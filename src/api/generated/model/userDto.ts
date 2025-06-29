@@ -13,4 +13,6 @@ export interface UserDto {
   /** @nullable */
   fullName?: string | null;
   isActive?: boolean;
+  /** @nullable */
+  birthday?: string | null;
 }

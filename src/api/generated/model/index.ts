@@ -21,6 +21,7 @@ export * from './getApiCategoryParams';
 export * from './getApiOrderParams';
 export * from './getApiProductCategoryCategoryIdParams';
 export * from './getApiProductParams';
+export * from './getApiRoleParams';
 export * from './getApiUserAddressesUserUserIdParams';
 export * from './getApiUsersParams';
 export * from './orderDto';

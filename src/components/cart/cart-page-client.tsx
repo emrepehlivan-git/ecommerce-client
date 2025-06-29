@@ -15,14 +15,6 @@ export function CartPageClient() {
   const { data: session } = useSession();
   const { cart, isLoading, isCartEmpty, clearCart, totalItems, totalAmount } = useCart();
 
-  console.log('CartPageClient Debug:', {
-    cart,
-    cartItems: cart?.items,
-    cartItemsLength: cart?.items?.length,
-    isLoading,
-    isCartEmpty,
-    session: !!session
-  });
 
   if (!session) {
     return (
@@ -56,7 +48,7 @@ export function CartPageClient() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Sepetim</h1>
+          <h2 className="text-3xl font-bold text-gray-900">Sepetim</h2>
           <p className="text-gray-600 mt-1">
             {totalItems} ürün - Toplam: ₺{totalAmount.toLocaleString('tr-TR')}
           </p>

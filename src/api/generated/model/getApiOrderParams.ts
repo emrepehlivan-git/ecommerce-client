@@ -10,5 +10,6 @@ import type { OrderStatus } from './orderStatus';
 export type GetApiOrderParams = {
 Page?: number;
 PageSize?: number;
+Search?: string;
 status?: OrderStatus;
 };

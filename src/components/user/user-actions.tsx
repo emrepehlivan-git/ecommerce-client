@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useSession, signIn } from "next-auth/react";
 import LogoutButton from "../auth/logout-button";
+import { hasRole } from "@/lib/auth-utils";
 
 interface UserActionsProps {
   cartItemCount: number;
@@ -79,18 +80,25 @@ export function UserActions({ cartItemCount }: UserActionsProps) {
     );
   }
 
+  const isAdmin = hasRole(session, "Admin");
+
   return (
     <div className="flex items-center gap-2 sm:gap-4">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="text-gray-600  hidden sm:flex">
             <User className="h-5 w-5 mr-2" />
-            Hesabım
+            {session.user.name}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Hesabım</DropdownMenuLabel>
           <DropdownMenuSeparator />
+          {isAdmin && (
+            <DropdownMenuItem asChild>
+              <Link href="/admin">Admin Paneli</Link>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem asChild>
             <Link href="/profile">Hesap Bilgileri</Link>
           </DropdownMenuItem>
@@ -118,6 +126,11 @@ export function UserActions({ cartItemCount }: UserActionsProps) {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Hesabım</DropdownMenuLabel>
           <DropdownMenuSeparator />
+          {isAdmin && (
+            <DropdownMenuItem asChild>
+              <Link href="/admin">Admin Paneli</Link>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem asChild>
             <Link href="/profile">Hesap Bilgileri</Link>
           </DropdownMenuItem>

@@ -5,11 +5,10 @@ import "./globals.css";
 
 import { QueryProvider } from "@/providers/query-provider";
 import { Toaster } from "@/components/ui/sonner";
-import { Navbar } from "@/components/navbar";
 import AuthSessionProvider from "@/providers/auth-session-provider";
-import { CartProvider } from "@/contexts/cart-context";
 import { auth } from "@/lib/auth";
 import { BackToTop } from "@/components/ui/back-to-top";
+import NavbarWrapper from "@/components/navbar/navbar-wrapper";
 
 const font = Inter({
   subsets: ["latin"],
@@ -42,10 +41,7 @@ export default async function RootLayout({
       <body className={`${font.className} antialiased`}>
         <QueryProvider>
           <AuthSessionProvider session={session}>
-            <CartProvider>
-              <Navbar />
-              {children}
-            </CartProvider>
+            <NavbarWrapper>{children}</NavbarWrapper>
           </AuthSessionProvider>
         </QueryProvider>
         <BackToTop />

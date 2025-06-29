@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { getSession } from "next-auth/react";
+import { auth } from "./auth";
 
 const getBaseURL = () => {
   if (typeof window === 'undefined') {
@@ -12,6 +13,24 @@ export const axiosClient = axios.create({
   baseURL: getBaseURL(),
   withCredentials: true,
 });
+
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (value?: any) => void;
+  reject: (error?: any) => void;
+}> = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach(({ resolve, reject }) => {
+    if (error) {
+      reject(error);
+    } else {
+      resolve(token);
+    }
+  });
+  
+  failedQueue = [];
+};
 
 axiosClient.interceptors.request.use(
   async (config) => {
@@ -30,10 +49,60 @@ axiosClient.interceptors.request.use(
 
 axiosClient.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error?.response?.status === 401 && !originalRequest._retry && typeof window !== 'undefined') {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        }).then(() => {
+          return axiosClient(originalRequest);
+        }).catch((err) => {
+          return Promise.reject(err);
+        });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const session = await getSession();
+        
+        if (session?.error === "RefreshAccessTokenError") {
+          processQueue(error, null);
+          return Promise.reject(error);
+        }
+
+        if (session?.accessToken) {
+          originalRequest.headers.Authorization = `Bearer ${session.accessToken}`;
+          processQueue(null, session.accessToken);
+          return axiosClient(originalRequest);
+        } else {
+          processQueue(error, null);
+          return Promise.reject(error);
+        }
+      } catch (refreshError) {
+        processQueue(refreshError, null);
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
     return Promise.reject(error);
   }
 );
 
-export const axiosClientMutator = (config: AxiosRequestConfig) =>
-  axiosClient(config);
+export const axiosClientMutator = async (config: AxiosRequestConfig) => {
+  if (typeof window === 'undefined') {
+    const session = await auth();
+    if (session?.accessToken) {
+      config.headers = {
+        ...config.headers,
+        Authorization: `Bearer ${session.accessToken}`,
+      };
+    }
+  }
+  return axiosClient(config);
+}

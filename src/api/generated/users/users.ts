@@ -441,4 +441,62 @@ const {mutation: mutationOptions} = options ?
 
       return useMutation(mutationOptions , queryClient);
     }
+    export const putApiUsersIdBirthday = (
+    id: string,
+    putApiUsersIdBirthdayBody: string,
+ ) => {
+      
+      
+      return axiosClientMutator<void>(
+      {url: `/api/Users/${id}/birthday`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: putApiUsersIdBirthdayBody
+    },
+      );
+    }
+  
+
+
+export const getPutApiUsersIdBirthdayMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiUsersIdBirthday>>, TError,{id: string;data: string}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiUsersIdBirthday>>, TError,{id: string;data: string}, TContext> => {
+
+const mutationKey = ['putApiUsersIdBirthday'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiUsersIdBirthday>>, {id: string;data: string}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  putApiUsersIdBirthday(id,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutApiUsersIdBirthdayMutationResult = NonNullable<Awaited<ReturnType<typeof putApiUsersIdBirthday>>>
+    export type PutApiUsersIdBirthdayMutationBody = string
+    export type PutApiUsersIdBirthdayMutationError = ProblemDetails
+
+    export const usePutApiUsersIdBirthday = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiUsersIdBirthday>>, TError,{id: string;data: string}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof putApiUsersIdBirthday>>,
+        TError,
+        {id: string;data: string},
+        TContext
+      > => {
+
+      const mutationOptions = getPutApiUsersIdBirthdayMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
     

@@ -35,6 +35,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { usePutApiUsersIdBirthday } from "@/api/generated/users/users";
+import { useSession } from "next-auth/react";
+import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { format } from "date-fns";
 
 const formSchema = z.object({
   name: z.string().min(2, "Ad en az 2 karakter olmalı"),
@@ -61,16 +65,30 @@ export default function EditProfileModal({
   onOpenChange,
   defaultValues,
 }: EditProfileModalProps) {
+  const { handleError } = useErrorHandler();    
   const [calendarOpen, setCalendarOpen] = useState(false);
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
+  const birthdayMutation = usePutApiUsersIdBirthday();
 
-  function onSubmit(values: ProfileFormValues) {
-    // TODO: API isteği ile güncelleme yapılacak
-    alert(JSON.stringify(values, null, 2));
-    onOpenChange(false);
+  async function onSubmit(values: ProfileFormValues) {
+    if (!userId) {
+      handleError("Kullanıcı bulunamadı!");
+      return;
+    }
+    try {
+      await birthdayMutation.mutateAsync({
+        id: userId,
+        data: values.birthDate ? new Date(values.birthDate).toISOString() : "",
+      });
+      onOpenChange(false);
+    } catch (e: any) {
+      handleError(e?.message || "Bir hata oluştu");
+    }
   }
 
   return (
@@ -154,35 +172,39 @@ export default function EditProfileModal({
                   control={form.control}
                   name="birthDate"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex flex-col">
                       <FormLabel>Doğum Tarihi</FormLabel>
-                      <FormControl>
-                        <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-                          <PopoverTrigger asChild>
+                      <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+                        <PopoverTrigger asChild>
+                          <FormControl>
                             <Button
-                              variant="outline"
-                              className="w-full justify-start text-left h-11"
-                            >
-                              <CalendarIcon className="w-4 h-4 inline mr-1" />
-                              {field.value
-                                ? new Date(field.value).toLocaleDateString()
-                                : "Doğum Tarihi Seçin"}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent>
-                            <Calendar
-                              mode="single"
-                              selected={
-                                field.value ? new Date(field.value) : undefined
+                              variant={"outline"}
+                              className={
+                                "w-[240px] pl-3 text-left font-normal" +
+                                (!field.value ? " text-muted-foreground" : "")
                               }
-                              onSelect={(date) => {
-                                field.onChange(date?.toISOString());
-                                setCalendarOpen(false);
-                              }}
-                            />
-                          </PopoverContent>
-                        </Popover>
-                      </FormControl>
+                              type="button"
+                            >
+                              {field.value
+                                ? format(new Date(field.value), "PPP")
+                                : <span>Tarih seç</span>}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value ? new Date(field.value) : undefined}
+                            onSelect={date => {
+                              field.onChange(date ? date.toISOString() : "");
+                              setCalendarOpen(false);
+                            }}
+                            disabled={date => date > new Date() || date < new Date("1900-01-01")}
+                            captionLayout="dropdown"
+                          />
+                        </PopoverContent>
+                      </Popover>
                       <FormMessage />
                     </FormItem>
                   )}

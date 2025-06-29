@@ -9,5 +9,6 @@
 export type GetApiCategoryParams = {
 Page?: number;
 PageSize?: number;
+Search?: string;
 orderBy?: string;
 };

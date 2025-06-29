@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Search, User, ShoppingCart, Folder, Home } from "lucide-react";
+import { Menu, User, ShoppingCart, Folder, Home, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Sheet,
@@ -15,6 +14,8 @@ import {
 import { cn } from "@/lib/utils";
 import { Logo } from "./logo";
 import type { CategoryDto } from "@/api/generated/model";
+import { useSession } from "next-auth/react";
+import { hasRole } from "@/lib/auth-utils";
 
 interface MobileNavigationProps {
   cartItemCount: number;
@@ -26,6 +27,7 @@ export function MobileNavigation({
   categories,
 }: MobileNavigationProps) {
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   return (
     <Sheet>
@@ -61,6 +63,23 @@ export function MobileNavigation({
                     Ana Sayfa
                   </Link>
                 </SheetClose>
+                
+                {hasRole(session, "Admin") && (
+                  <SheetClose asChild>
+                    <Link
+                      href="/admin"
+                      className={cn(
+                        "flex items-center p-3 rounded-lg text-sm font-medium transition-colors",
+                        pathname === "/admin"
+                          ? "bg-primary/10 text-primary"
+                          : "text-gray-700 hover:bg-gray-100"
+                      )}
+                    >
+                      <Shield className="mr-3 h-4 w-4" />
+                      Admin Paneli
+                    </Link>
+                  </SheetClose>
+                )}
                 
                 {/* Kategoriler */}
                 <div className="mt-6">

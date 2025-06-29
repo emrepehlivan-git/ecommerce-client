@@ -9,4 +9,5 @@
 export type GetApiUsersParams = {
 Page?: number;
 PageSize?: number;
+Search?: string;
 };

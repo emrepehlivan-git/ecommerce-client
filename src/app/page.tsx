@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { FeaturedProducts } from "@/components/product/products-list";
 import { ProductGridSkeleton } from "@/components/product/product-grid-skeleton";
 
-export default async function Home() {
+export default function Home() {
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="mb-12 text-center">

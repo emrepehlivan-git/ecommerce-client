@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { CategoryDto } from "@/api/generated/model";
+import { useSession } from "next-auth/react";
 
 interface DesktopNavigationProps {
   categories: CategoryDto[];
@@ -11,6 +12,7 @@ interface DesktopNavigationProps {
 
 export function DesktopNavigation({ categories }: DesktopNavigationProps) {
   const pathname = usePathname();
+  const { data: session } = useSession();
  
   return (
     <div className="hidden md:block">
@@ -27,9 +29,7 @@ export function DesktopNavigation({ categories }: DesktopNavigationProps) {
                 )}
                 asChild
               >
-                <Link href={`/category/${category.id}`}>
-                  {category.name}
-                </Link>
+                <Link href={`/category/${category.id}`}>{category.name}</Link>
               </Button>
             );
           })}

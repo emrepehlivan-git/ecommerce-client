@@ -5,7 +5,6 @@ import { auth } from "./auth";
 const issuer = process.env.NEXT_PUBLIC_AUTH_SERVER_URL;
 const clientId = process.env.NEXT_PUBLIC_OPENIDDICT_CLIENT_ID;
 
-
 const normalizedIssuer = issuer?.endsWith('/') ? issuer : `${issuer}/`;
 
 const getInternalIssuer = () => {
@@ -17,6 +16,63 @@ const getInternalIssuer = () => {
   return normalizedIssuer;
 };
 
+async function refreshAccessToken(token: any) {
+  try {
+    
+    if (!token.refreshToken) {
+      throw new Error('No refresh token available');
+    }
+
+    const tokenUrl = typeof window === 'undefined' 
+      ? `${getInternalIssuer()}connect/token`
+      : `${normalizedIssuer}connect/token`;
+
+    const response = await fetch(tokenUrl, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      method: "POST",
+      body: new URLSearchParams({
+        client_id: clientId!,
+        grant_type: "refresh_token",
+        refresh_token: token.refreshToken,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Token refresh failed: ${response.status}`);
+    }
+
+    const tokens = await response.json();
+    
+    let userInfo = null;
+    try {
+      userInfo = await getUserInfo(tokens.access_token);
+    } catch (userError) {
+    }
+
+    return {
+      ...token,
+      accessToken: tokens.access_token,
+      accessTokenExpires: Date.now() + (tokens.expires_in || 3600) * 1000,
+      refreshToken: tokens.refresh_token ?? token.refreshToken,
+      ...(userInfo && {
+        id: userInfo.sub,
+        name: userInfo.fullName,
+        email: userInfo.email,
+        role: userInfo.role,
+        birthDate: userInfo.birthDate,
+      }),
+      error: undefined,
+    };
+  } catch (error) {
+    return {
+      ...token,
+      error: "RefreshAccessTokenError",
+    };
+  }
+}
 
 export const authOptions: NextAuthConfig = {
   providers: [
@@ -32,7 +88,7 @@ export const authOptions: NextAuthConfig = {
         : `${normalizedIssuer}.well-known/openid-configuration`,
       authorization: {
         params: {
-          scope: "openid profile email roles api",
+          scope: "openid profile email roles api offline_access",
           response_type: "code",
           code_challenge_method: "S256",
         },
@@ -65,74 +121,109 @@ export const authOptions: NextAuthConfig = {
   secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === "development",
   trustHost: true,
-  pages: {
-    signIn: "/signin",
-  },
   callbacks: {
-    async jwt({ token, account }) {
+    async jwt({ token, account, trigger }) {
       if (account?.access_token) {
         try {
           const user = await getUserInfo(account?.access_token as string);
-          token.id = user.sub;
-          token.name = user.fullName;
-          token.email = user.email;
-          token.role = user.role;
-          token.birthDate = user.birthDate;
-          token.accessToken = account.access_token;
+          return {
+            ...token,
+            id: user.sub,
+            name: user.fullName,
+            email: user.email,
+            role: user.role,
+            birthDate: user.birthDate,
+            accessToken: account.access_token,
+            refreshToken: account.refresh_token,
+            accessTokenExpires: account.expires_at ? account.expires_at * 1000 : Date.now() + 3600 * 1000,
+            error: undefined,
+          };
         } catch (error) {
-          console.error("Error fetching user info:", error);
+          return {
+            ...token,
+            error: "UserInfoError",
+          };
         }
       }
 
-      return token;
+      if (token.error && !token.refreshToken) {
+        return token;
+      }
+
+      const now = Date.now();
+      const expiryTime = (token.accessTokenExpires as number) || 0;
+      const bufferTime = 5 * 60 * 1000;
+
+      if (expiryTime > now + bufferTime) {
+        return { ...token, error: undefined };
+      }
+
+      if (!token.refreshToken) {
+        return {
+          ...token,
+          error: "NoRefreshToken",
+          accessToken: undefined,
+        };
+      }
+
+      return refreshAccessToken(token);
     },
     async session({ session, token }) {
-      session.user = {
-        id: token.id as string,
-        email: token.email as string,
-        name: token.name,
-        role: token.role as string[],
-        emailVerified: token.emailVerified as Date,
-        birthDate: token.birthDate as Date,
+      if (token.error || !token.accessToken) {
+        return {
+          ...session,
+          error: token.error as string || "NoAccessToken",
+          user: {
+            id: "",
+            email: "",
+            name: "",
+            role: [],
+            emailVerified: null,
+            birthDate: null,
+          },
+          accessToken: undefined,
+          expires: new Date(0).toISOString(),
+        };
+      }
+
+      return {
+        ...session,
+        user: {
+          id: token.id as string,
+          email: token.email as string,
+          name: token.name,
+          role: token.role as string[],
+          emailVerified: token.emailVerified as Date,
+          birthDate: token.birthDate as Date,
+        },
+        accessToken: token.accessToken as string,
+        error: undefined,
       };
-      session.accessToken = token.accessToken as string;
-      return session;
     },
   },
 };
 
 const getUserInfo = async (accessToken: string) => {
   try {
-    // Server-side istekler için internal URL kullan
     const userinfoUrl = typeof window === 'undefined' 
       ? `${getInternalIssuer()}connect/userinfo`
       : `${normalizedIssuer}connect/userinfo`;
       
-    const { data } = await axiosClient.get(userinfoUrl, {
+    const response = await fetch(userinfoUrl, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-    return data;
+
+    if (!response.ok) {
+      throw new Error(`User info request failed: ${response.status}`);
+    }
+
+    return await response.json();
   } catch (error) {
-    console.error("Error fetching user info from userinfo endpoint:", error);
     throw error;
   }
 };
-
-declare module "next-auth" {
-  interface Session {
-    user: {
-      role: string[];
-      birthDate: Date;
-    } & DefaultSession["user"];
-    accessToken?: string;
-  }
-  
-  interface JWT {
-    accessToken?: string;
-  }
-}
 
 export const isAuthenticated = async (): Promise<boolean> => {
   const session = await auth();

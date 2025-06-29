@@ -59,7 +59,7 @@ export function CartSummary({ totalItems, totalAmount }: CartSummaryProps) {
 
         <div className="space-y-3 pt-4">
           <Button asChild className="w-full h-12 text-lg">
-            <Link href="/odeme">
+            <Link href="/checkout">
               <CreditCard className="mr-2 h-5 w-5" />
               Ödemeye Geç
             </Link>

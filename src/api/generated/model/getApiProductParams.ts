@@ -9,6 +9,8 @@
 export type GetApiProductParams = {
 Page?: number;
 PageSize?: number;
+Search?: string;
 includeCategory?: boolean;
 orderBy?: string;
+categoryId?: string;
 };
