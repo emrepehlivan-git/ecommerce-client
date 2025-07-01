@@ -1,14 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { Plus, Edit, Trash2, Copy } from "lucide-react"
-import { ColumnDef } from "@tanstack/react-table"
+import { Plus } from "lucide-react"
 import { toast } from "sonner"
 import { useQueryClient } from "@tanstack/react-query"
 
 import { DataTable } from "@/components/ui/data-table"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { ConfirmDialog } from "@/components/common/confirm-dialog"
 
 import { 
@@ -20,10 +18,10 @@ import {
 } from "@/api/generated/category/category"
 import type { CategoryDto, CreateCategoryCommand, UpdateCategoryCommand } from "@/api/generated/model"
 
-import { CategoryFormModal } from "@/components/admin/category-form-modal"
+import { CategoryFormModal } from "@/components/admin/categories/category-form-modal"
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler"
-import { Hint } from "@/components/ui/hint"
 import { useDebounce } from "@/hooks/use-debounce"
+import { getCategoryColumns } from "./categories-table-columns"
 
 export function CategoryPageClient() {
   const [currentPage, setCurrentPage] = useState(1)
@@ -135,74 +133,6 @@ export function CategoryPageClient() {
     toast.success("ID copied to clipboard")
   }
 
-  const columns: ColumnDef<CategoryDto>[] = [
-    {
-      accessorKey: "id",
-      header: "ID",
-      cell: ({ row }) => {
-        const id = row.getValue<string>("id")
-       return <Hint label="Copy ID">
-            <Badge variant="outline" className="font-mono text-xs cursor-pointer" onClick={() => handleCopyId(id)}>
-              <Copy className="h-4 w-4" />
-              <span className="sr-only">Copy ID</span>
-              {id}
-            </Badge>
-        </Hint>
-      }
-    },
-    {
-      accessorKey: "name",
-      header: "Category Name",
-      cell: ({ row }) => (
-        <div className="font-medium">{row.getValue("name")}</div>
-      ),
-    },
-    {
-      id: "actions",
-      header: "Actions",
-      cell: ({ row }) => {
-        const category = row.original
-        
-        return (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleEdit(category)}
-              className="h-8 w-8 p-0"
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleDeleteClick(category)}
-              className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
-        )
-      },
-    },
-  ]
-
-  let categories: CategoryDto[] = []
-  let totalRecords = 0
-  let totalPages = 1
-
-  if (categoriesResponse?.data) {
-    if ('value' in categoriesResponse.data && Array.isArray(categoriesResponse.data.value)) {
-      categories = categoriesResponse.data.value || []
-      totalRecords = categoriesResponse.data.pagedInfo?.totalRecords || 0
-      totalPages = categoriesResponse.data.pagedInfo?.totalPages || 1
-    } else if (Array.isArray(categoriesResponse.data)) {
-      categories = categoriesResponse.data
-      totalRecords = categories.length
-      totalPages = Math.ceil(totalRecords / pageSize)
-    }
-  }
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -219,12 +149,16 @@ export function CategoryPageClient() {
       </div>
 
       <DataTable
-        columns={columns}
-        data={categories}
+        columns={getCategoryColumns({
+          handleEdit,
+          handleDeleteClick,
+          handleCopyId,
+        })}
+        data={categoriesResponse?.data?.value ?? []}
         page={currentPage}
         pageSize={pageSize}
-        totalPages={totalPages}
-        totalRecords={totalRecords}
+        totalPages={categoriesResponse?.data?.pagedInfo?.totalPages ?? 1}
+        totalRecords={categoriesResponse?.data?.pagedInfo?.totalRecords ?? 0}
         onPageChange={setCurrentPage}
         onPageSizeChange={setPageSize}
         globalFilter={globalFilter}

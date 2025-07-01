@@ -3,7 +3,7 @@ import { Suspense } from "react"
 import { notFound } from "next/navigation"
 import { getApiCategory } from "@/api/generated/category/category"
 import { getApiProductId } from "@/api/generated/product/product"
-import { ProductEditClient } from "@/components/admin/product-edit-client"
+import { ProductEditClient } from "@/components/admin/products/product-edit-client"
 import { Skeleton } from "@/components/ui/skeleton"
 
 export const metadata: Metadata = {

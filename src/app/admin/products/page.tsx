@@ -2,7 +2,7 @@ import { Suspense } from "react"
 import { Metadata } from "next"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { Skeleton } from "@/components/ui/skeleton"
-import { ProductsPageClient } from "@/components/admin/products-page-client"
+import { ProductsPageClient } from "@/components/admin/products/products-page-client"
 
 export const metadata: Metadata = {
   title: "Products",

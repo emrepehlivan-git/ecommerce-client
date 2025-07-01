@@ -196,21 +196,6 @@ export function ProductsPageClient() {
     },
   ]
 
-  let products: ProductDto[] = []
-  let totalRecords = 0
-  let totalPages = 1
-
-  if (productsResponse?.data) {
-    if ('value' in productsResponse.data && Array.isArray(productsResponse.data.value)) {
-      products = productsResponse.data.value || []
-      totalRecords = productsResponse.data.pagedInfo?.totalRecords || 0
-      totalPages = productsResponse.data.pagedInfo?.totalPages || 1
-    } else if (Array.isArray(productsResponse.data)) {
-      products = productsResponse.data
-      totalRecords = products.length
-      totalPages = Math.ceil(totalRecords / pageSize)
-    }
-  }
 
   return (
     <div className="space-y-6">
@@ -232,11 +217,11 @@ export function ProductsPageClient() {
 
       <DataTable
         columns={columns}
-        data={products}
+        data={productsResponse?.data?.value ?? []}
         page={currentPage}
         pageSize={pageSize}
-        totalPages={totalPages}
-        totalRecords={totalRecords}
+        totalPages={productsResponse?.data?.pagedInfo?.totalPages ?? 1}
+        totalRecords={productsResponse?.data?.pagedInfo?.totalRecords ?? 0}
         onPageChange={setCurrentPage}
         onPageSizeChange={setPageSize}
         globalFilter={globalFilter}

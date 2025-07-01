@@ -1,7 +1,7 @@
 import { Metadata } from "next"
 import { Suspense } from "react"
 import { getApiCategory } from "@/api/generated/category/category"
-import { ProductCreateClient } from "@/components/admin/product-create-client"
+import { ProductCreateClient } from "@/components/admin/products/product-create-client"
 import { Skeleton } from "@/components/ui/skeleton"
 
 export const metadata: Metadata = {

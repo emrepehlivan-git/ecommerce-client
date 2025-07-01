@@ -6,19 +6,20 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { MoreHorizontal, Pencil, Trash } from "lucide-react"
-import { useDeleteApiRoleId, getGetApiRoleQueryKey } from "@/api/generated/role/role"
+import { useDeleteApiRoleId, getGetApiRoleQueryKey, usePostApiRoleDeleteMany, postApiRoleDeleteMany} from "@/api/generated/role/role"
 import { useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler"
 import { useState } from "react"
 import { RoleFormModal } from "./role-form-modal"
 import { ConfirmDialog } from "@/components/common/confirm-dialog"
+import React from "react"
 
 const RoleActions = ({ role }: { role: RoleDto }) => {
-  const { handleError } = useErrorHandler()
   const [isFormModalOpen, setIsFormModalOpen] = useState(false)
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
   const queryClient = useQueryClient()
+  const { handleError } = useErrorHandler()
   const deleteRoleMutation = useDeleteApiRoleId({
     mutation: {
       onSuccess: () => {
@@ -33,7 +34,7 @@ const RoleActions = ({ role }: { role: RoleDto }) => {
       },
     },
   })
-
+ 
   const handleDelete = () => {
     if (!role.id) return
     deleteRoleMutation.mutate({ id: role.id })
@@ -98,33 +99,62 @@ export const columns: ColumnDef<RoleDto>[] = [
   },
   {
     id: "actions",
-    header: ({ table }) => {
+    header: function ActionsHeader({ table }) {
       const selectedRows = table.getSelectedRowModel().rows
       const hasSelection = selectedRows.length > 0
+      const queryClient = useQueryClient()
+      const { handleError } = useErrorHandler()
+      const [isBulkConfirmOpen, setIsBulkConfirmOpen] = React.useState(false)
+      const deleteRolesMutation = usePostApiRoleDeleteMany({
+        mutation: {
+          onSuccess: () => {
+            toast.success("Seçili roller başarıyla silindi.")
+            queryClient.invalidateQueries({ queryKey: getGetApiRoleQueryKey() })
+            table.resetRowSelection()
+          },
+          onError: (error) => {
+            handleError(error)
+          },
+          onSettled: () => {
+            setIsBulkConfirmOpen(false)
+          },
+        },
+      })
+
       const handleBulkDelete = () => {
-        // Tetikleyici fonksiyon burada, gerçek silme işlemi üst komponentte yapılmalı
-        // Burada sadece örnek olarak alert koyuyorum
-        const ids = selectedRows.map(row => row.original.id)
-        alert("Seçili rolleri sil: " + ids.join(", "))
+        const ids = selectedRows.map((row) => row.original.id).filter((id): id is string => !!id)
+        if (ids.length === 0) return
+        deleteRolesMutation.mutate({ data: ids })
       }
+
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" disabled={!hasSelection}>
-              Bulk Actions
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              onClick={handleBulkDelete}
-              disabled={!hasSelection}
-              className="text-destructive"
-            >
-              <Trash className="h-4 w-4 mr-2" />
-              Delete Selected Roles
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <>
+          <ConfirmDialog
+            isOpen={isBulkConfirmOpen}
+            onClose={() => setIsBulkConfirmOpen(false)}
+            onConfirm={handleBulkDelete}
+            title="Emin misiniz?"
+            description="Bu işlem geri alınamaz. Seçili roller kalıcı olarak silinecek."
+            isPending={deleteRolesMutation.isPending}
+          />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" disabled={!hasSelection}>
+                Toplu İşlemler
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() => setIsBulkConfirmOpen(true)}
+                disabled={!hasSelection}
+                className="text-destructive"
+              >
+                <Trash className="h-4 w-4 mr-2" />
+                Seçili Rolleri Sil
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </>
       )
     },
     cell: ({ row }) => <RoleActions role={row.original} />,

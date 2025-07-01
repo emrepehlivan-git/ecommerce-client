@@ -765,4 +765,62 @@ const {mutation: mutationOptions} = options ?
 
       return useMutation(mutationOptions , queryClient);
     }
+    export const postApiRoleDeleteMany = (
+    postApiRoleDeleteManyBody: string[],
+ signal?: AbortSignal
+) => {
+      
+      
+      return axiosClientMutator<void>(
+      {url: `/api/Role/delete-many`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: postApiRoleDeleteManyBody, signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiRoleDeleteManyMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiRoleDeleteMany>>, TError,{data: string[]}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiRoleDeleteMany>>, TError,{data: string[]}, TContext> => {
+
+const mutationKey = ['postApiRoleDeleteMany'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiRoleDeleteMany>>, {data: string[]}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiRoleDeleteMany(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiRoleDeleteManyMutationResult = NonNullable<Awaited<ReturnType<typeof postApiRoleDeleteMany>>>
+    export type PostApiRoleDeleteManyMutationBody = string[]
+    export type PostApiRoleDeleteManyMutationError = ProblemDetails
+
+    export const usePostApiRoleDeleteMany = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiRoleDeleteMany>>, TError,{data: string[]}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiRoleDeleteMany>>,
+        TError,
+        {data: string[]},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiRoleDeleteManyMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
     

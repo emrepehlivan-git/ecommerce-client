@@ -2,7 +2,7 @@ import { Suspense } from "react"
 import { Metadata } from "next"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { Skeleton } from "@/components/ui/skeleton"
-import { CategoryPageClient } from "@/components/admin/categories-page-client"
+import { CategoryPageClient } from "@/components/admin/categories/categories-page-client"
 
 export const metadata: Metadata = {
   title: "Categories",
