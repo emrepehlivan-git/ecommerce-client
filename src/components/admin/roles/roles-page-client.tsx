@@ -1,9 +1,9 @@
 "use client"
 
-import { columns } from "@/components/admin/roles-table-columns"
-import { RolesTable } from "@/components/admin/roles-table"
+import { columns } from "@/components/admin/roles/roles-table-columns"
+import { RolesTable } from "@/components/admin/roles/roles-table"
 import { useState } from "react"
-import { RoleFormModal } from "@/components/admin/role-form-modal"
+import { RoleFormModal } from "@/components/admin/roles/role-form-modal"
 import { Button } from "@/components/ui/button"
 
 export function RolesPageClient() {

@@ -1,11 +1,10 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Hint } from "@/components/ui/hint"
-import { Edit, Trash2, Copy } from "lucide-react"
+import { Edit, Trash2, MoreHorizontal } from "lucide-react"
 import type { CategoryDto } from "@/api/generated/model"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { CopyButton } from "@/components/ui/copy-button"
 
-// columns fonksiyonu, gerekli handler fonksiyonlarını parametre olarak alacak
 export function getCategoryColumns({ handleEdit, handleDeleteClick, handleCopyId }: {
   handleEdit: (category: CategoryDto) => void,
   handleDeleteClick: (category: CategoryDto) => void,
@@ -18,13 +17,10 @@ export function getCategoryColumns({ handleEdit, handleDeleteClick, handleCopyId
       cell: ({ row }) => {
         const id = row.getValue<string>("id")
         return (
-          <Hint label="Copy ID">
-            <Badge variant="outline" className="font-mono text-xs cursor-pointer" onClick={() => handleCopyId(id)}>
-              <Copy className="h-4 w-4" />
-              <span className="sr-only">Copy ID</span>
-              {id}
-            </Badge>
-          </Hint>
+          <div className="flex items-center gap-2">
+            <CopyButton value={id} className="h-5 w-5 p-0 mr-1" />
+            <span className="font-mono text-xs">{id.slice(0, 8)}</span>
+          </div>
         )
       }
     },
@@ -41,24 +37,23 @@ export function getCategoryColumns({ handleEdit, handleDeleteClick, handleCopyId
       cell: ({ row }) => {
         const category = row.original
         return (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleEdit(category)}
-              className="h-8 w-8 p-0"
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleDeleteClick(category)}
-              className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => handleEdit(category)}>
+                <Edit className="h-4 w-4" />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleDeleteClick(category)} variant="destructive">
+                <Trash2 className="h-4 w-4" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         )
       },
     },

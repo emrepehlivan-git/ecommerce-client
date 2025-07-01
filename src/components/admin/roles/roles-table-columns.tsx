@@ -14,6 +14,7 @@ import { useState } from "react"
 import { RoleFormModal } from "./role-form-modal"
 import { ConfirmDialog } from "@/components/common/confirm-dialog"
 import React from "react"
+import { CopyButton } from "@/components/ui/copy-button"
 
 const RoleActions = ({ role }: { role: RoleDto }) => {
   const [isFormModalOpen, setIsFormModalOpen] = useState(false)
@@ -63,7 +64,7 @@ const RoleActions = ({ role }: { role: RoleDto }) => {
             <Pencil className="h-4 w-4 mr-2" />
             Edit
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setIsConfirmModalOpen(true)}>
+          <DropdownMenuItem onClick={() => setIsConfirmModalOpen(true)} variant="destructive">
             <Trash className="h-4 w-4 mr-2" />
             Delete
           </DropdownMenuItem>
@@ -92,6 +93,15 @@ export const columns: ColumnDef<RoleDto>[] = [
   {
     accessorKey: "id",
     header: "ID",
+    cell: ({ row }) => {
+      const id = row.getValue<string>("id")
+      return (
+        <div className="flex items-center gap-2">
+          <CopyButton value={id} className="h-5 w-5 p-0 mr-1" />
+          <span className="font-mono text-xs">{id.slice(0, 8)}</span>
+        </div>
+      )
+    }
   },
   {
     accessorKey: "name",
@@ -108,7 +118,7 @@ export const columns: ColumnDef<RoleDto>[] = [
       const deleteRolesMutation = usePostApiRoleDeleteMany({
         mutation: {
           onSuccess: () => {
-            toast.success("Seçili roller başarıyla silindi.")
+            toast.success("Selected roles deleted successfully")
             queryClient.invalidateQueries({ queryKey: getGetApiRoleQueryKey() })
             table.resetRowSelection()
           },
@@ -133,24 +143,24 @@ export const columns: ColumnDef<RoleDto>[] = [
             isOpen={isBulkConfirmOpen}
             onClose={() => setIsBulkConfirmOpen(false)}
             onConfirm={handleBulkDelete}
-            title="Emin misiniz?"
-            description="Bu işlem geri alınamaz. Seçili roller kalıcı olarak silinecek."
+            title="Are you sure?"
+            description="This action cannot be undone. This will permanently delete the selected roles."
             isPending={deleteRolesMutation.isPending}
           />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" disabled={!hasSelection}>
-                Toplu İşlemler
+              <Button variant="ghost" size="icon" disabled={!hasSelection}>
+                <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
                 onClick={() => setIsBulkConfirmOpen(true)}
                 disabled={!hasSelection}
-                className="text-destructive"
+                variant="destructive"
               >
                 <Trash className="h-4 w-4 mr-2" />
-                Seçili Rolleri Sil
+                Delete Selected Roles
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -2,14 +2,12 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Plus, Edit, Trash2, Copy, Package } from "lucide-react"
-import { ColumnDef } from "@tanstack/react-table"
+import { Plus, Package } from "lucide-react"
 import { toast } from "sonner"
 import { useQueryClient } from "@tanstack/react-query"
 
 import { DataTable } from "@/components/ui/data-table"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { ConfirmDialog } from "@/components/common/confirm-dialog"
 
 import { 
@@ -20,8 +18,8 @@ import {
 import type { ProductDto } from "@/api/generated/model"
 
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler"
-import { Hint } from "@/components/ui/hint"
 import { useDebounce } from "@/hooks/use-debounce"
+import { getProductColumns } from "./products-table-columns"
 
 export function ProductsPageClient() {
   const router = useRouter()
@@ -85,117 +83,11 @@ export function ProductsPageClient() {
     toast.success("ID copied to clipboard")
   }
 
-  const columns: ColumnDef<ProductDto>[] = [
-    {
-      accessorKey: "id",
-      header: "ID",
-      cell: ({ row }) => {
-        const id = row.getValue<string>("id")
-        return (
-          <Hint label="ID'yi Kopyala">
-            <Badge variant="outline" className="font-mono text-xs cursor-pointer" onClick={() => handleCopyId(id)}>
-              <Copy className="h-3 w-3 mr-1" />
-              {id.slice(0, 8)}...
-            </Badge>
-          </Hint>
-        )
-      }
-    },
-    {
-      accessorKey: "name",
-      header: "Product Name",
-      cell: ({ row }) => (
-        <div className="font-medium">{row.getValue("name")}</div>
-      ),
-    },
-    {
-      accessorKey: "categoryName",
-      header: "Category",
-      cell: ({ row }) => {
-        const categoryName = row.getValue<string>("categoryName")
-        return categoryName ? (
-          <Badge variant="secondary">{categoryName}</Badge>
-        ) : (
-          <span className="text-muted-foreground">-</span>
-        )
-      },
-    },
-    {
-      accessorKey: "price",
-      header: "Price",
-      cell: ({ row }) => {
-        const price = row.getValue<number>("price")
-        return <div className="font-medium">₺{price?.toLocaleString('tr-TR')}</div>
-      },
-    },
-    {
-      accessorKey: "stockQuantity",
-      header: "Stock",
-      cell: ({ row }) => {
-        const stock = row.getValue<number>("stockQuantity")
-        const stockStatus = {
-          low: "warning" as const,
-          medium: "default" as const,
-          high: "success" as const,
-        }
-
-        const getStockLevel = (quantity: number): keyof typeof stockStatus => {
-          if (quantity <= 10) return "low"
-          if (quantity <= 50) return "medium"
-          return "high"
-        }
-
-        const stockLevel = getStockLevel(stock || 0)
-
-        return (
-          <Badge variant={stockStatus[stockLevel]}>
-            {stock || 0} 
-          </Badge>
-        )
-      },
-    },
-    {
-      accessorKey: "isActive",
-      header: "Status",
-      cell: ({ row }) => {
-        const isActive = row.getValue<boolean>("isActive")
-        return (  
-          <Badge variant={isActive ? "default" : "secondary"}>
-            {isActive ? "Active" : "Inactive"}
-          </Badge>
-        )
-      },
-    },
-    {
-      id: "actions",
-      header: "Actions",
-      cell: ({ row }) => {
-        const product = row.original
-        
-        return (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleEdit(product)}
-              className="h-8 w-8 p-0"
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleDeleteClick(product)}
-              className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
-        )
-      },
-    },
-  ]
-
+  const columns = getProductColumns({
+    handleEdit,
+    handleDeleteClick,
+    handleCopyId,
+  })
 
   return (
     <div className="space-y-6">
