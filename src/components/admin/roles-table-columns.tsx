@@ -3,7 +3,6 @@
 import { RoleDto } from "@/api/generated/model"
 import { ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
-import { DataTableColumnHeader } from "@/components/ui/data-table-column-header"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { MoreHorizontal, Pencil, Trash } from "lucide-react"
@@ -99,6 +98,35 @@ export const columns: ColumnDef<RoleDto>[] = [
   },
   {
     id: "actions",
+    header: ({ table }) => {
+      const selectedRows = table.getSelectedRowModel().rows
+      const hasSelection = selectedRows.length > 0
+      const handleBulkDelete = () => {
+        // Tetikleyici fonksiyon burada, gerçek silme işlemi üst komponentte yapılmalı
+        // Burada sadece örnek olarak alert koyuyorum
+        const ids = selectedRows.map(row => row.original.id)
+        alert("Seçili rolleri sil: " + ids.join(", "))
+      }
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" disabled={!hasSelection}>
+              Bulk Actions
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              onClick={handleBulkDelete}
+              disabled={!hasSelection}
+              className="text-destructive"
+            >
+              <Trash className="h-4 w-4 mr-2" />
+              Delete Selected Roles
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
+    },
     cell: ({ row }) => <RoleActions role={row.original} />,
   },
 ] 

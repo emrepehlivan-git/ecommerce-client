@@ -36,6 +36,8 @@ interface DataTableProps<TData, TValue> {
   globalFilter: string
   onGlobalFilterChange: (filter: string) => void
   isLoading?: boolean
+  rowSelection?: Record<string, boolean>
+  onRowSelectionChange?: (rowSelection: Record<string, boolean>) => void
 }
 
 export function DataTable<TData, TValue>({
@@ -50,11 +52,28 @@ export function DataTable<TData, TValue>({
   globalFilter,
   onGlobalFilterChange,
   isLoading,
+  rowSelection: externalRowSelection,
+  onRowSelectionChange,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [internalRowSelection, setInternalRowSelection] = React.useState({})
+
+  const rowSelection = externalRowSelection !== undefined ? externalRowSelection : internalRowSelection
+  const setRowSelection = (updaterOrValue: any) => {
+    let value: any
+    if (typeof updaterOrValue === "function") {
+      value = updaterOrValue(rowSelection)
+    } else {
+      value = updaterOrValue
+    }
+    if (onRowSelectionChange) {
+      onRowSelectionChange(value)
+    } else {
+      setInternalRowSelection(value)
+    }
+  }
 
   const pagination = React.useMemo(
     () => ({

@@ -33,8 +33,11 @@ import type {
   AddUserAddressCommand,
   DeleteUserAddressRequest,
   GetApiUserAddressesUserUserIdParams,
+  ProblemDetails,
+  Result,
   SetDefaultRequest,
-  UpdateUserAddressRequest
+  UpdateUserAddressRequest,
+  UserAddressDto
 } from '.././model';
 
 import { axiosClientMutator } from '../../../lib/axiosClient';
@@ -49,7 +52,7 @@ export const getApiUserAddressesUserUserId = (
 ) => {
       
       
-      return axiosClientMutator<void>(
+      return axiosClientMutator<UserAddressDto[]>(
       {url: `/api/UserAddresses/user/${userId}`, method: 'GET',
         params, signal
     },
@@ -63,7 +66,7 @@ export const getGetApiUserAddressesUserUserIdQueryKey = (userId: string,
     }
 
     
-export const getGetApiUserAddressesUserUserIdInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, GetApiUserAddressesUserUserIdParams['page']>, TError = unknown>(userId: string,
+export const getGetApiUserAddressesUserUserIdInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, GetApiUserAddressesUserUserIdParams['page']>, TError = ProblemDetails>(userId: string,
     params?: GetApiUserAddressesUserUserIdParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, TError, TData, Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, QueryKey, GetApiUserAddressesUserUserIdParams['page']>>, }
 ) => {
 
@@ -83,10 +86,10 @@ const {query: queryOptions} = options ?? {};
 }
 
 export type GetApiUserAddressesUserUserIdInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>>
-export type GetApiUserAddressesUserUserIdInfiniteQueryError = unknown
+export type GetApiUserAddressesUserUserIdInfiniteQueryError = ProblemDetails
 
 
-export function useGetApiUserAddressesUserUserIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, GetApiUserAddressesUserUserIdParams['page']>, TError = unknown>(
+export function useGetApiUserAddressesUserUserIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, GetApiUserAddressesUserUserIdParams['page']>, TError = ProblemDetails>(
  userId: string,
     params: undefined |  GetApiUserAddressesUserUserIdParams, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, TError, TData, Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, QueryKey, GetApiUserAddressesUserUserIdParams['page']>> & Pick<
         DefinedInitialDataOptions<
@@ -97,7 +100,7 @@ export function useGetApiUserAddressesUserUserIdInfinite<TData = InfiniteData<Aw
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiUserAddressesUserUserIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, GetApiUserAddressesUserUserIdParams['page']>, TError = unknown>(
+export function useGetApiUserAddressesUserUserIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, GetApiUserAddressesUserUserIdParams['page']>, TError = ProblemDetails>(
  userId: string,
     params?: GetApiUserAddressesUserUserIdParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, TError, TData, Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, QueryKey, GetApiUserAddressesUserUserIdParams['page']>> & Pick<
         UndefinedInitialDataOptions<
@@ -108,13 +111,13 @@ export function useGetApiUserAddressesUserUserIdInfinite<TData = InfiniteData<Aw
       >, }
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiUserAddressesUserUserIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, GetApiUserAddressesUserUserIdParams['page']>, TError = unknown>(
+export function useGetApiUserAddressesUserUserIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, GetApiUserAddressesUserUserIdParams['page']>, TError = ProblemDetails>(
  userId: string,
     params?: GetApiUserAddressesUserUserIdParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, TError, TData, Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, QueryKey, GetApiUserAddressesUserUserIdParams['page']>>, }
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useGetApiUserAddressesUserUserIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, GetApiUserAddressesUserUserIdParams['page']>, TError = unknown>(
+export function useGetApiUserAddressesUserUserIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, GetApiUserAddressesUserUserIdParams['page']>, TError = ProblemDetails>(
  userId: string,
     params?: GetApiUserAddressesUserUserIdParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, TError, TData, Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, QueryKey, GetApiUserAddressesUserUserIdParams['page']>>, }
  , queryClient?: QueryClient 
@@ -131,7 +134,7 @@ export function useGetApiUserAddressesUserUserIdInfinite<TData = InfiniteData<Aw
 
 
 
-export const getGetApiUserAddressesUserUserIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, TError = unknown>(userId: string,
+export const getGetApiUserAddressesUserUserIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, TError = ProblemDetails>(userId: string,
     params?: GetApiUserAddressesUserUserIdParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, TError, TData>>, }
 ) => {
 
@@ -151,10 +154,10 @@ const {query: queryOptions} = options ?? {};
 }
 
 export type GetApiUserAddressesUserUserIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>>
-export type GetApiUserAddressesUserUserIdQueryError = unknown
+export type GetApiUserAddressesUserUserIdQueryError = ProblemDetails
 
 
-export function useGetApiUserAddressesUserUserId<TData = Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, TError = unknown>(
+export function useGetApiUserAddressesUserUserId<TData = Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, TError = ProblemDetails>(
  userId: string,
     params: undefined |  GetApiUserAddressesUserUserIdParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
@@ -165,7 +168,7 @@ export function useGetApiUserAddressesUserUserId<TData = Awaited<ReturnType<type
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiUserAddressesUserUserId<TData = Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, TError = unknown>(
+export function useGetApiUserAddressesUserUserId<TData = Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, TError = ProblemDetails>(
  userId: string,
     params?: GetApiUserAddressesUserUserIdParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
@@ -176,13 +179,13 @@ export function useGetApiUserAddressesUserUserId<TData = Awaited<ReturnType<type
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiUserAddressesUserUserId<TData = Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, TError = unknown>(
+export function useGetApiUserAddressesUserUserId<TData = Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, TError = ProblemDetails>(
  userId: string,
     params?: GetApiUserAddressesUserUserIdParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useGetApiUserAddressesUserUserId<TData = Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, TError = unknown>(
+export function useGetApiUserAddressesUserUserId<TData = Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, TError = ProblemDetails>(
  userId: string,
     params?: GetApiUserAddressesUserUserIdParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiUserAddressesUserUserId>>, TError, TData>>, }
  , queryClient?: QueryClient 
@@ -215,7 +218,7 @@ export const postApiUserAddresses = (
   
 
 
-export const getPostApiUserAddressesMutationOptions = <TError = unknown,
+export const getPostApiUserAddressesMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiUserAddresses>>, TError,{data: AddUserAddressCommand}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof postApiUserAddresses>>, TError,{data: AddUserAddressCommand}, TContext> => {
 
@@ -242,9 +245,9 @@ const {mutation: mutationOptions} = options ?
 
     export type PostApiUserAddressesMutationResult = NonNullable<Awaited<ReturnType<typeof postApiUserAddresses>>>
     export type PostApiUserAddressesMutationBody = AddUserAddressCommand
-    export type PostApiUserAddressesMutationError = unknown
+    export type PostApiUserAddressesMutationError = ProblemDetails
 
-    export const usePostApiUserAddresses = <TError = unknown,
+    export const usePostApiUserAddresses = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiUserAddresses>>, TError,{data: AddUserAddressCommand}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postApiUserAddresses>>,
@@ -263,7 +266,7 @@ const {mutation: mutationOptions} = options ?
  ) => {
       
       
-      return axiosClientMutator<void>(
+      return axiosClientMutator<Result>(
       {url: `/api/UserAddresses/${id}`, method: 'PUT',
       headers: {'Content-Type': 'application/json', },
       data: updateUserAddressRequest
@@ -273,7 +276,7 @@ const {mutation: mutationOptions} = options ?
   
 
 
-export const getPutApiUserAddressesIdMutationOptions = <TError = unknown,
+export const getPutApiUserAddressesIdMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiUserAddressesId>>, TError,{id: string;data: UpdateUserAddressRequest}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof putApiUserAddressesId>>, TError,{id: string;data: UpdateUserAddressRequest}, TContext> => {
 
@@ -300,9 +303,9 @@ const {mutation: mutationOptions} = options ?
 
     export type PutApiUserAddressesIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiUserAddressesId>>>
     export type PutApiUserAddressesIdMutationBody = UpdateUserAddressRequest
-    export type PutApiUserAddressesIdMutationError = unknown
+    export type PutApiUserAddressesIdMutationError = ProblemDetails
 
-    export const usePutApiUserAddressesId = <TError = unknown,
+    export const usePutApiUserAddressesId = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiUserAddressesId>>, TError,{id: string;data: UpdateUserAddressRequest}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putApiUserAddressesId>>,
@@ -321,7 +324,7 @@ const {mutation: mutationOptions} = options ?
  ) => {
       
       
-      return axiosClientMutator<void>(
+      return axiosClientMutator<Result>(
       {url: `/api/UserAddresses/${id}`, method: 'DELETE',
       headers: {'Content-Type': 'application/json', },
       data: deleteUserAddressRequest
@@ -331,7 +334,7 @@ const {mutation: mutationOptions} = options ?
   
 
 
-export const getDeleteApiUserAddressesIdMutationOptions = <TError = unknown,
+export const getDeleteApiUserAddressesIdMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiUserAddressesId>>, TError,{id: string;data: DeleteUserAddressRequest}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteApiUserAddressesId>>, TError,{id: string;data: DeleteUserAddressRequest}, TContext> => {
 
@@ -358,9 +361,9 @@ const {mutation: mutationOptions} = options ?
 
     export type DeleteApiUserAddressesIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiUserAddressesId>>>
     export type DeleteApiUserAddressesIdMutationBody = DeleteUserAddressRequest
-    export type DeleteApiUserAddressesIdMutationError = unknown
+    export type DeleteApiUserAddressesIdMutationError = ProblemDetails
 
-    export const useDeleteApiUserAddressesId = <TError = unknown,
+    export const useDeleteApiUserAddressesId = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiUserAddressesId>>, TError,{id: string;data: DeleteUserAddressRequest}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteApiUserAddressesId>>,
@@ -379,7 +382,7 @@ const {mutation: mutationOptions} = options ?
  ) => {
       
       
-      return axiosClientMutator<void>(
+      return axiosClientMutator<Result>(
       {url: `/api/UserAddresses/${id}/set-default`, method: 'PATCH',
       headers: {'Content-Type': 'application/json', },
       data: setDefaultRequest
@@ -389,7 +392,7 @@ const {mutation: mutationOptions} = options ?
   
 
 
-export const getPatchApiUserAddressesIdSetDefaultMutationOptions = <TError = unknown,
+export const getPatchApiUserAddressesIdSetDefaultMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchApiUserAddressesIdSetDefault>>, TError,{id: string;data: SetDefaultRequest}, TContext>, }
 ): UseMutationOptions<Awaited<ReturnType<typeof patchApiUserAddressesIdSetDefault>>, TError,{id: string;data: SetDefaultRequest}, TContext> => {
 
@@ -416,9 +419,9 @@ const {mutation: mutationOptions} = options ?
 
     export type PatchApiUserAddressesIdSetDefaultMutationResult = NonNullable<Awaited<ReturnType<typeof patchApiUserAddressesIdSetDefault>>>
     export type PatchApiUserAddressesIdSetDefaultMutationBody = SetDefaultRequest
-    export type PatchApiUserAddressesIdSetDefaultMutationError = unknown
+    export type PatchApiUserAddressesIdSetDefaultMutationError = ProblemDetails
 
-    export const usePatchApiUserAddressesIdSetDefault = <TError = unknown,
+    export const usePatchApiUserAddressesIdSetDefault = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchApiUserAddressesIdSetDefault>>, TError,{id: string;data: SetDefaultRequest}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof patchApiUserAddressesIdSetDefault>>,

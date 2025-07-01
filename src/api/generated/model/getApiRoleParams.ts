@@ -10,4 +10,5 @@ export type GetApiRoleParams = {
 Page?: number;
 PageSize?: number;
 Search?: string;
+includePermissions?: boolean;
 };

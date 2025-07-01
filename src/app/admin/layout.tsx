@@ -11,12 +11,12 @@ export default async function Layout({ children }: { children: React.ReactNode }
   }
 
   return (
-    <html lang="tr">
+    <html lang="en">
       <body>
         <SidebarProvider>
           <AdminSidebar />
           <main className="w-full px-4">
-            <SidebarTrigger />
+            <SidebarTrigger className="mb-3"/>
             {children}
           </main>
         </SidebarProvider>

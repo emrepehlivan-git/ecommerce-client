@@ -36,6 +36,7 @@ export * from './permissionDto';
 export * from './problemDetails';
 export * from './productDto';
 export * from './productDtoListPagedResult';
+export * from './result';
 export * from './resultStatus';
 export * from './roleDto';
 export * from './setDefaultRequest';
