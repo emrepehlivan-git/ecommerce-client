@@ -155,6 +155,21 @@ export default {
       priceDesc: "Fiyata Göre (Yüksek-Düşük)",
       placeholder: "Varsayılan Sıralama",
     },
+    infiniteScroll: {
+      errorTitle: "Ürünler yüklenirken hata oluştu",
+      defaultErrorMessage: "Lütfen daha sonra tekrar deneyin.",
+      refreshButton: "Yenile",
+      noProductsInCategoryTitle: "Bu kategoride ürün bulunamadı",
+      noProductsTitle: "Ürün bulunamadı",
+      noProductsInCategoryDescription: "Farklı filtreler deneyin veya diğer kategorilere göz atın.",
+      noProductsDescription:
+        "Filtreleri değiştirmeyi veya daha sonra tekrar kontrol etmeyi deneyin.",
+      displayed: "ürün gösteriliyor",
+      loadingMore: "Daha fazla ürün yükleniyor...",
+      allLoadedInCategory: "Bu kategorideki tüm ürünler yüklendi",
+      allLoaded: "Tümü",
+      loaded: "ürün yüklendi!",
+    },
     error: {
       title: "Bir hata oluştu!",
       description: "Ürünleri yüklerken beklenmedik bir sorun oluştu. Lütfen tekrar deneyin.",

@@ -18,11 +18,11 @@ export function TopBar() {
           </div>
           <div className="flex items-center gap-2">
             <Truck className="h-4 w-4 text-gray-500" />
-            <Link href="/siparis-takip" className="text-xs sm:text-sm">
+            <Link href="/" className="text-xs sm:text-sm">
               Siparişini takip et
             </Link>
           </div>
-          <Link href="/kampanyalar" className="text-xs sm:text-sm hidden sm:inline">
+          <Link href="/" className="text-xs sm:text-sm hidden sm:inline">
             Tüm Kampanyalar
           </Link>
         </div>
