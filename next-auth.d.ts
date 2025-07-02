@@ -25,7 +25,7 @@ declare module "next-auth/jwt" {
     role: string[]
     birthDate: Date
     accessToken?: string
-    refreshToken?: string
+    hasRefreshToken?: boolean
     accessTokenExpires?: number
     error?: string
   }

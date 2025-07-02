@@ -7,15 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { CartItemDto } from "@/api/generated/model";
-import { useCart } from "@/contexts/cart-context";
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useAppStore } from "@/stores/useAppStore";
+import { toast } from "sonner";
 
 interface CartItemProps {
   item: CartItemDto;
 }
 
 export function CartItem({ item }: CartItemProps) {
-  const { updateQuantity, removeFromCart } = useCart();
+  const { updateQuantity, removeFromCart } = useAppStore();
   const [isLoading, setIsLoading] = useState(false);
   const { handleError } = useErrorHandler({
     context: 'CartItem'

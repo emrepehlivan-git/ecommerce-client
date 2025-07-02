@@ -5,9 +5,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import { QuantitySelector } from "./quantity-selector";
-import { useCart } from "@/contexts/cart-context";
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
 import { useI18n } from "@/i18n/client";
+import { useAppStore } from "@/stores/useAppStore";
+import { toast } from "sonner";
 
 interface ProductPurchaseProps {
   productId: string;
@@ -19,7 +20,7 @@ export function ProductPurchase({ productId, price, stockQuantity }: ProductPurc
   const t = useI18n();
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const { addToCart } = useCart();
+  const { addToCart } = useAppStore();
   const { handleError } = useErrorHandler({
     context: "ProductPurchase",
   });

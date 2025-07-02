@@ -8,15 +8,18 @@ import { SearchBar } from "./search-bar";
 import { UserActions } from "../user/user-actions";
 import { CategoryNavigation } from "../category/category-navigation";
 import { useGetApiV1Category } from "@/api/generated/category/category";
-import { useCart } from "@/contexts/cart-context";
+import { DesktopNavigation } from "./desktop-navigation";
+import { useAppStore } from "@/stores/useAppStore";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { LanguageSwitcher } from "./language-switcher";
 
 export function Navbar() {
-  const { totalItems: cartItemCount } = useCart();
+  const { totalItems: cartItemCount } = useAppStore();
   const { data } = useGetApiV1Category();
+  const isMobile = useIsMobile();
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white border-b shadow-sm">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <TopBar />
 
       <div className="flex h-16 items-center px-4 lg:px-6">

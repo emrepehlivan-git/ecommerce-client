@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Plus } from "lucide-react";
-import { useCart } from "@/contexts/cart-context";
+import { useAppStore } from "@/stores/useAppStore";
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { toast } from "sonner";
 
 interface QuickAddToCartProps {
   productId: string;
@@ -20,7 +21,7 @@ export function QuickAddToCart({
   className,
 }: QuickAddToCartProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const { addToCart } = useCart();
+  const { addToCart } = useAppStore();
   const { handleError } = useErrorHandler({
     context: "QuickAddToCart",
   });

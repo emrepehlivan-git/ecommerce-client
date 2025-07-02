@@ -1,6 +1,6 @@
 "use client";
 
-import { useCart } from "@/contexts/cart-context";
+import { useAppStore } from "@/stores/useAppStore";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -12,14 +12,15 @@ import { UserAddressDto } from "@/api/generated/model";
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
 import { Skeleton } from "../ui/skeleton";
 import { Loader2 } from "lucide-react";
+import { formatPrice } from "@/lib/utils";
 
 export default function CheckoutClient() {
   const { data: session } = useSession();
-  const { cart, isLoading, totalAmount, totalItems, clearCart } = useCart();
+  const { cart, isLoadingCart, totalAmount, totalItems, clearCart } = useAppStore();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const { handleError } = useErrorHandler({ context: "CheckoutClient" });
+  const { handleError, handleSuccess: handleSuccessHandler } = useErrorHandler({ context: "CheckoutClient" });
   const userId = session?.user?.id || cart?.userId;
   if (!userId) {
     return (
@@ -35,6 +36,8 @@ export default function CheckoutClient() {
   const [selectedAddressId, setSelectedAddressId] = useState<string | undefined>(
     defaultAddress?.id
   );
+
+  const createOrderMutation = usePostApiV1Order();
 
   const postOrder = usePostApiV1Order({
     mutation: {
@@ -90,7 +93,7 @@ export default function CheckoutClient() {
     await postOrder.mutateAsync({ data: order });
   };
 
-  if (isLoading || addressesLoading) {
+  if (isLoadingCart || addressesLoading) {
     return (
       <div className="container mx-auto py-8 text-center">
         <Skeleton className="w-full h-12" />

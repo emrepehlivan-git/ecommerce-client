@@ -1,6 +1,6 @@
 "use client";
 
-import { useCart } from "@/contexts/cart-context";
+import { useAppStore } from "@/stores/useAppStore";
 import { CartItem } from "./cart-item";
 import { CartSummary } from "./cart-summary";
 import { EmptyCart } from "./empty-cart";
@@ -10,11 +10,11 @@ import { Separator } from "@/components/ui/separator";
 import { ShoppingCart, Trash2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { signIn } from "next-auth/react";
+import { formatPrice } from "@/lib/utils";
 
-export function CartPageClient() {
+export default function CartPageClient() {
   const { data: session } = useSession();
-  const { cart, isLoading, isCartEmpty, clearCart, totalItems, totalAmount } = useCart();
-
+  const { cart, isLoadingCart, isCartEmpty, clearCart, totalItems, totalAmount } = useAppStore();
 
   if (!session) {
     return (
@@ -35,7 +35,7 @@ export function CartPageClient() {
     );
   }
 
-  if (isLoading) {
+  if (isLoadingCart) {
     return <CartSkeleton />;
   }
 
