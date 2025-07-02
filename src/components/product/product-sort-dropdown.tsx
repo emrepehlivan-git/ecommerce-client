@@ -1,15 +1,15 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ArrowUpDown } from "lucide-react";
-
-const sortOptions = [
-  { value: "Name asc", label: "İsme Göre (A-Z)" },
-  { value: "Name desc", label: "İsme Göre (Z-A)" },
-  { value: "Price asc", label: "Fiyata Göre (Düşük-Yüksek)" },
-  { value: "Price desc", label: "Fiyata Göre (Yüksek-Düşük)" },
-];
+import { useI18n } from "@/i18n/client";
 
 interface ProductSortDropdownProps {
   className?: string;
@@ -18,6 +18,14 @@ interface ProductSortDropdownProps {
 export function ProductSortDropdown({ className = "" }: ProductSortDropdownProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useI18n();
+
+  const sortOptions = [
+    { value: "Name asc", label: t("products.sortDropdown.nameAsc") },
+    { value: "Name desc", label: t("products.sortDropdown.nameDesc") },
+    { value: "Price asc", label: t("products.sortDropdown.priceAsc") },
+    { value: "Price desc", label: t("products.sortDropdown.priceDesc") },
+  ];
 
   const currentSort = searchParams.get("orderBy") || "";
 
@@ -37,12 +45,12 @@ export function ProductSortDropdown({ className = "" }: ProductSortDropdownProps
       <ArrowUpDown className="h-4 w-4 text-gray-500" />
       <Select value={currentSort || undefined} onValueChange={updateSort}>
         <SelectTrigger className="w-48 h-9 text-sm border-gray-300 hover:border-blue-400 focus:border-blue-500">
-          <SelectValue placeholder="Varsayılan Sıralama" />
+          <SelectValue placeholder={t("products.sortDropdown.placeholder")} />
         </SelectTrigger>
         <SelectContent>
           {sortOptions.map((option) => (
-            <SelectItem 
-              key={option.value} 
+            <SelectItem
+              key={option.value}
               value={option.value}
               className="text-sm hover:bg-blue-50"
             >
@@ -53,4 +61,4 @@ export function ProductSortDropdown({ className = "" }: ProductSortDropdownProps
       </Select>
     </div>
   );
-} 
+}

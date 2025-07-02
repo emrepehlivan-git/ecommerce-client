@@ -1,5 +1,6 @@
 "use client";
 
+import { useI18n } from "@/i18n/client";
 import { ProductDto } from "@/api/generated/model";
 import { ProductImageGallery } from "./product-image-gallery";
 import { ProductInfo } from "./product-info";
@@ -15,23 +16,25 @@ interface ProductDetailsClientProps {
 }
 
 export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
+  const t = useI18n();
   const isOutOfStock = !product.isActive || (product.stockQuantity || 0) === 0;
+  const defaultProductName = t("products.detail.defaultName");
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <ProductImageGallery 
-        productName={product.name || "Ürün"} 
+      <ProductImageGallery
+        productName={product.name || defaultProductName}
         isOutOfStock={isOutOfStock}
       />
 
       <div className="space-y-6">
         <ProductInfo
-          name={product.name || "Ürün"}
+          name={product.name || defaultProductName}
           price={product.price || 0}
           categoryName={product.categoryName || undefined}
           actions={
-            <ProductActions 
-              productName={product.name || "Ürün"}
+            <ProductActions
+              productName={product.name || defaultProductName}
               productDescription={product.description || undefined}
             />
           }
@@ -39,7 +42,7 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
 
         <Separator />
 
-        <ProductStockInfo 
+        <ProductStockInfo
           stockQuantity={product.stockQuantity || 0}
           isActive={product.isActive || false}
         />
@@ -51,9 +54,8 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
         <Separator />
 
         {!isOutOfStock ? (
-          <ProductPurchase 
+          <ProductPurchase
             productId={product.id || ""}
-            productName={product.name || "Ürün"}
             price={product.price || 0}
             stockQuantity={product.stockQuantity || 0}
           />
@@ -63,4 +65,4 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
       </div>
     </div>
   );
-} 
+}

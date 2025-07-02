@@ -9,6 +9,7 @@ import { UserActions } from "../user/user-actions";
 import { CategoryNavigation } from "../category/category-navigation";
 import { useGetApiV1Category } from "@/api/generated/category/category";
 import { useCart } from "@/contexts/cart-context";
+import { LanguageSwitcher } from "./language-switcher";
 
 export function Navbar() {
   const { totalItems: cartItemCount } = useCart();
@@ -28,7 +29,8 @@ export function Navbar() {
           <SearchBar />
         </div>
 
-        <div className="flex items-center ml-auto">
+        <div className="flex items-center ml-auto gap-2">
+          <LanguageSwitcher />
           <UserActions cartItemCount={cartItemCount} />
         </div>
       </div>

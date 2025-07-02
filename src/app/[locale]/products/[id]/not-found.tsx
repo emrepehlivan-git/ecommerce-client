@@ -15,14 +15,10 @@ export default function ProductNotFound() {
             className="object-contain opacity-50"
           />
         </div>
-        
+
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold text-gray-900">
-            Ürün Bulunamadı
-          </h1>
-          <p className="text-gray-600">
-            Aradığınız ürün mevcut değil veya kaldırılmış olabilir.
-          </p>
+          <h1 className="text-2xl font-bold text-gray-900">Ürün Bulunamadı</h1>
+          <p className="text-gray-600">Aradığınız ürün mevcut değil veya kaldırılmış olabilir.</p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -32,7 +28,7 @@ export default function ProductNotFound() {
               Ürünlere Dön
             </Link>
           </Button>
-          
+
           <Button asChild>
             <Link href="/">
               <Home className="mr-2 h-4 w-4" />
@@ -43,4 +39,4 @@ export default function ProductNotFound() {
       </div>
     </div>
   );
-} 
+}

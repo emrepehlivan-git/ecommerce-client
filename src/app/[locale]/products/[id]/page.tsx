@@ -3,6 +3,7 @@ import { Metadata } from "next";
 import { getApiV1ProductId } from "@/api/generated/product/product";
 import { ProductDetailsClient } from "@/components/product/product-details-client";
 import { ProductBreadcrumb } from "@/components/product/product-breadcrumb";
+import { getI18n } from "@/i18n/server";
 
 interface ProductDetailPageProps {
   params: {
@@ -30,20 +31,26 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
 export async function generateMetadata({ params }: ProductDetailPageProps): Promise<Metadata> {
   const { id } = await params;
+  const t = await getI18n();
 
   const response = await getApiV1ProductId(id);
   const product = response.data;
 
   if (!product) {
     return {
-      title: "Product Not Found",
-      description: "The product you are looking for was not found.",
+      title: t("products.detail.notFound.title"),
+      description: t("products.detail.notFound.description"),
     };
   }
 
   return {
-    title: `${product.name} | E-Ticaret`,
-    description: product.description || `${product.name} product details.`,
-    keywords: [product.name, product.categoryName, "e-commerce", "online shopping"].filter(Boolean),
+    title: `${product.name} ${t("products.detail.metadata.titleSuffix")}`,
+    description:
+      product.description || `${product.name} ${t("products.detail.metadata.defaultDescription")}`,
+    keywords: [
+      product.name,
+      product.categoryName,
+      ...t("products.detail.metadata.keywords").split(", "),
+    ].filter(Boolean) as string[],
   };
 }

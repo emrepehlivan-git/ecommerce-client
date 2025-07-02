@@ -34,17 +34,19 @@ import {
 } from "@/api/generated/model";
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
 import { useQueryClient } from "@tanstack/react-query";
+import { useI18n } from "@/i18n/client";
 
-const addressSchema = z.object({
-  label: z.string().min(1, "Address label is required"),
-  street: z.string().min(1, "Street address is required"),
-  city: z.string().min(1, "City is required"),
-  zipCode: z.string().min(1, "Zip code is required"),
-  country: z.string().min(1, "Country is required"),
-  isDefault: z.boolean().optional(),
-});
+const getAddressSchema = (t: any) =>
+  z.object({
+    label: z.string().min(1, t("profile.addresses.modal.validation.labelRequired")),
+    street: z.string().min(1, t("profile.addresses.modal.validation.streetRequired")),
+    city: z.string().min(1, t("profile.addresses.modal.validation.cityRequired")),
+    zipCode: z.string().min(1, t("profile.addresses.modal.validation.zipCodeRequired")),
+    country: z.string().min(1, t("profile.addresses.modal.validation.countryRequired")),
+    isDefault: z.boolean().optional(),
+  });
 
-type AddressFormValues = z.infer<typeof addressSchema>;
+type AddressFormValues = z.infer<ReturnType<typeof getAddressSchema>>;
 
 interface AddressModalProps {
   isOpen: boolean;
@@ -65,6 +67,8 @@ export function AddressModal({
 }: AddressModalProps) {
   const { handleError, handleSuccess } = useErrorHandler({ context: "AddressModal" });
   const queryClient = useQueryClient();
+  const t = useI18n();
+  const addressSchema = getAddressSchema(t);
 
   const form = useForm<AddressFormValues>({
     resolver: zodResolver(addressSchema),
@@ -81,7 +85,7 @@ export function AddressModal({
   const addMutation = usePostApiV1UserAddresses({
     mutation: {
       onSuccess: () => {
-        handleSuccess("Address added successfully!");
+        handleSuccess(t("profile.addresses.modal.addSuccess"));
         queryClient.invalidateQueries({
           queryKey: getGetApiV1UserAddressesUserUserIdQueryKey(userId),
         });
@@ -90,7 +94,7 @@ export function AddressModal({
         form.reset();
       },
       onError: (error) => {
-        handleError(error, "Error adding address");
+        handleError(error, t("profile.addresses.modal.addError"));
       },
     },
   });
@@ -98,7 +102,7 @@ export function AddressModal({
   const editMutation = usePutApiV1UserAddressesId({
     mutation: {
       onSuccess: () => {
-        handleSuccess("Address updated successfully!");
+        handleSuccess(t("profile.addresses.modal.editSuccess"));
         queryClient.invalidateQueries({
           queryKey: getGetApiV1UserAddressesUserUserIdQueryKey(userId),
         });
@@ -107,7 +111,7 @@ export function AddressModal({
         form.reset();
       },
       onError: (error) => {
-        handleError(error, "Error updating address");
+        handleError(error, t("profile.addresses.modal.editError"));
       },
     },
   });
@@ -173,11 +177,20 @@ export function AddressModal({
   };
 
   const isLoading = addMutation.isPending || editMutation.isPending;
-  const title = mode === "add" ? "Add New Address" : "Edit Address";
+  const title =
+    mode === "add" ? t("profile.addresses.modal.addTitle") : t("profile.addresses.modal.editTitle");
   const description =
-    mode === "add" ? "Add a new address for delivery" : "Update your address information";
-  const submitText = mode === "add" ? "Save" : "Update";
-  const loadingText = mode === "add" ? "Adding..." : "Updating...";
+    mode === "add"
+      ? t("profile.addresses.modal.addDescription")
+      : t("profile.addresses.modal.editDescription");
+  const submitText =
+    mode === "add"
+      ? t("profile.addresses.modal.saveButton")
+      : t("profile.addresses.modal.updateButton");
+  const loadingText =
+    mode === "add"
+      ? t("profile.addresses.modal.addingButton")
+      : t("profile.addresses.modal.updatingButton");
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -193,9 +206,9 @@ export function AddressModal({
               name="label"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Address Label</FormLabel>
+                  <FormLabel>{t("profile.addresses.modal.labelLabel")}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Home, Work, etc." {...field} />
+                    <Input placeholder={t("profile.addresses.modal.labelPlaceholder")} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -207,9 +220,12 @@ export function AddressModal({
               name="street"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Street Address</FormLabel>
+                  <FormLabel>{t("profile.addresses.modal.streetLabel")}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Street, neighborhood, apartment no" {...field} />
+                    <Input
+                      placeholder={t("profile.addresses.modal.streetPlaceholder")}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -222,9 +238,12 @@ export function AddressModal({
                 name="city"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>City</FormLabel>
+                    <FormLabel>{t("profile.addresses.modal.cityLabel")}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Istanbul" {...field} />
+                      <Input
+                        placeholder={t("profile.addresses.modal.cityPlaceholder")}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -238,9 +257,12 @@ export function AddressModal({
                 name="zipCode"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Postal Code</FormLabel>
+                    <FormLabel>{t("profile.addresses.modal.zipCodeLabel")}</FormLabel>
                     <FormControl>
-                      <Input placeholder="34000" {...field} />
+                      <Input
+                        placeholder={t("profile.addresses.modal.zipCodePlaceholder")}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -252,9 +274,12 @@ export function AddressModal({
                 name="country"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Country</FormLabel>
+                    <FormLabel>{t("profile.addresses.modal.countryLabel")}</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input
+                        placeholder={t("profile.addresses.modal.countryPlaceholder")}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -267,21 +292,21 @@ export function AddressModal({
                 control={form.control}
                 name="isDefault"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
                     <FormControl>
                       <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                     <div className="space-y-1 leading-none">
-                      <FormLabel>Set as default address</FormLabel>
+                      <FormLabel>{t("profile.addresses.modal.defaultCheckbox")}</FormLabel>
                     </div>
                   </FormItem>
                 )}
               />
             )}
 
-            <div className="flex gap-2 justify-end pt-4">
+            <div className="flex justify-end space-x-2 pt-4">
               <Button type="button" variant="outline" onClick={handleClose}>
-                Cancel
+                {t("profile.addresses.modal.cancelButton")}
               </Button>
               <Button type="submit" disabled={isLoading}>
                 {isLoading ? loadingText : submitText}

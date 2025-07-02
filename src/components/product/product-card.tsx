@@ -10,7 +10,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const isOutOfStock = !product.isActive || (product.stockQuantity || 0) === 0;
-  
+
   return (
     <Link href={`/products/${product.id}`}>
       <Card className="group cursor-pointer transition-all duration-200 hover:shadow-lg">
@@ -27,42 +27,35 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
           )}
         </div>
-        
+
         <CardContent className="p-4 space-y-2">
           <div className="space-y-1">
-            <h3 className="font-medium text-sm line-clamp-2 text-gray-900">
-              {product.name}
-            </h3>
-            
+            <h3 className="font-medium text-sm line-clamp-2 text-gray-900">{product.name}</h3>
+
             {product.categoryName && (
               <Badge variant="outline" className="text-xs">
                 {product.categoryName}
               </Badge>
             )}
           </div>
-          
+
           <div className="flex items-center justify-between">
             <span className="text-lg font-bold text-primary">
-              ₺{product.price?.toLocaleString('tr-TR')}
+              ₺{product.price?.toLocaleString("tr-TR")}
             </span>
-            
+
             {product.stockQuantity !== undefined && (
               <span className="text-xs text-gray-500">
-                {product.stockQuantity > 0 
-                  ? `${product.stockQuantity} adet` 
-                  : "Stokta yok"
-                }
+                {product.stockQuantity > 0 ? `${product.stockQuantity} adet` : "Stokta yok"}
               </span>
             )}
           </div>
-          
+
           {product.description && (
-            <p className="text-xs text-gray-600 line-clamp-2">
-              {product.description}
-            </p>
+            <p className="text-xs text-gray-600 line-clamp-2">{product.description}</p>
           )}
         </CardContent>
       </Card>
     </Link>
   );
-} 
+}

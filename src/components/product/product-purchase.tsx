@@ -7,6 +7,7 @@ import { ShoppingCart } from "lucide-react";
 import { QuantitySelector } from "./quantity-selector";
 import { useCart } from "@/contexts/cart-context";
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useI18n } from "@/i18n/client";
 
 interface ProductPurchaseProps {
   productId: string;
@@ -15,6 +16,7 @@ interface ProductPurchaseProps {
 }
 
 export function ProductPurchase({ productId, price, stockQuantity }: ProductPurchaseProps) {
+  const t = useI18n();
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const { addToCart } = useCart();
@@ -27,7 +29,7 @@ export function ProductPurchase({ productId, price, stockQuantity }: ProductPurc
     try {
       await addToCart(productId, quantity);
     } catch (error) {
-      handleError(error, "Ürün sepete eklenirken hata oluştu!");
+      handleError(error, t("products.purchase.error"));
     } finally {
       setIsLoading(false);
     }
@@ -37,7 +39,7 @@ export function ProductPurchase({ productId, price, stockQuantity }: ProductPurc
     <Card>
       <CardContent className="p-6 space-y-4">
         <div className="flex items-center gap-4">
-          <span className="text-sm font-medium">Miktar:</span>
+          <span className="text-sm font-medium">{t("products.purchase.quantity")}</span>
           <QuantitySelector
             quantity={quantity}
             onQuantityChange={setQuantity}
@@ -46,7 +48,7 @@ export function ProductPurchase({ productId, price, stockQuantity }: ProductPurc
         </div>
 
         <div className="flex items-center justify-between text-lg font-semibold">
-          <span>Toplam:</span>
+          <span>{t("products.purchase.total")}</span>
           <span className="text-primary">₺{(price * quantity).toLocaleString("tr-TR")}</span>
         </div>
 
@@ -57,7 +59,7 @@ export function ProductPurchase({ productId, price, stockQuantity }: ProductPurc
           size="lg"
         >
           <ShoppingCart className="mr-2 h-5 w-5" />
-          {isLoading ? "Ekleniyor..." : "Sepete Ekle"}
+          {isLoading ? t("products.purchase.adding") : t("products.purchase.addToCart")}
         </Button>
       </CardContent>
     </Card>

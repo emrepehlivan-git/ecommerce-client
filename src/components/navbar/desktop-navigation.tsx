@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { CategoryDto } from "@/api/generated/model";
+import { LanguageSwitcher } from "./language-switcher";
 
 interface DesktopNavigationProps {
   categories: CategoryDto[];
@@ -14,6 +15,7 @@ export function DesktopNavigation({ categories }: DesktopNavigationProps) {
 
   return (
     <div className="hidden md:block">
+      <LanguageSwitcher />
       <ScrollArea className="w-full whitespace-nowrap">
         <nav className="flex items-center gap-1 pb-2">
           {categories.map((category) => {

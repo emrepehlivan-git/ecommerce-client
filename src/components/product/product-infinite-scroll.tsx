@@ -9,6 +9,7 @@ import { useMemo, useEffect, useRef, useCallback } from "react";
 import { ProductDto, ProductDtoListPagedResult } from "@/api/generated/model";
 import { Loader2, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/i18n/client";
 
 interface ProductInfiniteScrollProps {
   initialPageSize?: number;
@@ -21,6 +22,7 @@ export function ProductInfiniteScroll({
 }: ProductInfiniteScrollProps) {
   const searchParams = useSearchParams();
   const loadingRef = useRef<HTMLDivElement>(null);
+  const t = useI18n();
 
   const queryParams = useMemo(
     () => ({
@@ -106,14 +108,14 @@ export function ProductInfiniteScroll({
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <div className="text-6xl mb-4">⚠️</div>
         <h3 className="text-lg font-medium text-gray-900 mb-2">
-          An error occurred while loading products
+          {t("products.infiniteScroll.errorTitle")}
         </h3>
         <p className="text-gray-600 mb-4">
-          {(error as unknown as Error)?.message || "Please try again later."}
+          {(error as unknown as Error)?.message || t("products.infiniteScroll.defaultErrorMessage")}
         </p>
         <Button onClick={() => window.location.reload()}>
           <RotateCcw className="w-4 h-4 mr-2" />
-          Refresh
+          {t("products.infiniteScroll.refreshButton")}
         </Button>
       </div>
     );
@@ -124,12 +126,14 @@ export function ProductInfiniteScroll({
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <div className="text-6xl mb-4">🛍️</div>
         <h3 className="text-lg font-medium text-gray-900 mb-2">
-          {categoryId ? "No products found in this category" : "No products found"}
+          {categoryId
+            ? t("products.infiniteScroll.noProductsInCategoryTitle")
+            : t("products.infiniteScroll.noProductsTitle")}
         </h3>
         <p className="text-gray-600">
           {categoryId
-            ? "Try different filters or browse other categories."
-            : "Try changing filters or check again later."}
+            ? t("products.infiniteScroll.noProductsInCategoryDescription")
+            : t("products.infiniteScroll.noProductsDescription")}
         </p>
       </div>
     );
@@ -143,7 +147,7 @@ export function ProductInfiniteScroll({
           <span className="text-gray-900 font-semibold">
             {totalRecords.toLocaleString("tr-TR")}
           </span>{" "}
-          products displayed
+          {t("products.infiniteScroll.displayed")}
         </div>
 
         <ProductSortDropdown />
@@ -160,7 +164,7 @@ export function ProductInfiniteScroll({
           {isFetchingNextPage && (
             <div className="flex items-center space-x-2 text-gray-600">
               <Loader2 className="w-4 h-4 animate-spin" />
-              <span>Loading more products...</span>
+              <span>{t("products.infiniteScroll.loadingMore")}</span>
             </div>
           )}
         </div>
@@ -168,7 +172,11 @@ export function ProductInfiniteScroll({
 
       {!hasNextPage && allProducts.length > 0 && allProducts.length === totalRecords && (
         <div className="text-center py-8 text-gray-500">
-          🎉 {categoryId ? "All products in this category" : "All"} products loaded!
+          🎉{" "}
+          {categoryId
+            ? t("products.infiniteScroll.allLoadedInCategory")
+            : t("products.infiniteScroll.allLoaded")}{" "}
+          {t("products.infiniteScroll.loaded")}
         </div>
       )}
     </div>

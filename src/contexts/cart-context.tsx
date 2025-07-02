@@ -10,6 +10,7 @@ import {
 } from "@/api/generated/cart/cart";
 import { CartDto, AddToCartCommand, UpdateCartItemQuantityCommand } from "@/api/generated/model";
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useSession } from "next-auth/react";
 
 interface CartContextType {
   cart: CartDto | undefined;
@@ -45,7 +46,18 @@ export function CartProvider({ children }: CartProviderProps) {
     context: "CartProvider",
   });
 
-  const { data: cartResponse, isLoading, error, refetch } = useGetApiV1Cart();
+  const { data: user } = useSession();
+
+  const {
+    data: cartResponse,
+    isLoading,
+    error,
+    refetch,
+  } = useGetApiV1Cart({
+    query: {
+      enabled: !!user?.user?.id,
+    },
+  });
 
   const cart = cartResponse?.data as CartDto | undefined;
 
@@ -56,7 +68,7 @@ export function CartProvider({ children }: CartProviderProps) {
         refetch();
       },
       onError: (error) => {
-        handleError(error, "Ürün sepete eklenirken hata oluştu!");
+        handleError(error);
       },
     },
   });
@@ -68,7 +80,7 @@ export function CartProvider({ children }: CartProviderProps) {
         refetch();
       },
       onError: (error) => {
-        handleError(error, "Miktar güncellenirken hata oluştu!");
+        handleError(error);
       },
     },
   });
@@ -80,7 +92,7 @@ export function CartProvider({ children }: CartProviderProps) {
         refetch();
       },
       onError: (error) => {
-        handleError(error, "Ürün sepetten çıkarılırken hata oluştu!");
+        handleError(error);
       },
     },
   });
@@ -92,7 +104,7 @@ export function CartProvider({ children }: CartProviderProps) {
         refetch();
       },
       onError: (error) => {
-        handleError(error, "Sepet temizlenirken hata oluştu!");
+        handleError(error);
       },
     },
   });

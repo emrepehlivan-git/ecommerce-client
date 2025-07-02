@@ -27,13 +27,15 @@ import { usePutApiV1UsersIdBirthday } from "@/api/generated/users/users";
 import { useSession } from "next-auth/react";
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
 import { format } from "date-fns";
+import { useI18n } from "@/i18n/client";
 
-const formSchema = z.object({
-  name: z.string().min(2, "Ad en az 2 karakter olmalı"),
-  email: z.string().email("Geçerli bir email girin"),
-  phone: z.string(),
-  birthDate: z.string(),
-});
+const getFormSchema = (t: any) =>
+  z.object({
+    name: z.string().min(2, t("profile.editModal.validation.nameMin")),
+    email: z.string().email(t("profile.editModal.validation.emailInvalid")),
+    phone: z.string(),
+    birthDate: z.string(),
+  });
 
 type ProfileFormValues = {
   name: string;
@@ -55,6 +57,8 @@ export default function EditProfileModal({
 }: EditProfileModalProps) {
   const { handleError } = useErrorHandler();
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const t = useI18n();
+  const formSchema = getFormSchema(t);
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues,
@@ -65,7 +69,7 @@ export default function EditProfileModal({
 
   async function onSubmit(values: ProfileFormValues) {
     if (!userId) {
-      handleError("Kullanıcı bulunamadı!");
+      handleError(t("profile.editModal.userNotFound"));
       return;
     }
     try {
@@ -85,9 +89,9 @@ export default function EditProfileModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <User className="w-5 h-5" />
-            Profil Bilgileri
+            {t("profile.editModal.title")}
           </DialogTitle>
-          <DialogDescription>Profil bilgilerinizi güncelleyin</DialogDescription>
+          <DialogDescription>{t("profile.editModal.description")}</DialogDescription>
         </DialogHeader>
         <div className="space-y-6">
           <Form {...form}>
@@ -100,10 +104,14 @@ export default function EditProfileModal({
                     <FormItem>
                       <FormLabel>
                         <TextIcon className="w-4 h-4 inline mr-1" />
-                        Adınız ve Soyadınız
+                        {t("profile.editModal.nameLabel")}
                       </FormLabel>
                       <FormControl>
-                        <Input {...field} className="h-11" placeholder="Adınız ve Soyadınız" />
+                        <Input
+                          {...field}
+                          className="h-11"
+                          placeholder={t("profile.editModal.namePlaceholder")}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -116,7 +124,7 @@ export default function EditProfileModal({
                     <FormItem>
                       <FormLabel>
                         <Mail className="w-4 h-4 inline mr-1" />
-                        Email
+                        {t("profile.editModal.emailLabel")}
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -137,10 +145,14 @@ export default function EditProfileModal({
                     <FormItem>
                       <FormLabel>
                         <Phone className="w-4 h-4 inline mr-1" />
-                        Telefon Numarası
+                        {t("profile.editModal.phoneLabel")}
                       </FormLabel>
                       <FormControl>
-                        <Input {...field} className="h-11" placeholder="90 (555) 555-55-55" />
+                        <Input
+                          {...field}
+                          className="h-11"
+                          placeholder={t("profile.editModal.phonePlaceholder")}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -151,7 +163,7 @@ export default function EditProfileModal({
                   name="birthDate"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>Doğum Tarihi</FormLabel>
+                      <FormLabel>{t("profile.editModal.birthDateLabel")}</FormLabel>
                       <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -166,7 +178,7 @@ export default function EditProfileModal({
                               {field.value ? (
                                 format(new Date(field.value), "PPP")
                               ) : (
-                                <span>Tarih seç</span>
+                                <span>{t("profile.editModal.pickDate")}</span>
                               )}
                               <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
@@ -193,10 +205,10 @@ export default function EditProfileModal({
 
               <div className="flex gap-2 justify-end">
                 <Button type="submit" variant="default">
-                  <Save className="w-4 h-4 mr-2" /> Kaydet
+                  <Save className="w-4 h-4 mr-2" /> {t("profile.editModal.saveButton")}
                 </Button>
                 <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                  <X className="w-4 h-4 mr-2" /> İptal
+                  <X className="w-4 h-4 mr-2" /> {t("profile.editModal.cancelButton")}
                 </Button>
               </div>
             </form>

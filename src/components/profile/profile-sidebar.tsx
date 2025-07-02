@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import { User } from "next-auth";
 import { useState } from "react";
 import EditProfileModal from "./edit-profile-modal";
+import { useI18n } from "@/i18n/client";
 
 interface ProfileSidebarProps {
   user: User;
@@ -12,21 +13,22 @@ interface ProfileSidebarProps {
 
 export default function ProfileSidebar({ user }: ProfileSidebarProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const t = useI18n();
 
   const links = [
     {
       href: "/profile/orders",
-      label: "Orders",
+      label: t("profile.sidebar.orders"),
       icon: Package,
     },
     {
       href: "/profile/addresses",
-      label: "Addresses",
+      label: t("profile.sidebar.addresses"),
       icon: MapPin,
     },
     {
       href: "/profile/reviews",
-      label: "Reviews",
+      label: t("profile.sidebar.reviews"),
       icon: Star,
     },
   ];
@@ -51,7 +53,7 @@ export default function ProfileSidebar({ user }: ProfileSidebarProps) {
             onClick={() => setIsEditModalOpen(true)}
           >
             <Pencil className="size-4" />
-            Edit Profile
+            {t("profile.sidebar.editProfile")}
           </Button>
         </div>
         <nav className="flex flex-col gap-2 mt-4">

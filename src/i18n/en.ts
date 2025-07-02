@@ -1,0 +1,218 @@
+export default {
+  hello: "Hello",
+  welcome: "Welcome to our store!",
+  layout: {
+    metadata: {
+      title: "ECommerce",
+      description: "ECommerce app",
+      keywords: "ECommerce",
+    },
+  },
+  home: {
+    description:
+      "The e-commerce platform where you can find the highest quality products at affordable prices. With our wide product range, you can supply everything you need from a single point.",
+  },
+  notFound: {
+    alt: "Not Found",
+    backToHome: "Back to home",
+  },
+  errorPage: {
+    welcome: "Welcome",
+    description:
+      "The e-commerce platform where you can find the highest quality products at affordable prices. With our wide product range, you can supply everything you need from a single point.",
+    featuredProductsErrorTitle: "Featured products could not be loaded",
+    featuredProductsErrorMessage:
+      "There was a problem showing the featured products. Please try again.",
+    tryAgain: "Try Again",
+    consoleError: "Home page error:",
+  },
+  profile: {
+    sidebar: {
+      orders: "Orders",
+      addresses: "Addresses",
+      reviews: "Reviews",
+      editProfile: "Edit Profile",
+    },
+    editModal: {
+      title: "Profile Information",
+      description: "Update your profile information",
+      nameLabel: "Your Name and Surname",
+      namePlaceholder: "Your Name and Surname",
+      emailLabel: "Email",
+      phoneLabel: "Phone Number",
+      phonePlaceholder: "90 (555) 555-55-55",
+      birthDateLabel: "Date of Birth",
+      pickDate: "Pick a date",
+      saveButton: "Save",
+      cancelButton: "Cancel",
+      validation: {
+        nameMin: "Name must be at least 2 characters",
+        emailInvalid: "Enter a valid email",
+      },
+      userNotFound: "User not found!",
+    },
+    page: {
+      title: "Profile",
+      description: "Profile page",
+      keywords: "profile, user, profile page",
+    },
+    orders: {
+      loginRequired: "You must be logged in to view orders.",
+      client: {
+        loadingError: "Error loading orders.",
+        noOrders: "No orders found.",
+        title: "My Orders",
+        orderId: "Order #",
+        status: "Status: ",
+        total: "Total: ",
+        address: "Address: ",
+        products: "Products:",
+      },
+    },
+    addresses: {
+      client: {
+        title: "My Addresses",
+        description: "Manage your delivery addresses",
+        addNewAddress: "Add New Address",
+      },
+      list: {
+        deleteSuccess: "Address deleted successfully!",
+        setDefaultSuccess: "Default address updated!",
+        addressNotFound: "Address not found",
+        userNotFound: "User not found",
+        setDefaultError: "Cannot set default address",
+        noAddressTitle: "No address added yet",
+        noAddressDescription: "Add an address to start delivering",
+        defaultAddressLabel: "Address",
+        defaultBadge: "Default",
+        isDefaultHint: "Default address",
+        setAsDefaultHint: "Set as default",
+        editHint: "Edit",
+        deleteHint: "Delete",
+        deleteDialogTitle: "Delete Address",
+        deleteDialogDescription:
+          "Are you sure you want to delete this address? This action cannot be undone.",
+        cancelButton: "Cancel",
+        deleteButton: "Delete",
+        deletingButton: "Deleting...",
+      },
+      modal: {
+        validation: {
+          labelRequired: "Address label is required",
+          streetRequired: "Street address is required",
+          cityRequired: "City is required",
+          zipCodeRequired: "Zip code is required",
+          countryRequired: "Country is required",
+        },
+        addSuccess: "Address added successfully!",
+        addError: "Error adding address",
+        editSuccess: "Address updated successfully!",
+        editError: "Error updating address",
+        addTitle: "Add New Address",
+        editTitle: "Edit Address",
+        addDescription: "Add a new address for delivery",
+        editDescription: "Update your address information",
+        saveButton: "Save",
+        updateButton: "Update",
+        addingButton: "Adding...",
+        updatingButton: "Updating...",
+        labelLabel: "Address Label",
+        labelPlaceholder: "Home, Work, etc.",
+        streetLabel: "Street Address",
+        streetPlaceholder: "Street, neighborhood, apartment no",
+        cityLabel: "City",
+        cityPlaceholder: "Istanbul",
+        zipCodeLabel: "Postal Code",
+        zipCodePlaceholder: "34000",
+        countryLabel: "Country",
+        countryPlaceholder: "Türkiye",
+        defaultCheckbox: "Set as default address",
+        cancelButton: "Cancel",
+      },
+    },
+    reviews: {
+      page: {
+        title: "My Reviews",
+        description: "Your reviews will be listed here.",
+      },
+    },
+  },
+  products: {
+    page: {
+      breadcrumb: {
+        home: "Home Page",
+        allProducts: "All Products",
+      },
+      header: {
+        title: "All Products",
+        description: "Discover our wide range of products and find everything you need",
+      },
+    },
+    sortDropdown: {
+      nameAsc: "By Name (A-Z)",
+      nameDesc: "By Name (Z-A)",
+      priceAsc: "By Price (Low-High)",
+      priceDesc: "By Price (High-Low)",
+      placeholder: "Default Sorting",
+    },
+    infiniteScroll: {
+      errorTitle: "An error occurred!",
+      defaultErrorMessage:
+        "An unexpected problem occurred while loading the products. Please try again.",
+      refreshButton: "Try Again",
+      noProductsTitle: "No products found",
+      noProductsDescription: "No products found",
+      noProductsInCategoryTitle: "No products found in this category",
+      noProductsInCategoryDescription: "No products found in this category",
+      displayed: "Displayed",
+      loadingMore: "Loading more...",
+      allLoaded: "All products loaded",
+      allLoadedInCategory: "All products in this category loaded",
+      loaded: "loaded",
+    },
+    error: {
+      title: "An error occurred!",
+      description: "An unexpected problem occurred while loading the products. Please try again.",
+      tryAgain: "Try Again",
+    },
+    detail: {
+      notFound: {
+        title: "Product Not Found",
+        description: "The product you are looking for was not found.",
+      },
+      metadata: {
+        titleSuffix: "| E-Commerce",
+        defaultDescription: "product details.",
+        keywords: "e-commerce, online shopping",
+      },
+      defaultName: "Product",
+    },
+    breadcrumb: {
+      products: "Products",
+    },
+    purchase: {
+      quantity: "Quantity:",
+      total: "Total:",
+      addToCart: "Add to Cart",
+      adding: "Adding...",
+      error: "Error adding product to cart!",
+    },
+    outOfStock: {
+      title: "This product is currently out of stock.",
+      followUp: "Follow us to get updates on stock availability.",
+    },
+    description: {
+      title: "Description",
+    },
+    stock: {
+      status: "Stock Status:",
+      outOfStock: "Out of Stock",
+      inStock: "{count} available",
+    },
+    actions: {
+      addedToWishlist: "Product added to wishlist",
+      removedFromWishlist: "Product removed from wishlist",
+      linkCopied: "Product link copied!",
+    },
+  },
+} as const;

@@ -24,6 +24,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { ErrorHelper } from "@/lib/errorHelper";
 import { AddressModal } from "./address-modal";
 import { Hint } from "@/components/ui/hint";
+import { useI18n } from "@/i18n/client";
 
 interface AddressListProps {
   userId: string;
@@ -38,11 +39,12 @@ export function AddressList({ userId }: AddressListProps) {
   const { data: addresses, isLoading, refetch } = useGetApiV1UserAddressesUserUserId(userId);
   const { handleError, handleSuccess } = useErrorHandler({ context: "AddressList" });
   const queryClient = useQueryClient();
+  const t = useI18n();
 
   const deleteMutation = useDeleteApiV1UserAddressesId({
     mutation: {
       onSuccess: () => {
-        handleSuccess("Address deleted successfully!");
+        handleSuccess(t("profile.addresses.list.deleteSuccess"));
         queryClient.invalidateQueries({
           queryKey: getGetApiV1UserAddressesUserUserIdQueryKey(userId),
         });
@@ -60,7 +62,7 @@ export function AddressList({ userId }: AddressListProps) {
   const setDefaultMutation = usePatchApiV1UserAddressesIdSetDefault({
     mutation: {
       onSuccess: () => {
-        handleSuccess("Default address updated!");
+        handleSuccess(t("profile.addresses.list.setDefaultSuccess"));
         queryClient.invalidateQueries({
           queryKey: getGetApiV1UserAddressesUserUserIdQueryKey(userId),
         });
@@ -80,12 +82,12 @@ export function AddressList({ userId }: AddressListProps) {
 
   const confirmDelete = () => {
     if (!addressToDelete) {
-      handleError("Address not found");
+      handleError(t("profile.addresses.list.addressNotFound"));
       return;
     }
 
     if (!userId) {
-      handleError("User not found");
+      handleError(t("profile.addresses.list.userNotFound"));
       return;
     }
 
@@ -97,12 +99,12 @@ export function AddressList({ userId }: AddressListProps) {
 
   const handleSetDefault = (addressId: string) => {
     if (!addressId) {
-      handleError("Cannot set default address");
+      handleError(t("profile.addresses.list.setDefaultError"));
       return;
     }
 
     if (!userId) {
-      handleError("User not found");
+      handleError(t("profile.addresses.list.userNotFound"));
       return;
     }
 
@@ -126,8 +128,8 @@ export function AddressList({ userId }: AddressListProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">No address added yet</CardTitle>
-          <CardDescription>Add an address to start delivering</CardDescription>
+          <CardTitle className="text-lg">{t("profile.addresses.list.noAddressTitle")}</CardTitle>
+          <CardDescription>{t("profile.addresses.list.noAddressDescription")}</CardDescription>
         </CardHeader>
       </Card>
     );
@@ -142,15 +144,24 @@ export function AddressList({ userId }: AddressListProps) {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-muted-foreground" />
-                  <CardTitle className="text-lg">{address.label || "Address"}</CardTitle>
+                  <CardTitle className="text-lg">
+                    {address.label || t("profile.addresses.list.defaultAddressLabel")}
+                  </CardTitle>
                   {address.isDefault && (
                     <Badge variant="secondary" className="text-xs">
-                      Default
+                      {t("profile.addresses.list.defaultBadge")}
                     </Badge>
                   )}
                 </div>
                 <div className="flex gap-2">
-                  <Hint label={address.isDefault ? "Default address" : "Set as default"} asChild>
+                  <Hint
+                    label={
+                      address.isDefault
+                        ? t("profile.addresses.list.isDefaultHint")
+                        : t("profile.addresses.list.setAsDefaultHint")
+                    }
+                    asChild
+                  >
                     <Button
                       variant="ghost"
                       size="sm"
@@ -164,12 +175,12 @@ export function AddressList({ userId }: AddressListProps) {
                       )}
                     </Button>
                   </Hint>
-                  <Hint label="Edit" asChild>
+                  <Hint label={t("profile.addresses.list.editHint")} asChild>
                     <Button variant="ghost" size="sm" onClick={() => handleEdit(address)}>
                       <Edit className="w-4 h-4" />
                     </Button>
                   </Hint>
-                  <Hint label="Delete" asChild>
+                  <Hint label={t("profile.addresses.list.deleteHint")} asChild>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -198,21 +209,23 @@ export function AddressList({ userId }: AddressListProps) {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Address</DialogTitle>
+            <DialogTitle>{t("profile.addresses.list.deleteDialogTitle")}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this address? This action cannot be undone.
+              {t("profile.addresses.list.deleteDialogDescription")}
             </DialogDescription>
           </DialogHeader>
           <div className="flex gap-2 justify-end">
             <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-              Cancel
+              {t("profile.addresses.list.cancelButton")}
             </Button>
             <Button
               variant="destructive"
               onClick={confirmDelete}
               disabled={deleteMutation.isPending}
             >
-              {deleteMutation.isPending ? "Deleting..." : "Delete"}
+              {deleteMutation.isPending
+                ? t("profile.addresses.list.deletingButton")
+                : t("profile.addresses.list.deleteButton")}
             </Button>
           </div>
         </DialogContent>
