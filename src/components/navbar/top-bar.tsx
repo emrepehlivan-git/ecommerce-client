@@ -8,9 +8,7 @@ export function TopBar() {
     <div className="bg-gray-100 px-4 py-2 text-sm">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-          <span className="text-gray-600 text-xs sm:text-sm">
-            MegaMart'a hoş geldiniz!
-          </span>
+          <span className="text-gray-600 text-xs sm:text-sm">MegaMart&apos;a hoş geldiniz!</span>
         </div>
         <div className="flex items-center gap-2 sm:gap-6">
           <div className="hidden sm:flex items-center gap-2">

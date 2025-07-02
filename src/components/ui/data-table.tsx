@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   ColumnDef,
   flexRender,
@@ -13,31 +13,39 @@ import {
   VisibilityState,
   getFilteredRowModel,
   PaginationState,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Skeleton } from "@/components/ui/skeleton"
-import { DataTableToolbar } from "./data-table-toolbar"
-import { DataTablePagination } from "./data-table-pagination"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
+import { DataTableToolbar } from "./data-table-toolbar";
+import { DataTablePagination } from "./data-table-pagination";
+import { SetStateAction } from "react";
 
 export interface DataTableState {
-  pagination: PaginationState
-  globalFilter: string
+  pagination: PaginationState;
+  globalFilter: string;
 }
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-  page: number
-  pageSize: number
-  totalPages: number
-  totalRecords: number
-  onPageChange: (page: number) => void
-  onPageSizeChange: (pageSize: number) => void
-  globalFilter: string
-  onGlobalFilterChange: (filter: string) => void
-  isLoading?: boolean
-  rowSelection?: Record<string, boolean>
-  onRowSelectionChange?: (rowSelection: Record<string, boolean>) => void
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  totalRecords: number;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (pageSize: number) => void;
+  globalFilter: string;
+  onGlobalFilterChange: (filter: string) => void;
+  isLoading?: boolean;
+  rowSelection?: Record<string, boolean>;
+  onRowSelectionChange?: (rowSelection: Record<string, boolean>) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -55,33 +63,34 @@ export function DataTable<TData, TValue>({
   rowSelection: externalRowSelection,
   onRowSelectionChange,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-  const [internalRowSelection, setInternalRowSelection] = React.useState({})
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [internalRowSelection, setInternalRowSelection] = React.useState({});
 
-  const rowSelection = externalRowSelection !== undefined ? externalRowSelection : internalRowSelection
-  const setRowSelection = (updaterOrValue: any) => {
-    let value: any
+  const rowSelection =
+    externalRowSelection !== undefined ? externalRowSelection : internalRowSelection;
+  const setRowSelection = (updaterOrValue: SetStateAction<Record<string, boolean>>) => {
+    let value: SetStateAction<Record<string, boolean>>;
     if (typeof updaterOrValue === "function") {
-      value = updaterOrValue(rowSelection)
+      value = updaterOrValue(rowSelection);
     } else {
-      value = updaterOrValue
+      value = updaterOrValue;
     }
     if (onRowSelectionChange) {
-      onRowSelectionChange(value)
+      onRowSelectionChange(value as Record<string, boolean>);
     } else {
-      setInternalRowSelection(value)
+      setInternalRowSelection(value as Record<string, boolean>);
     }
-  }
+  };
 
   const pagination = React.useMemo(
     () => ({
       pageIndex: page - 1,
       pageSize,
     }),
-    [page, pageSize],
-  )
+    [page, pageSize]
+  );
 
   const table = useReactTable({
     data,
@@ -106,16 +115,16 @@ export function DataTable<TData, TValue>({
     manualFiltering: true,
     pageCount: totalPages,
     onPaginationChange: (updater) => {
-      const newPagination = typeof updater === "function" ? updater(pagination) : updater
+      const newPagination = typeof updater === "function" ? updater(pagination) : updater;
 
       if (newPagination.pageSize !== pagination.pageSize) {
-        onPageSizeChange(newPagination.pageSize)
+        onPageSizeChange(newPagination.pageSize);
       } else if (newPagination.pageIndex !== pagination.pageIndex) {
-        onPageChange(newPagination.pageIndex + 1)
+        onPageChange(newPagination.pageIndex + 1);
       }
     },
     onGlobalFilterChange: onGlobalFilterChange,
-  })
+  });
 
   return (
     <div className="w-full space-y-4">
@@ -126,7 +135,13 @@ export function DataTable<TData, TValue>({
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
-                  return <TableHead key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>
+                  return (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(header.column.columnDef.header, header.getContext())}
+                    </TableHead>
+                  );
                 })}
               </TableRow>
             ))}
@@ -146,7 +161,9 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                    <TableCell key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
                   ))}
                 </TableRow>
               ))
@@ -162,5 +179,5 @@ export function DataTable<TData, TValue>({
       </div>
       <DataTablePagination table={table} rowCount={totalRecords} />
     </div>
-  )
-} 
+  );
+}

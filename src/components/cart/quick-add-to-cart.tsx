@@ -8,34 +8,32 @@ import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
 
 interface QuickAddToCartProps {
   productId: string;
-  productName: string;
   variant?: "default" | "icon";
   size?: "sm" | "default" | "lg";
   className?: string;
 }
 
-export function QuickAddToCart({ 
-  productId, 
-  productName, 
+export function QuickAddToCart({
+  productId,
   variant = "default",
   size = "default",
-  className 
+  className,
 }: QuickAddToCartProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { addToCart } = useCart();
   const { handleError } = useErrorHandler({
-    context: 'QuickAddToCart'
+    context: "QuickAddToCart",
   });
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent navigation if used in Link
     e.stopPropagation();
-    
+
     setIsLoading(true);
     try {
       await addToCart(productId, 1);
     } catch (error) {
-      handleError(error, 'Ürün sepete eklenirken hata oluştu!');
+      handleError(error, "Ürün sepete eklenirken hata oluştu!");
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +65,7 @@ export function QuickAddToCart({
       className={`w-full ${className}`}
     >
       <ShoppingCart className="mr-2 h-4 w-4" />
-      {isLoading ? 'Ekleniyor...' : 'Sepete Ekle'}
+      {isLoading ? "Adding to cart..." : "Add to cart"}
     </Button>
   );
-} 
+}

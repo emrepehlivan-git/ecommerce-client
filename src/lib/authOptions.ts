@@ -1,31 +1,31 @@
-import { type DefaultSession, NextAuthConfig } from "next-auth";
-import { axiosClient } from "@/lib/axiosClient";
+import { NextAuthConfig } from "next-auth";
 import { auth } from "./auth";
+import { JWT } from "next-auth/jwt";
 
 const issuer = process.env.NEXT_PUBLIC_AUTH_SERVER_URL;
 const clientId = process.env.NEXT_PUBLIC_OPENIDDICT_CLIENT_ID;
 
-const normalizedIssuer = issuer?.endsWith('/') ? issuer : `${issuer}/`;
+const normalizedIssuer = issuer?.endsWith("/") ? issuer : `${issuer}/`;
 
 const getInternalIssuer = () => {
   if (process.env.INTERNAL_AUTH_SERVER_URL) {
-    return process.env.INTERNAL_AUTH_SERVER_URL?.endsWith('/') 
-      ? process.env.INTERNAL_AUTH_SERVER_URL 
+    return process.env.INTERNAL_AUTH_SERVER_URL?.endsWith("/")
+      ? process.env.INTERNAL_AUTH_SERVER_URL
       : `${process.env.INTERNAL_AUTH_SERVER_URL}/`;
   }
   return normalizedIssuer;
 };
 
-async function refreshAccessToken(token: any) {
+async function refreshAccessToken(token: JWT) {
   try {
-    
     if (!token.refreshToken) {
-      throw new Error('No refresh token available');
+      throw new Error("No refresh token available");
     }
 
-    const tokenUrl = typeof window === 'undefined' 
-      ? `${getInternalIssuer()}connect/token`
-      : `${normalizedIssuer}connect/token`;
+    const tokenUrl =
+      typeof window === "undefined"
+        ? `${getInternalIssuer()}connect/token`
+        : `${normalizedIssuer}connect/token`;
 
     const response = await fetch(tokenUrl, {
       headers: {
@@ -41,15 +41,16 @@ async function refreshAccessToken(token: any) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`Token refresh failed: ${response.status}`);
+      throw new Error(`Token refresh failed: ${response.status} ${errorText}`);
     }
 
     const tokens = await response.json();
-    
+
     let userInfo = null;
     try {
       userInfo = await getUserInfo(tokens.access_token);
-    } catch (userError) {
+    } catch {
+      // ignore
     }
 
     return {
@@ -66,7 +67,7 @@ async function refreshAccessToken(token: any) {
       }),
       error: undefined,
     };
-  } catch (error) {
+  } catch {
     return {
       ...token,
       error: "RefreshAccessTokenError",
@@ -82,10 +83,11 @@ export const authOptions: NextAuthConfig = {
       type: "oauth",
       clientId,
       clientSecret: "",
-      issuer: typeof window === 'undefined' ? getInternalIssuer() : normalizedIssuer,
-      wellKnown: typeof window === 'undefined' 
-        ? `${getInternalIssuer()}.well-known/openid-configuration`
-        : `${normalizedIssuer}.well-known/openid-configuration`,
+      issuer: typeof window === "undefined" ? getInternalIssuer() : normalizedIssuer,
+      wellKnown:
+        typeof window === "undefined"
+          ? `${getInternalIssuer()}.well-known/openid-configuration`
+          : `${normalizedIssuer}.well-known/openid-configuration`,
       authorization: {
         params: {
           scope: "openid profile email roles api offline_access",
@@ -95,16 +97,18 @@ export const authOptions: NextAuthConfig = {
         url: `${normalizedIssuer}connect/authorize`,
       },
       userinfo: {
-        url: typeof window === 'undefined' 
-          ? `${getInternalIssuer()}connect/userinfo`
-          : `${normalizedIssuer}connect/userinfo`,
+        url:
+          typeof window === "undefined"
+            ? `${getInternalIssuer()}connect/userinfo`
+            : `${normalizedIssuer}connect/userinfo`,
       },
       token: {
-        url: typeof window === 'undefined' 
-          ? `${getInternalIssuer()}connect/token`
-          : `${normalizedIssuer}connect/token`,
+        url:
+          typeof window === "undefined"
+            ? `${getInternalIssuer()}connect/token`
+            : `${normalizedIssuer}connect/token`,
       },
-      profile: async (profile: any) => {
+      profile: async (profile) => {
         return {
           id: profile.sub,
           name: profile.name,
@@ -122,7 +126,7 @@ export const authOptions: NextAuthConfig = {
   debug: process.env.NODE_ENV === "development",
   trustHost: true,
   callbacks: {
-    async jwt({ token, account, trigger }) {
+    async jwt({ token, account }) {
       if (account?.access_token) {
         try {
           const user = await getUserInfo(account?.access_token as string);
@@ -135,10 +139,12 @@ export const authOptions: NextAuthConfig = {
             birthDate: user.birthDate,
             accessToken: account.access_token,
             refreshToken: account.refresh_token,
-            accessTokenExpires: account.expires_at ? account.expires_at * 1000 : Date.now() + 3600 * 1000,
+            accessTokenExpires: account.expires_at
+              ? account.expires_at * 1000
+              : Date.now() + 3600 * 1000,
             error: undefined,
           };
-        } catch (error) {
+        } catch {
           return {
             ...token,
             error: "UserInfoError",
@@ -172,7 +178,7 @@ export const authOptions: NextAuthConfig = {
       if (token.error || !token.accessToken) {
         return {
           ...session,
-          error: token.error as string || "NoAccessToken",
+          error: (token.error as string) || "NoAccessToken",
           user: {
             id: "",
             email: "",
@@ -205,10 +211,11 @@ export const authOptions: NextAuthConfig = {
 
 const getUserInfo = async (accessToken: string) => {
   try {
-    const userinfoUrl = typeof window === 'undefined' 
-      ? `${getInternalIssuer()}connect/userinfo`
-      : `${normalizedIssuer}connect/userinfo`;
-      
+    const userinfoUrl =
+      typeof window === "undefined"
+        ? `${getInternalIssuer()}connect/userinfo`
+        : `${normalizedIssuer}connect/userinfo`;
+
     const response = await fetch(userinfoUrl, {
       headers: {
         Authorization: `Bearer ${accessToken}`,

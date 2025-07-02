@@ -7,23 +7,20 @@ import { MobileNavigation } from "./mobile-navigation";
 import { SearchBar } from "./search-bar";
 import { UserActions } from "../user/user-actions";
 import { CategoryNavigation } from "../category/category-navigation";
-import { useGetApiCategory } from "@/api/generated/category/category";
+import { useGetApiV1Category } from "@/api/generated/category/category";
 import { useCart } from "@/contexts/cart-context";
 
 export function Navbar() {
   const { totalItems: cartItemCount } = useCart();
-  const { data } = useGetApiCategory();
+  const { data } = useGetApiV1Category();
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b shadow-sm">
       <TopBar />
-      
+
       <div className="flex h-16 items-center px-4 lg:px-6">
         <div className="flex items-center gap-2 md:gap-4">
-          <MobileNavigation
-            cartItemCount={cartItemCount}
-            categories={data?.data.value || []}
-          />
+          <MobileNavigation cartItemCount={cartItemCount} categories={data?.data.value || []} />
           <Logo />
         </div>
 

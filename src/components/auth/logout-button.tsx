@@ -15,7 +15,7 @@ export default function LogoutButton({
     <form action={logoutServerAction}>
       <Button type="submit" variant={variant} className={cn(className)}>
         <LogOut className="mr-2 size-3.5" />
-        Çıkış Yap
+        Logout
       </Button>
     </form>
   );

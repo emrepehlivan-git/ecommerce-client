@@ -1,146 +1,152 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Plus } from "lucide-react"
-import { toast } from "sonner"
-import { useQueryClient } from "@tanstack/react-query"
+import { useState } from "react";
+import { Plus } from "lucide-react";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { DataTable } from "@/components/ui/data-table"
-import { Button } from "@/components/ui/button"
-import { ConfirmDialog } from "@/components/common/confirm-dialog"
+import { DataTable } from "@/components/ui/data-table";
+import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/common/confirm-dialog";
 
-import { 
-  useGetApiCategory,
-  usePostApiCategory,
-  usePutApiCategoryId,
-  useDeleteApiCategoryId,
-  getGetApiCategoryQueryKey
-} from "@/api/generated/category/category"
-import type { CategoryDto, CreateCategoryCommand, UpdateCategoryCommand } from "@/api/generated/model"
+import {
+  useGetApiV1Category,
+  usePostApiV1Category,
+  usePutApiV1CategoryId,
+  useDeleteApiV1CategoryId,
+  getGetApiV1CategoryQueryKey,
+} from "@/api/generated/category/category";
+import type {
+  CategoryDto,
+  CreateCategoryCommand,
+  UpdateCategoryCommand,
+} from "@/api/generated/model";
 
-import { CategoryFormModal } from "@/components/admin/categories/category-form-modal"
-import { useErrorHandler } from "@/lib/hooks/useErrorHandler"
-import { useDebounce } from "@/hooks/use-debounce"
-import { getCategoryColumns } from "./categories-table-columns"
+import { CategoryFormModal } from "@/components/admin/categories/category-form-modal";
+import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useDebounce } from "@/hooks/use-debounce";
+import { getCategoryColumns } from "./categories-table-columns";
 
 export function CategoryPageClient() {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
-  const [globalFilter, setGlobalFilter] = useState("")
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false)
-  const [editingCategory, setEditingCategory] = useState<CategoryDto | null>(null)
-  const [deletingCategory, setDeletingCategory] = useState<CategoryDto | null>(null)
-  const { handleError } = useErrorHandler()
-  const debouncedGlobalFilter = useDebounce(globalFilter)
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<CategoryDto | null>(null);
+  const [deletingCategory, setDeletingCategory] = useState<CategoryDto | null>(null);
+  const { handleError } = useErrorHandler();
+  const debouncedGlobalFilter = useDebounce(globalFilter);
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
-  const { data: categoriesResponse, isLoading, isFetching } = useGetApiCategory({
+  const {
+    data: categoriesResponse,
+    isLoading,
+    isFetching,
+  } = useGetApiV1Category({
     Page: currentPage,
     PageSize: pageSize,
     Search: debouncedGlobalFilter || undefined,
-  })
+  });
 
-  const queryKey = getGetApiCategoryQueryKey({
+  const queryKey = getGetApiV1CategoryQueryKey({
     Page: currentPage,
     PageSize: pageSize,
     Search: debouncedGlobalFilter || undefined,
-  })
+  });
 
-  const createMutation = usePostApiCategory({
+  const createMutation = usePostApiV1Category({
     mutation: {
       onSuccess: () => {
-        toast.success("Category created successfully")
-        setIsFormModalOpen(false)
-        setEditingCategory(null)
-        queryClient.invalidateQueries({ queryKey })
+        toast.success("Category created successfully");
+        setIsFormModalOpen(false);
+        setEditingCategory(null);
+        queryClient.invalidateQueries({ queryKey });
       },
       onError: (error) => {
-        handleError(error)
+        handleError(error);
       },
     },
-  })
+  });
 
-  const updateMutation = usePutApiCategoryId({
+  const updateMutation = usePutApiV1CategoryId({
     mutation: {
       onSuccess: () => {
-        toast.success("Category updated successfully")
-        setIsFormModalOpen(false)
-        setEditingCategory(null)
-        queryClient.invalidateQueries({ queryKey })
+        toast.success("Category updated successfully");
+        setIsFormModalOpen(false);
+        setEditingCategory(null);
+        queryClient.invalidateQueries({ queryKey });
       },
       onError: (error) => {
-        handleError(error)
+        handleError(error);
       },
     },
-  })
+  });
 
-  const deleteMutation = useDeleteApiCategoryId({
+  const deleteMutation = useDeleteApiV1CategoryId({
     mutation: {
       onSuccess: () => {
-        toast.success("Category deleted successfully")
-        setDeletingCategory(null)
-        queryClient.invalidateQueries({ queryKey })
+        toast.success("Category deleted successfully");
+        setDeletingCategory(null);
+        queryClient.invalidateQueries({ queryKey });
       },
       onError: (error) => {
-        handleError(error)
+        handleError(error);
       },
     },
-  })
+  });
 
   const handleCreate = (data: CreateCategoryCommand) => {
-    createMutation.mutate({ data })
-  }
+    createMutation.mutate({ data });
+  };
 
   const handleUpdate = (data: UpdateCategoryCommand) => {
-    if (!editingCategory?.id) return
-    updateMutation.mutate({ 
-      id: editingCategory.id, 
-      data: { ...data, id: editingCategory.id } 
-    })
-  }
+    if (!editingCategory?.id) return;
+    updateMutation.mutate({
+      id: editingCategory.id,
+      data: { ...data, id: editingCategory.id },
+    });
+  };
 
   const handleDelete = () => {
-    if (!deletingCategory?.id) return
-    deleteMutation.mutate({ id: deletingCategory.id })
-  }
+    if (!deletingCategory?.id) return;
+    deleteMutation.mutate({ id: deletingCategory.id });
+  };
 
   const handleEdit = (category: CategoryDto) => {
-    setEditingCategory(category)
-    setIsFormModalOpen(true)
-  }
+    setEditingCategory(category);
+    setIsFormModalOpen(true);
+  };
 
   const handleDeleteClick = (category: CategoryDto) => {
-    setDeletingCategory(category)
-  }
+    setDeletingCategory(category);
+  };
 
   const handleAddNew = () => {
-    setEditingCategory(null)
-    setIsFormModalOpen(true)
-  }
+    setEditingCategory(null);
+    setIsFormModalOpen(true);
+  };
 
   const handleCloseModal = () => {
-    setIsFormModalOpen(false)
-    setEditingCategory(null)
-  }
+    setIsFormModalOpen(false);
+    setEditingCategory(null);
+  };
 
   const handleCloseDeleteDialog = () => {
-    setDeletingCategory(null)
-  }
+    setDeletingCategory(null);
+  };
 
   const handleCopyId = (id: string) => {
-    navigator.clipboard.writeText(id)
-    toast.success("ID copied to clipboard")
-  }
+    navigator.clipboard.writeText(id);
+    toast.success("ID copied to clipboard");
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Categories</h2>
-          <p className="text-muted-foreground">
-            Manage product categories
-          </p>
+          <p className="text-muted-foreground">Manage product categories</p>
         </div>
         <Button onClick={handleAddNew} className="gap-2">
           <Plus className="h-4 w-4" />
@@ -183,5 +189,5 @@ export function CategoryPageClient() {
         isPending={deleteMutation.isPending}
       />
     </div>
-  )
-} 
+  );
+}

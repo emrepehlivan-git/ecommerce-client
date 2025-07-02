@@ -1,93 +1,91 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Plus, Package } from "lucide-react"
-import { toast } from "sonner"
-import { useQueryClient } from "@tanstack/react-query"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Plus, Package } from "lucide-react";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { DataTable } from "@/components/ui/data-table"
-import { Button } from "@/components/ui/button"
-import { ConfirmDialog } from "@/components/common/confirm-dialog"
+import { DataTable } from "@/components/ui/data-table";
+import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/common/confirm-dialog";
 
-import { 
-  useGetApiProduct,
-  useDeleteApiProductId,
-  getGetApiProductQueryKey
-} from "@/api/generated/product/product"
-import type { ProductDto } from "@/api/generated/model"
+import {
+  useGetApiV1Product,
+  useDeleteApiV1ProductId,
+  getGetApiV1ProductQueryKey,
+} from "@/api/generated/product/product";
+import type { ProductDto } from "@/api/generated/model";
 
-import { useErrorHandler } from "@/lib/hooks/useErrorHandler"
-import { useDebounce } from "@/hooks/use-debounce"
-import { getProductColumns } from "./products-table-columns"
+import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useDebounce } from "@/hooks/use-debounce";
+import { getProductColumns } from "./products-table-columns";
 
 export function ProductsPageClient() {
-  const router = useRouter()
-  const [currentPage, setCurrentPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
-  const [globalFilter, setGlobalFilter] = useState("")
-  const [deletingProduct, setDeletingProduct] = useState<ProductDto | null>(null)
-  const { handleError } = useErrorHandler()
-  const debouncedGlobalFilter = useDebounce(globalFilter)
+  const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [deletingProduct, setDeletingProduct] = useState<ProductDto | null>(null);
+  const { handleError } = useErrorHandler();
+  const debouncedGlobalFilter = useDebounce(globalFilter);
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
-  const { data: productsResponse, isLoading, isFetching } = useGetApiProduct({
+  const {
+    data: productsResponse,
+    isLoading,
+    isFetching,
+  } = useGetApiV1Product({
     Page: currentPage,
     PageSize: pageSize,
     Search: debouncedGlobalFilter || undefined,
-  })
+  });
 
-  const queryKey = getGetApiProductQueryKey({
+  const queryKey = getGetApiV1ProductQueryKey({
     Page: currentPage,
     PageSize: pageSize,
     Search: debouncedGlobalFilter || undefined,
-  })
+  });
 
-  const deleteMutation = useDeleteApiProductId({
+  const deleteMutation = useDeleteApiV1ProductId({
     mutation: {
       onSuccess: () => {
-        toast.success("Product deleted successfully")
-        setDeletingProduct(null)
-        queryClient.invalidateQueries({ queryKey })
+        toast.success("Product deleted successfully");
+        setDeletingProduct(null);
+        queryClient.invalidateQueries({ queryKey });
       },
       onError: (error) => {
-        handleError(error)
+        handleError(error);
       },
     },
-  })
+  });
 
   const handleDelete = () => {
-    if (!deletingProduct?.id) return
-    deleteMutation.mutate({ id: deletingProduct.id })
-  }
+    if (!deletingProduct?.id) return;
+    deleteMutation.mutate({ id: deletingProduct.id });
+  };
 
   const handleEdit = (product: ProductDto) => {
-    router.push(`/admin/products/${product.id}/edit`)
-  }
+    router.push(`/admin/products/${product.id}/edit`);
+  };
 
   const handleDeleteClick = (product: ProductDto) => {
-    setDeletingProduct(product)
-  }
+    setDeletingProduct(product);
+  };
 
   const handleAddNew = () => {
-    router.push("/admin/products/create")
-  }
+    router.push("/admin/products/create");
+  };
 
   const handleCloseDeleteDialog = () => {
-    setDeletingProduct(null)
-  }
-
-  const handleCopyId = (id: string) => {
-    navigator.clipboard.writeText(id)
-    toast.success("ID copied to clipboard")
-  }
+    setDeletingProduct(null);
+  };
 
   const columns = getProductColumns({
     handleEdit,
     handleDeleteClick,
-    handleCopyId,
-  })
+  });
 
   return (
     <div className="space-y-6">
@@ -97,9 +95,7 @@ export function ProductsPageClient() {
             <Package className="h-6 w-6" />
             Products
           </h2>
-          <p className="text-muted-foreground">
-            Product management and stock control
-          </p>
+          <p className="text-muted-foreground">Product management and stock control</p>
         </div>
         <Button onClick={handleAddNew} className="gap-2">
           <Plus className="h-4 w-4" />
@@ -130,5 +126,5 @@ export function ProductsPageClient() {
         isPending={deleteMutation.isPending}
       />
     </div>
-  )
-} 
+  );
+}

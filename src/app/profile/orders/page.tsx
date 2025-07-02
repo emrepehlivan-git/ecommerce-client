@@ -6,7 +6,11 @@ export default async function OrdersPage() {
   const userId = session?.user?.id;
 
   if (!userId) {
-    return <div className="container mx-auto py-8 text-center">Siparişleri görmek için giriş yapmalısınız.</div>;
+    return (
+      <div className="container mx-auto py-8 text-center">
+        You must be logged in to view orders.
+      </div>
+    );
   }
 
   return <OrdersClient userId={userId} />;

@@ -8,7 +8,6 @@ export function EmptyCart() {
   return (
     <div className="container mx-auto px-4 py-16">
       <div className="flex flex-col items-center justify-center min-h-[400px] space-y-6">
-        {/* Icon */}
         <div className="relative">
           <div className="bg-gray-100 rounded-full p-8">
             <ShoppingCart className="h-16 w-16 text-gray-400" />
@@ -18,54 +17,48 @@ export function EmptyCart() {
           </div>
         </div>
 
-        {/* Content */}
         <div className="text-center space-y-4 max-w-md">
-          <h2 className="text-2xl font-bold text-gray-900">
-            Sepetiniz Boş
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-900">Your cart is empty</h2>
           <p className="text-gray-600 leading-relaxed">
-            Henüz sepetinizde ürün bulunmuyor. Binlerce ürün arasından 
-            beğendiğinizi seçip alışverişe başlayın!
+            Your cart is empty. Choose your favorite products and start shopping!
           </p>
         </div>
 
-        {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-4 pt-4">
           <Button asChild size="lg" className="px-8">
             <Link href="/products">
               <ShoppingCart className="mr-2 h-5 w-5" />
-              Alışverişe Başla
+              Start Shopping
             </Link>
           </Button>
         </div>
 
-        {/* Features */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-8 w-full max-w-2xl">
           <div className="text-center space-y-2">
             <div className="bg-green-100 rounded-full p-3 w-fit mx-auto">
               <Package className="h-6 w-6 text-green-600" />
             </div>
-            <h3 className="font-medium text-gray-900">Ücretsiz Kargo</h3>
-            <p className="text-sm text-gray-600">500₺ üzeri alışverişlerde</p>
+            <h3 className="font-medium text-gray-900">Free Shipping</h3>
+            <p className="text-sm text-gray-600">On purchases over 500$</p>
           </div>
-          
+
           <div className="text-center space-y-2">
             <div className="bg-blue-100 rounded-full p-3 w-fit mx-auto">
               <ShoppingCart className="h-6 w-6" />
             </div>
-            <h3 className="font-medium text-gray-900">Kolay İade</h3>
-            <p className="text-sm text-gray-600">30 gün içinde ücretsiz</p>
+            <h3 className="font-medium text-gray-900">Easy Return</h3>
+            <p className="text-sm text-gray-600">Free return within 30 days</p>
           </div>
-          
+
           <div className="text-center space-y-2">
             <div className="bg-purple-100 rounded-full p-3 w-fit mx-auto">
               <Package className="h-6 w-6 text-purple-600" />
             </div>
-            <h3 className="font-medium text-gray-900">Hızlı Teslimat</h3>
-            <p className="text-sm text-gray-600">Aynı gün kargo seçeneği</p>
+            <h3 className="font-medium text-gray-900">Fast Delivery</h3>
+            <p className="text-sm text-gray-600">Same day shipping option</p>
           </div>
         </div>
       </div>
     </div>
   );
-} 
+}

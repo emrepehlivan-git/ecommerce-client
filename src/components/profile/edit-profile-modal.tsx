@@ -20,22 +20,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Save,
-  X,
-  User,
-  Mail,
-  Phone,
-  CalendarIcon,
-  TextIcon,
-} from "lucide-react";
+import { Save, X, User, Mail, Phone, CalendarIcon, TextIcon } from "lucide-react";
 import { Calendar } from "../ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { usePutApiUsersIdBirthday } from "@/api/generated/users/users";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { usePutApiV1UsersIdBirthday } from "@/api/generated/users/users";
 import { useSession } from "next-auth/react";
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
 import { format } from "date-fns";
@@ -65,7 +53,7 @@ export default function EditProfileModal({
   onOpenChange,
   defaultValues,
 }: EditProfileModalProps) {
-  const { handleError } = useErrorHandler();    
+  const { handleError } = useErrorHandler();
   const [calendarOpen, setCalendarOpen] = useState(false);
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(formSchema),
@@ -73,7 +61,7 @@ export default function EditProfileModal({
   });
   const { data: session } = useSession();
   const userId = session?.user?.id;
-  const birthdayMutation = usePutApiUsersIdBirthday();
+  const birthdayMutation = usePutApiV1UsersIdBirthday();
 
   async function onSubmit(values: ProfileFormValues) {
     if (!userId) {
@@ -86,8 +74,8 @@ export default function EditProfileModal({
         data: values.birthDate ? new Date(values.birthDate).toISOString() : "",
       });
       onOpenChange(false);
-    } catch (e: any) {
-      handleError(e?.message || "Bir hata oluştu");
+    } catch (error) {
+      handleError(error);
     }
   }
 
@@ -99,9 +87,7 @@ export default function EditProfileModal({
             <User className="w-5 h-5" />
             Profil Bilgileri
           </DialogTitle>
-          <DialogDescription>
-            Profil bilgilerinizi güncelleyin
-          </DialogDescription>
+          <DialogDescription>Profil bilgilerinizi güncelleyin</DialogDescription>
         </DialogHeader>
         <div className="space-y-6">
           <Form {...form}>
@@ -117,11 +103,7 @@ export default function EditProfileModal({
                         Adınız ve Soyadınız
                       </FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          className="h-11"
-                          placeholder="Adınız ve Soyadınız"
-                        />
+                        <Input {...field} className="h-11" placeholder="Adınız ve Soyadınız" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -158,11 +140,7 @@ export default function EditProfileModal({
                         Telefon Numarası
                       </FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          className="h-11"
-                          placeholder="90 (555) 555-55-55"
-                        />
+                        <Input {...field} className="h-11" placeholder="90 (555) 555-55-55" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -185,9 +163,11 @@ export default function EditProfileModal({
                               }
                               type="button"
                             >
-                              {field.value
-                                ? format(new Date(field.value), "PPP")
-                                : <span>Tarih seç</span>}
+                              {field.value ? (
+                                format(new Date(field.value), "PPP")
+                              ) : (
+                                <span>Tarih seç</span>
+                              )}
                               <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
                           </FormControl>
@@ -196,11 +176,11 @@ export default function EditProfileModal({
                           <Calendar
                             mode="single"
                             selected={field.value ? new Date(field.value) : undefined}
-                            onSelect={date => {
+                            onSelect={(date) => {
                               field.onChange(date ? date.toISOString() : "");
                               setCalendarOpen(false);
                             }}
-                            disabled={date => date > new Date() || date < new Date("1900-01-01")}
+                            disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                             captionLayout="dropdown"
                           />
                         </PopoverContent>
@@ -215,11 +195,7 @@ export default function EditProfileModal({
                 <Button type="submit" variant="default">
                   <Save className="w-4 h-4 mr-2" /> Kaydet
                 </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => onOpenChange(false)}
-                >
+                <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                   <X className="w-4 h-4 mr-2" /> İptal
                 </Button>
               </div>
@@ -229,4 +205,4 @@ export default function EditProfileModal({
       </DialogContent>
     </Dialog>
   );
-} 
+}

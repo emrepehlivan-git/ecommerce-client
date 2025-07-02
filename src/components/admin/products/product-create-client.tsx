@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import { useRouter } from "next/navigation"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { ArrowLeft, Loader2, Package, Plus } from "lucide-react"
-import { toast } from "sonner"
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { ArrowLeft, Loader2, Package, Plus } from "lucide-react";
+import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -15,21 +15,21 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+} from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import type { CreateProductCommand, CategoryDto } from "@/api/generated/model"
-import { usePostApiProduct } from "@/api/generated/product/product"
-import { useErrorHandler } from "@/lib/hooks/useErrorHandler"
+import type { CreateProductCommand, CategoryDto } from "@/api/generated/model";
+import { usePostApiV1Product } from "@/api/generated/product/product";
+import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
 
 const formSchema = z.object({
   name: z
@@ -42,28 +42,23 @@ const formSchema = z.object({
     .max(1000, "Description must be at most 1000 characters")
     .optional()
     .or(z.literal("")),
-  price: z
-    .number()
-    .min(0.01, "Price must be greater than 0")
-    .max(999999.99, "Price is too high"),
-  categoryId: z
-    .string()
-    .min(1, "Category selection is required"),
+  price: z.number().min(0.01, "Price must be greater than 0").max(999999.99, "Price is too high"),
+  categoryId: z.string().min(1, "Category selection is required"),
   stockQuantity: z
     .number()
     .min(0, "Stock quantity must be 0 or greater")
     .max(999999, "Stock quantity is too high"),
-})
+});
 
-type FormData = z.infer<typeof formSchema>
+type FormData = z.infer<typeof formSchema>;
 
 interface ProductCreateClientProps {
-  categories: CategoryDto[]
+  categories: CategoryDto[];
 }
 
 export function ProductCreateClient({ categories }: ProductCreateClientProps) {
-  const router = useRouter()
-  const { handleError } = useErrorHandler()
+  const router = useRouter();
+  const { handleError } = useErrorHandler();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -74,19 +69,19 @@ export function ProductCreateClient({ categories }: ProductCreateClientProps) {
       categoryId: "",
       stockQuantity: 0,
     },
-  })
+  });
 
-  const createMutation = usePostApiProduct({
+  const createMutation = usePostApiV1Product({
     mutation: {
       onSuccess: () => {
-        toast.success("Product created successfully")
-        router.push("/admin/products")
+        toast.success("Product created successfully");
+        router.push("/admin/products");
       },
       onError: (error) => {
-        handleError(error)
+        handleError(error);
       },
     },
-  })
+  });
 
   const handleSubmit = (data: FormData) => {
     const createData: CreateProductCommand = {
@@ -95,23 +90,18 @@ export function ProductCreateClient({ categories }: ProductCreateClientProps) {
       price: data.price,
       categoryId: data.categoryId,
       stockQuantity: data.stockQuantity,
-    }
-    createMutation.mutate({ data: createData })
-  }
+    };
+    createMutation.mutate({ data: createData });
+  };
 
   const handleCancel = () => {
-    router.push("/admin/products")
-  }
+    router.push("/admin/products");
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleCancel}
-          className="gap-2"
-        >
+        <Button variant="ghost" size="sm" onClick={handleCancel} className="gap-2">
           <ArrowLeft className="h-4 w-4" />
           Back
         </Button>
@@ -120,9 +110,7 @@ export function ProductCreateClient({ categories }: ProductCreateClientProps) {
             <Package className="h-6 w-6" />
             Create New Product
           </h3>
-          <p className="text-muted-foreground">
-            Add a new product to the system
-          </p>
+          <p className="text-muted-foreground">Add a new product to the system</p>
         </div>
       </div>
 
@@ -161,9 +149,9 @@ export function ProductCreateClient({ categories }: ProductCreateClientProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Category *</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        value={field.value} 
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
                         disabled={createMutation.isPending}
                       >
                         <FormControl>
@@ -232,7 +220,7 @@ export function ProductCreateClient({ categories }: ProductCreateClientProps) {
                   name="stockQuantity"
                   render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Initial Stock Quantity *</FormLabel>
+                      <FormLabel>Initial Stock Quantity *</FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -259,8 +247,8 @@ export function ProductCreateClient({ categories }: ProductCreateClientProps) {
                 >
                   Cancel
                 </Button>
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={createMutation.isPending}
                   className="flex-1 md:flex-none"
                 >
@@ -273,5 +261,5 @@ export function ProductCreateClient({ categories }: ProductCreateClientProps) {
         </CardContent>
       </Card>
     </div>
-  )
-} 
+  );
+}

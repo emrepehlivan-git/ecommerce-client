@@ -1,26 +1,26 @@
 "use client";
 
-import React, { createContext, useContext, ReactNode } from 'react';
-import { 
-  useGetApiCart, 
-  usePostApiCartAdd, 
-  usePutApiCartUpdateQuantity, 
-  useDeleteApiCartRemoveProductId,
-  useDeleteApiCartClear
-} from '@/api/generated/cart/cart';
-import { CartDto, AddToCartCommand, UpdateCartItemQuantityCommand } from '@/api/generated/model';
-import { useErrorHandler } from '@/lib/hooks/useErrorHandler';
+import React, { createContext, useContext, ReactNode } from "react";
+import {
+  useGetApiV1Cart,
+  usePostApiV1CartAdd,
+  usePutApiV1CartUpdateQuantity,
+  useDeleteApiV1CartRemoveProductId,
+  useDeleteApiV1CartClear,
+} from "@/api/generated/cart/cart";
+import { CartDto, AddToCartCommand, UpdateCartItemQuantityCommand } from "@/api/generated/model";
+import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
 
 interface CartContextType {
   cart: CartDto | undefined;
   isLoading: boolean;
   error: Error | null;
-  
+
   addToCart: (productId: string, quantity: number) => Promise<void>;
   updateQuantity: (productId: string, quantity: number) => Promise<void>;
   removeFromCart: (productId: string) => Promise<void>;
   clearCart: () => Promise<void>;
-  
+
   totalItems: number;
   totalAmount: number;
   isCartEmpty: boolean;
@@ -31,7 +31,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function useCart() {
   const context = useContext(CartContext);
   if (context === undefined) {
-    throw new Error('useCart must be used within a CartProvider');
+    throw new Error("useCart must be used within a CartProvider");
   }
   return context;
 }
@@ -42,59 +42,59 @@ interface CartProviderProps {
 
 export function CartProvider({ children }: CartProviderProps) {
   const { handleError, handleSuccess } = useErrorHandler({
-    context: 'CartProvider'
+    context: "CartProvider",
   });
 
-  const { data: cartResponse, isLoading, error, refetch } = useGetApiCart();
+  const { data: cartResponse, isLoading, error, refetch } = useGetApiV1Cart();
 
   const cart = cartResponse?.data as CartDto | undefined;
-  
-  const addToCartMutation = usePostApiCartAdd({
+
+  const addToCartMutation = usePostApiV1CartAdd({
     mutation: {
       onSuccess: () => {
-        handleSuccess('Ürün sepete eklendi!');
+        handleSuccess("Ürün sepete eklendi!");
         refetch();
       },
       onError: (error) => {
-        handleError(error, 'Ürün sepete eklenirken hata oluştu!');
-      }
-    }
+        handleError(error, "Ürün sepete eklenirken hata oluştu!");
+      },
+    },
   });
 
-  const updateQuantityMutation = usePutApiCartUpdateQuantity({
+  const updateQuantityMutation = usePutApiV1CartUpdateQuantity({
     mutation: {
       onSuccess: () => {
-        handleSuccess('Miktar güncellendi!');
+        handleSuccess("Miktar güncellendi!");
         refetch();
       },
       onError: (error) => {
-        handleError(error, 'Miktar güncellenirken hata oluştu!');
-      }
-    }
+        handleError(error, "Miktar güncellenirken hata oluştu!");
+      },
+    },
   });
 
-  const removeFromCartMutation = useDeleteApiCartRemoveProductId({
+  const removeFromCartMutation = useDeleteApiV1CartRemoveProductId({
     mutation: {
       onSuccess: () => {
-        handleSuccess('Ürün sepetten çıkarıldı!');
+        handleSuccess("Ürün sepetten çıkarıldı!");
         refetch();
       },
       onError: (error) => {
-        handleError(error, 'Ürün sepetten çıkarılırken hata oluştu!');
-      }
-    }
+        handleError(error, "Ürün sepetten çıkarılırken hata oluştu!");
+      },
+    },
   });
 
-  const clearCartMutation = useDeleteApiCartClear({
+  const clearCartMutation = useDeleteApiV1CartClear({
     mutation: {
       onSuccess: () => {
-        handleSuccess('Sepet temizlendi!');
+        handleSuccess("Sepet temizlendi!");
         refetch();
       },
       onError: (error) => {
-        handleError(error, 'Sepet temizlenirken hata oluştu!');
-      }
-    }
+        handleError(error, "Sepet temizlenirken hata oluştu!");
+      },
+    },
   });
 
   const addToCart = async (productId: string, quantity: number) => {
@@ -119,25 +119,20 @@ export function CartProvider({ children }: CartProviderProps) {
   const totalAmount = cart?.totalAmount || 0;
   const isCartEmpty = !cart?.items || cart.items.length === 0;
 
-
   const value: CartContextType = {
     cart,
     isLoading,
     error: error as Error | null,
-    
+
     addToCart,
     updateQuantity,
     removeFromCart,
     clearCart,
-    
+
     totalItems,
     totalAmount,
-    isCartEmpty
+    isCartEmpty,
   };
 
-  return (
-    <CartContext.Provider value={value}>
-      {children}
-    </CartContext.Provider>
-  );
-} 
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+}

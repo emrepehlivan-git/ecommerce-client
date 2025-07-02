@@ -3,7 +3,7 @@ import { getSession } from "next-auth/react";
 import { auth } from "./auth";
 
 const getBaseURL = () => {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL;
   }
   return process.env.NEXT_PUBLIC_API_URL;
@@ -16,11 +16,11 @@ export const axiosClient = axios.create({
 
 let isRefreshing = false;
 let failedQueue: Array<{
-  resolve: (value?: any) => void;
-  reject: (error?: any) => void;
+  resolve: (value?: unknown) => void;
+  reject: (error?: unknown) => void;
 }> = [];
 
-const processQueue = (error: any, token: string | null = null) => {
+const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue.forEach(({ resolve, reject }) => {
     if (error) {
       reject(error);
@@ -28,13 +28,13 @@ const processQueue = (error: any, token: string | null = null) => {
       resolve(token);
     }
   });
-  
+
   failedQueue = [];
 };
 
 axiosClient.interceptors.request.use(
   async (config) => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const session = await getSession();
       if (session?.accessToken) {
         config.headers.Authorization = `Bearer ${session.accessToken}`;
@@ -52,15 +52,21 @@ axiosClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error?.response?.status === 401 && !originalRequest._retry && typeof window !== 'undefined') {
+    if (
+      error?.response?.status === 401 &&
+      !originalRequest._retry &&
+      typeof window !== "undefined"
+    ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
-        }).then(() => {
-          return axiosClient(originalRequest);
-        }).catch((err) => {
-          return Promise.reject(err);
-        });
+        })
+          .then(() => {
+            return axiosClient(originalRequest);
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
       }
 
       originalRequest._retry = true;
@@ -68,7 +74,7 @@ axiosClient.interceptors.response.use(
 
       try {
         const session = await getSession();
-        
+
         if (session?.error === "RefreshAccessTokenError") {
           processQueue(error, null);
           return Promise.reject(error);
@@ -95,7 +101,7 @@ axiosClient.interceptors.response.use(
 );
 
 export const axiosClientMutator = async (config: AxiosRequestConfig) => {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     const session = await auth();
     if (session?.accessToken) {
       config.headers = {
@@ -105,4 +111,4 @@ export const axiosClientMutator = async (config: AxiosRequestConfig) => {
     }
   }
   return axiosClient(config);
-}
+};

@@ -4,18 +4,18 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogHeader, 
-  DialogTitle, 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
-import { 
-  useGetApiUserAddressesUserUserId, 
-  useDeleteApiUserAddressesId,
-  usePatchApiUserAddressesIdSetDefault,
-  getGetApiUserAddressesUserUserIdQueryKey
+import {
+  useGetApiV1UserAddressesUserUserId,
+  useDeleteApiV1UserAddressesId,
+  usePatchApiV1UserAddressesIdSetDefault,
+  getGetApiV1UserAddressesUserUserIdQueryKey,
 } from "@/api/generated/user-addresses/user-addresses";
 import { UserAddressDto } from "@/api/generated/model";
 import { MapPin, Trash2, Star, StarOff, Edit } from "lucide-react";
@@ -35,39 +35,39 @@ export function AddressList({ userId }: AddressListProps) {
   const [addressToDelete, setAddressToDelete] = useState<string | null>(null);
   const [addressToEdit, setAddressToEdit] = useState<UserAddressDto | null>(null);
 
-  const { data: addresses, isLoading, refetch } = useGetApiUserAddressesUserUserId(userId);
-  const { handleError, handleSuccess } = useErrorHandler({ context: 'AddressList' });
+  const { data: addresses, isLoading, refetch } = useGetApiV1UserAddressesUserUserId(userId);
+  const { handleError, handleSuccess } = useErrorHandler({ context: "AddressList" });
   const queryClient = useQueryClient();
 
-  const deleteMutation = useDeleteApiUserAddressesId({
+  const deleteMutation = useDeleteApiV1UserAddressesId({
     mutation: {
       onSuccess: () => {
-        handleSuccess("Adres başarıyla silindi!");
-        // Cache'i invalidate et
+        handleSuccess("Address deleted successfully!");
         queryClient.invalidateQueries({
-          queryKey: getGetApiUserAddressesUserUserIdQueryKey(userId)
+          queryKey: getGetApiV1UserAddressesUserUserIdQueryKey(userId),
         });
         setDeleteDialogOpen(false);
         setAddressToDelete(null);
+        refetch();
       },
       onError: (error) => {
-        const customMessage = ErrorHelper.getAddressOperationErrorMessage(error, 'delete');
+        const customMessage = ErrorHelper.getAddressOperationErrorMessage(error, "delete");
         handleError(error, customMessage);
       },
     },
   });
 
-  const setDefaultMutation = usePatchApiUserAddressesIdSetDefault({
+  const setDefaultMutation = usePatchApiV1UserAddressesIdSetDefault({
     mutation: {
       onSuccess: () => {
-        handleSuccess("Varsayılan adres güncellendi!");
-        // Cache'i invalidate et
+        handleSuccess("Default address updated!");
         queryClient.invalidateQueries({
-          queryKey: getGetApiUserAddressesUserUserIdQueryKey(userId)
+          queryKey: getGetApiV1UserAddressesUserUserIdQueryKey(userId),
         });
+        refetch();
       },
       onError: (error) => {
-        const customMessage = ErrorHelper.getAddressOperationErrorMessage(error, 'setDefault');
+        const customMessage = ErrorHelper.getAddressOperationErrorMessage(error, "setDefault");
         handleError(error, customMessage);
       },
     },
@@ -80,12 +80,12 @@ export function AddressList({ userId }: AddressListProps) {
 
   const confirmDelete = () => {
     if (!addressToDelete) {
-      handleError('Silinecek adres ID\'si bulunamadı', 'Silme işlemi gerçekleştirilemedi');
+      handleError("Address not found");
       return;
     }
 
     if (!userId) {
-      handleError('Kullanıcı ID\'si bulunamadı', 'Silme işlemi gerçekleştirilemedi');
+      handleError("User not found");
       return;
     }
 
@@ -97,12 +97,12 @@ export function AddressList({ userId }: AddressListProps) {
 
   const handleSetDefault = (addressId: string) => {
     if (!addressId) {
-      handleError('Adres ID\'si bulunamadı', 'Varsayılan adres güncelleme işlemi gerçekleştirilemedi');
+      handleError("Cannot set default address");
       return;
     }
 
     if (!userId) {
-      handleError('Kullanıcı ID\'si bulunamadı', 'Varsayılan adres güncelleme işlemi gerçekleştirilemedi');
+      handleError("User not found");
       return;
     }
 
@@ -115,26 +115,19 @@ export function AddressList({ userId }: AddressListProps) {
   const handleEdit = (address: UserAddressDto) => {
     setAddressToEdit(address);
     setEditDialogOpen(true);
-  };
-
-  const handleEditSuccess = () => {
-    // Cache invalidation AddressModal içinde yapılıyor
+    refetch();
   };
 
   if (isLoading) {
-    return (
-      <AddressSkeleton />
-    );
+    return <AddressSkeleton />;
   }
 
-  if (!addresses?.data?.value || addresses.data.value.length === 0) {
+  if (!addresses?.data || addresses.data.length === 0) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Henüz adres eklenmemiş</CardTitle>
-          <CardDescription>
-            Teslimat için bir adres ekleyerek başlayın
-          </CardDescription>
+          <CardTitle className="text-lg">No address added yet</CardTitle>
+          <CardDescription>Add an address to start delivering</CardDescription>
         </CardHeader>
       </Card>
     );
@@ -143,24 +136,21 @@ export function AddressList({ userId }: AddressListProps) {
   return (
     <>
       <div className="grid gap-4">
-        {addresses.data.value.map((address: UserAddressDto) => (
+        {addresses.data.map((address: UserAddressDto) => (
           <Card key={address.id} className="relative">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-muted-foreground" />
-                  <CardTitle className="text-lg">{address.label || "Adres"}</CardTitle>
+                  <CardTitle className="text-lg">{address.label || "Address"}</CardTitle>
                   {address.isDefault && (
                     <Badge variant="secondary" className="text-xs">
-                      Varsayılan
+                      Default
                     </Badge>
                   )}
                 </div>
                 <div className="flex gap-2">
-                  <Hint 
-                    label={address.isDefault ? "Varsayılan adres" : "Varsayılan yap"}
-                    asChild
-                  >
+                  <Hint label={address.isDefault ? "Default address" : "Set as default"} asChild>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -174,16 +164,12 @@ export function AddressList({ userId }: AddressListProps) {
                       )}
                     </Button>
                   </Hint>
-                  <Hint label="Düzenle" asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEdit(address)}
-                    >
+                  <Hint label="Edit" asChild>
+                    <Button variant="ghost" size="sm" onClick={() => handleEdit(address)}>
                       <Edit className="w-4 h-4" />
                     </Button>
                   </Hint>
-                  <Hint label="Sil" asChild>
+                  <Hint label="Delete" asChild>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -212,24 +198,21 @@ export function AddressList({ userId }: AddressListProps) {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Adresi Sil</DialogTitle>
+            <DialogTitle>Delete Address</DialogTitle>
             <DialogDescription>
-              Bu adresi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+              Are you sure you want to delete this address? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <div className="flex gap-2 justify-end">
-            <Button
-              variant="outline"
-              onClick={() => setDeleteDialogOpen(false)}
-            >
-              İptal
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+              Cancel
             </Button>
             <Button
               variant="destructive"
               onClick={confirmDelete}
               disabled={deleteMutation.isPending}
             >
-              {deleteMutation.isPending ? "Siliniyor..." : "Sil"}
+              {deleteMutation.isPending ? "Deleting..." : "Delete"}
             </Button>
           </div>
         </DialogContent>
@@ -240,30 +223,34 @@ export function AddressList({ userId }: AddressListProps) {
         onClose={() => setEditDialogOpen(false)}
         address={addressToEdit}
         userId={userId}
-        onSuccess={handleEditSuccess}
         mode="edit"
+        onSuccess={() => {
+          setEditDialogOpen(false);
+          refetch();
+          setAddressToEdit(null);
+        }}
       />
     </>
   );
-} 
+}
 
 const AddressSkeleton = () => {
   return (
     <div className="grid gap-4">
-    {[...Array(2)].map((_, i) => (
-      <Card key={i} className="animate-pulse">
-        <CardHeader>
-          <div className="h-4 bg-gray-300 rounded w-1/4"></div>
-          <div className="h-3 bg-gray-300 rounded w-1/2"></div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <div className="h-3 bg-gray-300 rounded"></div>
-            <div className="h-3 bg-gray-300 rounded w-3/4"></div>
-          </div>
-        </CardContent>
-      </Card>
-    ))}
-  </div>
+      {[...Array(2)].map((_, i) => (
+        <Card key={i} className="animate-pulse">
+          <CardHeader>
+            <div className="h-4 bg-gray-300 rounded w-1/4"></div>
+            <div className="h-3 bg-gray-300 rounded w-1/2"></div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div className="h-3 bg-gray-300 rounded"></div>
+              <div className="h-3 bg-gray-300 rounded w-3/4"></div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
   );
 };

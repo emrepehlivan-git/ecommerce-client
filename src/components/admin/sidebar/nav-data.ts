@@ -1,19 +1,24 @@
-import { BarChart3, ChevronRight, FileText, Home, Settings, Shield, Users, Zap } from "lucide-react"
+import { BarChart3, FileText, Home, Settings, Shield, Users, Zap } from "lucide-react";
 
 export type NavItem = {
-  title: string
-  url: string
-  icon: React.ElementType
-  isActive?: boolean
-  items?: NavSubItem[]
-}
+  title: string;
+  url: string;
+  icon: React.ElementType;
+  isActive?: boolean;
+  items?: NavSubItem[];
+};
 
 export type NavSubItem = {
-  title: string
-  url: string
-}
+  title: string;
+  url: string;
+};
 
 export const navMain: NavItem[] = [
+  {
+    title: "Go to app",
+    url: "/",
+    icon: Home,
+  },
   {
     title: "Dashboard",
     url: "/admin",
@@ -55,7 +60,7 @@ export const navMain: NavItem[] = [
     url: "/admin/stock",
     icon: Zap,
   },
-]
+];
 
 export const navSecondary: NavItem[] = [
   {
@@ -68,4 +73,4 @@ export const navSecondary: NavItem[] = [
     url: "/admin/security",
     icon: Shield,
   },
-] 
+];

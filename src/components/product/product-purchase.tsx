@@ -10,17 +10,16 @@ import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
 
 interface ProductPurchaseProps {
   productId: string;
-  productName: string;
   price: number;
   stockQuantity: number;
 }
 
-export function ProductPurchase({ productId, productName, price, stockQuantity }: ProductPurchaseProps) {
+export function ProductPurchase({ productId, price, stockQuantity }: ProductPurchaseProps) {
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const { addToCart } = useCart();
   const { handleError } = useErrorHandler({
-    context: 'ProductPurchase'
+    context: "ProductPurchase",
   });
 
   const handleAddToCart = async () => {
@@ -28,7 +27,7 @@ export function ProductPurchase({ productId, productName, price, stockQuantity }
     try {
       await addToCart(productId, quantity);
     } catch (error) {
-      handleError(error, 'Ürün sepete eklenirken hata oluştu!');
+      handleError(error, "Ürün sepete eklenirken hata oluştu!");
     } finally {
       setIsLoading(false);
     }
@@ -48,21 +47,19 @@ export function ProductPurchase({ productId, productName, price, stockQuantity }
 
         <div className="flex items-center justify-between text-lg font-semibold">
           <span>Toplam:</span>
-          <span className="text-primary">
-            ₺{(price * quantity).toLocaleString('tr-TR')}
-          </span>
+          <span className="text-primary">₺{(price * quantity).toLocaleString("tr-TR")}</span>
         </div>
 
-        <Button 
-          onClick={handleAddToCart} 
+        <Button
+          onClick={handleAddToCart}
           disabled={isLoading}
           className="w-full h-12 text-lg"
           size="lg"
         >
           <ShoppingCart className="mr-2 h-5 w-5" />
-          {isLoading ? 'Ekleniyor...' : 'Sepete Ekle'}
+          {isLoading ? "Ekleniyor..." : "Sepete Ekle"}
         </Button>
       </CardContent>
     </Card>
   );
-} 
+}

@@ -1,7 +1,6 @@
 "use client";
 import { MapPin, Package, Pencil, Star } from "lucide-react";
 import Link from "next/link";
-import LogoutButton from "../auth/logout-button";
 import { Button } from "../ui/button";
 import { User } from "next-auth";
 import { useState } from "react";
@@ -13,21 +12,21 @@ interface ProfileSidebarProps {
 
 export default function ProfileSidebar({ user }: ProfileSidebarProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  
+
   const links = [
     {
       href: "/profile/orders",
-      label: "Siparişlerim",
+      label: "Orders",
       icon: Package,
     },
     {
       href: "/profile/addresses",
-      label: "Adreslerim",
+      label: "Addresses",
       icon: MapPin,
     },
     {
       href: "/profile/reviews",
-      label: "Değerlendirmelerim",
+      label: "Reviews",
       icon: Star,
     },
   ];
@@ -45,16 +44,14 @@ export default function ProfileSidebar({ user }: ProfileSidebarProps) {
       <aside className="w-72 mr-8 bg-white rounded-xl shadow-md p-6 flex flex-col gap-6 h-fit">
         <div className="flex flex-col items-start gap-2">
           <span className="font-semibold text-lg">{user?.name}</span>
-          <span className="text-sm text-muted-foreground font-medium">
-            {user?.email}
-          </span>
-          <Button 
-            variant="outline" 
+          <span className="text-sm text-muted-foreground font-medium">{user?.email}</span>
+          <Button
+            variant="outline"
             className="w-full mt-5"
             onClick={() => setIsEditModalOpen(true)}
           >
             <Pencil className="size-4" />
-            Profili Düzenle
+            Edit Profile
           </Button>
         </div>
         <nav className="flex flex-col gap-2 mt-4">
@@ -69,8 +66,8 @@ export default function ProfileSidebar({ user }: ProfileSidebarProps) {
           ))}
         </nav>
       </aside>
-      
-      <EditProfileModal 
+
+      <EditProfileModal
         isOpen={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
         defaultValues={defaultProfileValues}
