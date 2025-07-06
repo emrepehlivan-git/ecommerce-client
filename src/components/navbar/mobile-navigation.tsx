@@ -1,142 +1,126 @@
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Menu, User, ShoppingCart, Folder, Home, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Sheet,
-  SheetContent,
-  SheetTrigger,
   SheetClose,
+  SheetContent,
+  SheetHeader,
   SheetTitle,
+  SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { Logo } from "./logo";
 import type { CategoryDto } from "@/api/generated/model";
+import { Menu, Shield, Home, Folder } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { hasRole } from "@/lib/auth-utils";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useState } from "react";
+import { useI18n } from "@/i18n/client";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Logo } from "./logo";
+import LogoutButton from "@/components/auth/logout-button";
+import { usePermissions } from "@/hooks/use-permissions";
 
 interface MobileNavigationProps {
-  cartItemCount: number;
   categories: CategoryDto[];
 }
 
-export function MobileNavigation({
-  cartItemCount,
-  categories,
-}: MobileNavigationProps) {
-  const pathname = usePathname();
+export function MobileNavigation({ categories }: MobileNavigationProps) {
+  const [isOpen, setIsOpen] = useState(false);
   const { data: session } = useSession();
+  const pathname = usePathname();
+  const { permissions } = usePermissions();
+  const t  = useI18n();
+
+  const isMobile = useIsMobile();
+
+  if (!isMobile) {
+    return null;
+  }
 
   return (
-    <Sheet>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden hover:bg-gray-100">
+        <Button
+          variant="outline"
+          size="icon"
+          className="lg:hidden"
+          aria-label="Toggle navigation"
+        >
           <Menu className="h-5 w-5" />
-          <span className="sr-only">Menü</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-80 p-0">
-        <SheetTitle className="sr-only">Navigasyon Menüsü</SheetTitle>
-        
-        <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b bg-blue-50">
+      <SheetContent side="left" className="w-full sm:w-[400px]">
+        <SheetHeader>
+          <SheetTitle>
             <Logo />
-          </div>
-          
-          <div className="flex-1 overflow-y-auto">
-            <ScrollArea className="h-full">
-              <div className="p-4 space-y-1">
+          </SheetTitle>
+        </SheetHeader>
+        <ScrollArea className="h-[calc(100%-80px)]">
+          <nav className="mt-4 flex flex-col gap-4 p-4">
+            <div className="flex flex-col gap-2">
+              <SheetClose asChild>
+                <Link
+                  href="/"
+                  className={cn(
+                    "flex items-center p-3 rounded-lg text-sm font-medium transition-colors",
+                    pathname === "/"
+                      ? "bg-primary/10 text-primary"
+                      : "text-gray-700 hover:bg-gray-100"
+                  )}
+                >
+                  <Home className="mr-3 h-4 w-4" />
+                  {t("mobile_navigation.home")}
+                </Link>
+              </SheetClose>
+              {permissions.includes("AdminPanel.Access") && (
                 <SheetClose asChild>
                   <Link
-                    href="/"
+                    href="/admin"
                     className={cn(
                       "flex items-center p-3 rounded-lg text-sm font-medium transition-colors",
-                      pathname === "/"
+                      pathname.startsWith("/admin")
                         ? "bg-primary/10 text-primary"
                         : "text-gray-700 hover:bg-gray-100"
                     )}
                   >
-                    <Home className="mr-3 h-4 w-4" />
-                    Ana Sayfa
+                    <Shield className="mr-3 h-4 w-4" />
+                    {t("mobile_navigation.admin")}
                   </Link>
                 </SheetClose>
-                
-                {hasRole(session, "Admin") && (
-                  <SheetClose asChild>
-                    <Link
-                      href="/admin"
-                      className={cn(
-                        "flex items-center p-3 rounded-lg text-sm font-medium transition-colors",
-                        pathname === "/admin"
-                          ? "bg-primary/10 text-primary"
-                          : "text-gray-700 hover:bg-gray-100"
-                      )}
-                    >
-                      <Shield className="mr-3 h-4 w-4" />
-                      Admin Paneli
-                    </Link>
-                  </SheetClose>
-                )}
-                
-                {/* Kategoriler */}
-                <div className="mt-6">
-                  <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    <Folder className="inline mr-2 h-3 w-3" />
-                    Kategoriler
-                  </div>
-                  
-                  <div className="space-y-1 mt-2">
-                    {categories.map((category) => (
-                      <SheetClose key={category.id} asChild>
-                        <Link
-                          href={`/category/${category.id}`}
-                          className={cn(
-                            "flex items-center p-3 rounded-lg text-sm font-medium transition-colors",
-                            pathname === `/category/${category.id}`
-                              ? "bg-primary/10 text-primary"
-                              : "text-gray-700 hover:bg-gray-100"
-                          )}
-                        >
-                          <div className="w-2 h-2 rounded-full bg-primary mr-3" />
-                          {category.name}
-                        </Link>
-                      </SheetClose>
-                    ))}
-                  </div>
-                </div>
+              )}
+            </div>
+
+            {/* Kategoriler */}
+            <div className="flex flex-col gap-2">
+              <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                <Folder className="inline mr-2 h-3 w-3" />
+                {t("mobile_navigation.categories")}
+              </h3>
+              {categories.map((category) => (
+                <SheetClose asChild key={category.id}>
+                  <Link
+                    href={`/category/${category.id}`}
+                    className={cn(
+                      "flex items-center p-3 rounded-lg text-sm font-medium transition-colors",
+                      pathname === `/category/${category.id}`
+                        ? "bg-primary/10 text-primary"
+                        : "text-gray-700 hover:bg-gray-100"
+                    )}
+                  >
+                    {category.name}
+                  </Link>
+                </SheetClose>
+              ))}
+            </div>
+
+            {session && (
+              <div className="mt-auto">
+                <LogoutButton className="w-full!" variant="ghost" />
               </div>
-            </ScrollArea>
-          </div>
-          
-          {/* Footer */}
-          <div className="border-t p-4 space-y-3 bg-gray-50">
-            <SheetClose asChild>
-              <Button variant="outline" asChild className="w-full justify-start h-12">
-                <Link href="/profile">
-                  <User className="mr-3 h-4 w-4" />
-                  Hesabım
-                </Link>
-              </Button>
-            </SheetClose>
-            
-            <SheetClose asChild>
-              <Button asChild className="w-full justify-start bg-primary hover:bg-primary/90 h-12">
-                <Link href="/cart">
-                  <ShoppingCart className="mr-3 h-4 w-4" />
-                  Sepetim
-                  {cartItemCount > 0 && (
-                    <Badge variant="secondary" className="ml-auto bg-white text-primary font-semibold">
-                      {cartItemCount}
-                    </Badge>
-                  )}
-                </Link>
-              </Button>
-            </SheetClose>
-          </div>
-        </div>
+            )}
+          </nav>
+        </ScrollArea>
       </SheetContent>
     </Sheet>
   );

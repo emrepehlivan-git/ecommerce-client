@@ -1,8 +1,11 @@
 import { NextAuthConfig } from "next-auth";
 import { auth } from "./auth";
+import Keycloak from "next-auth/providers/keycloak";
 
+const realm = "ecommerce";
 const issuer = process.env.NEXT_PUBLIC_AUTH_SERVER_URL;
-const clientId = process.env.NEXT_PUBLIC_OPENIDDICT_CLIENT_ID;
+const clientId = process.env.NEXT_PUBLIC_OPENIDDICT_CLIENT_ID ?? "nextjs-client";
+const clientSecret = process.env.KEYCLOAK_CLIENT_SECRET ?? "";
 
 const normalizedIssuer = issuer?.endsWith("/") ? issuer : `${issuer}/`;
 
@@ -17,68 +20,64 @@ const getInternalIssuer = () => {
 
 export const authOptions: NextAuthConfig = {
   providers: [
-    {
-      id: "openiddict",
-      name: "OpenIddict",
-      type: "oauth",
+    Keycloak({
       clientId,
-      clientSecret: "",
-      issuer: normalizedIssuer,
-      wellKnown: `${normalizedIssuer}.well-known/openid-configuration`,
+      clientSecret,
+      issuer: `${normalizedIssuer}realms/${realm}`,
       authorization: {
+        url: `${normalizedIssuer}realms/${realm}/protocol/openid-connect/auth`,
         params: {
-          scope: "openid profile email roles api offline_access",
-          response_type: "code",
-          code_challenge_method: "S256",
+          scope: "openid email profile",
         },
-        url: `${normalizedIssuer}connect/authorize`,
       },
-      userinfo: {
-        url:
-          typeof window === "undefined"
-            ? `${getInternalIssuer()}connect/userinfo`
-            : `${normalizedIssuer}connect/userinfo`,
-      },
-      token: {
-        url:
-          typeof window === "undefined"
-            ? `${getInternalIssuer()}connect/token`
-            : `${normalizedIssuer}connect/token`,
-      },
-      profile: async (profile) => {
-        return {
-          id: profile.sub,
-          name: profile.name,
-          email: profile.email,
-          image: profile.picture,
-        };
-      },
-      checks: ["pkce", "state"],
-    },
+      token: `${getInternalIssuer()}realms/${realm}/protocol/openid-connect/token`,
+      userinfo: `${getInternalIssuer()}realms/${realm}/protocol/openid-connect/userinfo`,
+    }),
   ],
   session: {
     strategy: "jwt",
+    maxAge: 2 * 60 * 60, // 2 saat
+  },
+  jwt: {
+    maxAge: 2 * 60 * 60, // 2 saat
+  },
+  cookies: {
+    sessionToken: {
+      name: "next-auth.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 2 * 60 * 60, // 2 saat
+      },
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === "development",
+  debug: false,
   trustHost: true,
   experimental: {
     enableWebAuthn: false,
   },
-  events: {
-    async signIn(message) {
-      console.log("NextAuth signIn event:", message);
-    },
-  },
   callbacks: {
     async jwt({ token, account, profile }) {
-      if (account) {
+      console.log("jwt", token, account, profile);
+      if (account?.access_token) {
         token.accessToken = account.access_token;
         token.accessTokenExpires = account.expires_at ? account.expires_at * 1000 : 0;
       }
 
       if (profile) {
-        token.id = profile.sub ?? "";
+        const anyProfile = profile as any;
+        token.id = anyProfile.sub ?? "";
+        token.name = anyProfile.name ?? "";
+        token.email = anyProfile.email ?? "";
+        
+        if (anyProfile.resource_access && anyProfile.resource_access[clientId]) {
+          token.role = anyProfile.resource_access[clientId].roles ?? [];
+        }
+        
+        token.permissions = (anyProfile.permissions as string[]) ?? [];
       }
 
       if (Date.now() > (token.accessTokenExpires ?? Infinity)) {
@@ -88,11 +87,40 @@ export const authOptions: NextAuthConfig = {
       return token;
     },
     async session({ session, token }) {
-      if (token.id) {
-        session.user.id = token.id;
-      }
+      console.log("session", session, token);
+      session.user.id = token.id || "";
+      session.user.name = token.name;
+      session.user.email = token.email ?? "";
+      session.user.role = token.role;
       session.accessToken = token.accessToken;
       session.error = token.error;
+      
+      // Backend'den permissions'ları çek
+      if (token.accessToken && !token.permissions?.length) {
+        try {
+          const apiUrl = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL;
+          const response = await fetch(`${apiUrl}/api/v1/Users/permissions`, {
+            headers: {
+              "Authorization": `Bearer ${token.accessToken}`,
+              "Content-Type": "application/json",
+            },
+          });
+          
+          if (response.ok) {
+            const permissions = await response.json();
+            token.permissions = permissions;
+            session.user.permissions = permissions;
+          } else {
+            session.user.permissions = [];
+          }
+        } catch (error) {
+          console.error("Failed to fetch permissions:", error);
+          session.user.permissions = [];
+        }
+      } else {
+        session.user.permissions = token.permissions || [];
+      }
+      
       return session;
     },
   },

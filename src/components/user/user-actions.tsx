@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { User, ShoppingCart } from "lucide-react";
+import { User, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,153 +9,56 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useSession, signIn } from "next-auth/react";
-import LogoutButton from "../auth/logout-button";
-import { hasRole } from "@/lib/auth-utils";
+import { useSession } from "next-auth/react";
+import { useI18n } from "@/i18n/client";
+import LogoutButton from "@/components/auth/logout-button";
+import { usePermissions } from "@/hooks/use-permissions";
+import LoginButton from "@/components/auth/login-button";
 
-interface UserActionsProps {
-  cartItemCount: number;
-}
-
-export function UserActions({ cartItemCount }: UserActionsProps) {
+export function UserActions() {
   const { data: session, status } = useSession();
-
-  const handleSignIn = () => {
-    signIn("openiddict");
-  };
+  const t = useI18n();
+  const { permissions } = usePermissions();
 
   if (status === "loading") {
-    return (
-      <div className="flex items-center gap-2 sm:gap-4">
-        <Button variant="ghost" disabled className="text-gray-600 hidden sm:flex">
-          <User className="h-5 w-5 mr-2" />
-          Sign In
-        </Button>
-        <Button variant="ghost" size="icon" className="relative" disabled>
-          <ShoppingCart className="h-5 w-5" />
-        </Button>
-      </div>
-    );
+    return <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse" />;
   }
 
   if (!session) {
-    return (
-      <div className="flex items-center gap-2 sm:gap-4">
-        <Button variant="ghost" onClick={handleSignIn} className="text-gray-600  hidden sm:flex">
-          <User className="h-5 w-5 mr-2" />
-          Sign
-        </Button>
-
-        {/* Mobile user icon */}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleSignIn}
-          className="text-gray-600  sm:hidden"
-        >
-          <User className="h-5 w-5" />
-          <span className="sr-only">Sign In</span>
-        </Button>
-
-        <Button variant="ghost" size="icon" className="relative" asChild>
-          <Link href="/cart">
-            <ShoppingCart className="h-5 w-5" />
-            <span className="sr-only">Cart</span>
-            {cartItemCount > 0 && (
-              <Badge
-                className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full p-0 text-xs bg-blue-600"
-                variant="default"
-              >
-                {cartItemCount}
-              </Badge>
-            )}
-          </Link>
-        </Button>
-      </div>
-    );
+    return <LoginButton />;
   }
 
-  const isAdmin = hasRole(session, "Admin");
-
   return (
-    <div className="flex items-center gap-2 sm:gap-4">
+    <div className="flex items-center gap-4">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="text-gray-600  hidden sm:flex">
-            <User className="h-5 w-5 mr-2" />
-            {session.user.name}
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          {isAdmin && (
-            <DropdownMenuItem asChild>
-              <Link href="/admin">Admin Panel</Link>
-            </DropdownMenuItem>
-          )}
-          <DropdownMenuItem asChild>
-            <Link href="/profile">Account Information</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/profile/orders">Orders</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/favoriler">Favorites</Link>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <LogoutButton className="w-full" variant="ghost" />
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      {/* Mobile user dropdown */}
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="text-gray-600 sm:hidden">
+          <Button variant="ghost" size="icon" className="rounded-full">
             <User className="h-5 w-5" />
-            <span className="sr-only">{session.user.name || "User"}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuLabel>{session.user.name}</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {isAdmin && (
+          {permissions.includes("AdminPanel.Access") && (
             <DropdownMenuItem asChild>
-              <Link href="/admin">Admin Panel</Link>
+              <Link href="/admin">
+                <Shield className="mr-2 h-4 w-4" />
+                {t("user_actions.admin_panel")}
+              </Link>
             </DropdownMenuItem>
           )}
           <DropdownMenuItem asChild>
-            <Link href="/profile">Account Information</Link>
+            <Link href="/profile">{t("user_actions.my_account")}</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href="/profile/orders">Orders</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/favoriler">Favorites</Link>
+            <Link href="/profile/orders">{t("user_actions.my_orders")}</Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
-            <LogoutButton className="w-full" variant="ghost" />
+            <LogoutButton />
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-
-      <Button variant="ghost" size="icon" className="relative" asChild>
-        <Link href="/cart">
-          <ShoppingCart className="h-5 w-5" />
-          <span className="sr-only">Cart</span>
-          {cartItemCount > 0 && (
-            <Badge
-              className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full p-0 text-xs bg-blue-600"
-              variant="default"
-            >
-              {cartItemCount}
-            </Badge>
-          )}
-        </Link>
-      </Button>
     </div>
   );
 }

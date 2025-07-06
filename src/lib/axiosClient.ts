@@ -9,10 +9,15 @@ const getBaseURL = () => {
   return process.env.NEXT_PUBLIC_API_URL;
 };
 
-export const axiosClient = axios.create({
+const axiosClient = axios.create({
   baseURL: getBaseURL(),
-  withCredentials: true,
+  timeout: 10000, 
+  maxRedirects: 3,
+  maxContentLength: 2000000,
+  maxBodyLength: 2000000,
 });
+
+axiosClient.defaults.timeout = 10000;
 
 let isRefreshing = false;
 let failedQueue: Array<{

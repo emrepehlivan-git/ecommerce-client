@@ -1,10 +1,46 @@
-import { Session } from "next-auth";
+import type { Session } from "next-auth";
+import { auth } from "./auth";
+import { getApiV1UsersPermissions } from "@/api/generated/users/users";
 
 export const hasRole = (session: Session | null, role: string): boolean => {
-  if (!session || !session.user || !session.user.role) {
-    return false;
+  return session?.user?.role?.includes(role) ?? false;
+};
+
+async function getUserPermissions(): Promise<string[]> {
+  try {
+    const response = await getApiV1UsersPermissions();
+    return response.data;
+  } catch (error) {
+    return [];
   }
-  return session.user.role.includes(role);
+}
+
+export const hasPermission = async (permission: string): Promise<boolean> => {
+  const session = await auth();
+  if (!session) return false;
+
+  const permissions = await getUserPermissions();
+  return permissions.includes(permission);
+};
+
+export const hasAllPermissions = async (
+  permissions: string[],
+): Promise<boolean> => {
+  const session = await auth();
+  if (!session) return false;
+
+  const userPermissions = await getUserPermissions();
+  return permissions.every((p) => userPermissions.includes(p));
+};
+
+export const hasAnyPermission = async (
+  permissions: string[],
+): Promise<boolean> => {
+  const session = await auth();
+  if (!session) return false;
+
+  const userPermissions = await getUserPermissions();
+  return permissions.some((p) => userPermissions.includes(p));
 };
 
 export const getUserInfo = async (accessToken: string) => {

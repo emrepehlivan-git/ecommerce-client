@@ -1,12 +1,12 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AdminSidebar } from "@/components/admin/admin-sidebar"
-import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
-import { hasRole } from "@/lib/auth-utils"
+import { hasPermission } from "@/lib/auth-utils"
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
-  const session = await auth()
-  if (!hasRole(session, "Admin")) {
+  const canAccess = await hasPermission("AdminPanel.Access")
+
+  if (!canAccess) {
     redirect("/")
   }
 

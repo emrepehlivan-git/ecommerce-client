@@ -10,14 +10,16 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAppStore } from "@/stores/useAppStore";
-import LoginButton from "../auth/login-button";
-import LogoutButton from "../auth/logout-button";
+import LoginButton from "@/components/auth/login-button";
+import LogoutButton from "@/components/auth/logout-button";
 import Link from "next/link";
+import { useI18n } from "@/i18n/client";
 
 export function UserNav() {
   const { data: session } = useSession();
   const { user, isLoadingUser } = useAppStore();
-
+  const t = useI18n();
+  
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -50,15 +52,15 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/profile">{/* <User className="mr-2 h-4 w-4" /> */} Profil</Link>
+            <Link href="/profile">{t("user_actions.my_account")}</Link>
         </DropdownMenuItem>
         {user?.role?.includes("Admin") && (
           <DropdownMenuItem asChild>
-            <Link href="/admin">{/* <Shield className="mr-2 h-4 w-4" /> */} Yönetim</Link>
+            <Link href="/admin">{t("user_actions.admin_panel")}</Link>
           </DropdownMenuItem>
         )}
         <DropdownMenuSeparator />
-        <LogoutButton />
+        <LogoutButton className="w-full!" variant="ghost" />
       </DropdownMenuContent>
     </DropdownMenu>
   );

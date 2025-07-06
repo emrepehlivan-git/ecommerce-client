@@ -19,11 +19,12 @@ import {
 } from "@/components/ui/sidebar";
 import { Bell, Settings } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useI18n } from "@/i18n/client";
 
 export function AdminSidebarFooter() {
   const session = useSession();
   const user = session?.data?.user;
-
+  const t = useI18n();
   return (
     <SidebarFooter>
       <SidebarMenu>
@@ -69,11 +70,11 @@ export function AdminSidebarFooter() {
               <DropdownMenuGroup>
                 <DropdownMenuItem>
                   <Settings />
-                  Account Settings
+                  {t("user_actions.my_account")}
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Bell />
-                  Notifications
+                  {t("user_actions.notifications")}
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />

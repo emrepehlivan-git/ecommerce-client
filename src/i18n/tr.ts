@@ -137,6 +137,19 @@ export default {
       },
     },
   },
+  user_actions: {
+    login: "Giriş Yap",
+    admin_panel: "Admin Paneli",
+    my_account: "Hesabım",
+    my_orders: "Siparişlerim",
+    logout: "Çıkış Yap",
+    notifications: "Bildirimler",
+  },
+  mobile_navigation: {
+    home: "Anasayfa",
+    admin: "Admin",
+    categories: "Kategoriler",
+  },
   products: {
     page: {
       breadcrumb: {

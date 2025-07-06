@@ -137,6 +137,19 @@ export default {
       },
     },
   },
+  user_actions: {
+    login: "Login",
+    admin_panel: "Admin Panel",
+    my_account: "My Account",
+    my_orders: "My Orders",
+    logout: "Logout",
+    notifications: "Notifications",
+  },
+  mobile_navigation: {
+    home: "Home",
+    admin: "Admin",
+    categories: "Categories",
+  },
   products: {
     page: {
       breadcrumb: {
