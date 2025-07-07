@@ -10,6 +10,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { BackToTop } from "@/components/ui/back-to-top";
 import { I18nProviderClient } from "@/i18n/client";
 import { StoreInitializer } from "@/stores/StoreInitializer";
+import { Metadata } from "next";
 
 const font = Poppins({
   subsets: ["latin"],
@@ -17,6 +18,22 @@ const font = Poppins({
   weight: ["400", "500", "600", "700", "800", "900"],
 });
 
+export const metadata: Metadata = {
+  title: "Ecommerce",
+  description: "Ecommerce",
+  openGraph: {
+    title: "Ecommerce",
+    description: "Ecommerce",
+    images: ["/logo.png"],
+  },
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export default async function RootLayout({
   children,
