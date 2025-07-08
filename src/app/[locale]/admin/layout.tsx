@@ -1,12 +1,16 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AdminSidebar } from "@/components/admin/admin-sidebar"
 import { redirect } from "next/navigation"
-import { hasPermission } from "@/lib/auth-utils"
+import { hasPermission, hasAdminAccess } from "@/lib/auth-utils"
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
-  const canAccess = await hasPermission("AdminPanel.Access")
+  // Hem admin rolü hem de permission kontrolü yap
+  const [canAccess, isAdminUser] = await Promise.all([
+    hasPermission("AdminPanel.Access"),
+    hasAdminAccess()
+  ]);
 
-  if (!canAccess) {
+  if (!canAccess && !isAdminUser) {
     redirect("/")
   }
 

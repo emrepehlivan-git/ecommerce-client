@@ -14,11 +14,18 @@ import { useI18n } from "@/i18n/client";
 import LogoutButton from "@/components/auth/logout-button";
 import { usePermissions } from "@/hooks/use-permissions";
 import LoginButton from "@/components/auth/login-button";
+import { checkAdminAccess } from "@/lib/auth-utils";
 
-export function UserActions() {
+interface UserActionsProps {
+  cartItemCount?: number;
+}
+
+export function UserActions({ cartItemCount }: UserActionsProps = {}) {
   const { data: session, status } = useSession();
   const t = useI18n();
   const { permissions } = usePermissions();
+  
+  const hasAdminRole = session?.user?.role ? checkAdminAccess(session.user.role) : false;
 
   if (status === "loading") {
     return <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse" />;
@@ -39,7 +46,7 @@ export function UserActions() {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>{session.user.name}</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {permissions.includes("AdminPanel.Access") && (
+          {(permissions.includes("AdminPanel.Access") || hasAdminRole) && (
             <DropdownMenuItem asChild>
               <Link href="/admin">
                 <Shield className="mr-2 h-4 w-4" />

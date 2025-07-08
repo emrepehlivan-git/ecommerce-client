@@ -61,7 +61,6 @@ export const authOptions: NextAuthConfig = {
   },
   callbacks: {
     async jwt({ token, account, profile }) {
-      console.log("jwt", token, account, profile);
       if (account?.access_token) {
         token.accessToken = account.access_token;
         token.accessTokenExpires = account.expires_at ? account.expires_at * 1000 : 0;
@@ -73,10 +72,17 @@ export const authOptions: NextAuthConfig = {
         token.name = anyProfile.name ?? "";
         token.email = anyProfile.email ?? "";
         
-        if (anyProfile.resource_access && anyProfile.resource_access[clientId]) {
-          token.role = anyProfile.resource_access[clientId].roles ?? [];
+        let clientRoles: string[] = [];
+        
+        if (anyProfile.resource_access?.[clientId]?.roles) {
+          clientRoles = anyProfile.resource_access[clientId].roles;
         }
         
+        const filteredRoles = clientRoles.filter(role => 
+          role && role.trim().length > 0
+        );
+        
+        token.role = filteredRoles;
         token.permissions = (anyProfile.permissions as string[]) ?? [];
       }
 
@@ -87,7 +93,6 @@ export const authOptions: NextAuthConfig = {
       return token;
     },
     async session({ session, token }) {
-      console.log("session", session, token);
       session.user.id = token.id || "";
       session.user.name = token.name;
       session.user.email = token.email ?? "";
@@ -95,7 +100,6 @@ export const authOptions: NextAuthConfig = {
       session.accessToken = token.accessToken;
       session.error = token.error;
       
-      // Backend'den permissions'ları çek
       if (token.accessToken && !token.permissions?.length) {
         try {
           const apiUrl = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL;
