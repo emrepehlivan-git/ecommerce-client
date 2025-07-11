@@ -227,5 +227,9 @@ export default {
       removedFromWishlist: "Ürün favorilerden kaldırıldı",
       linkCopied: "Ürün linki kopyalandı!",
     },
+    card: {
+      outOfStock: "Stokta Yok",
+      inStock: "Stokta",
+    },
   },
 } as const;

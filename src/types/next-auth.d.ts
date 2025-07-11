@@ -8,16 +8,14 @@ declare module "next-auth" {
       id: string;
       name: string;
       email: string;
-      role: string[];
-      permissions: string[];
+      roles: string[];
     } & DefaultSession["user"];
     accessToken: unknown;
     error: unknown;
   }
 
   interface User extends DefaultUser {
-    role: string[];
-    permissions: string[];
+    roles: string[];
   }
 }
 
@@ -26,8 +24,7 @@ declare module "next-auth/jwt" {
     id: string;
     name: string;
     email: string;
-    role: string[];
-    permissions: string[];
+    roles: string[];
     accessToken: unknown;
     accessTokenExpires: number;
     error?: string;

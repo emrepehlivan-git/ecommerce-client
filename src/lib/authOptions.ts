@@ -64,6 +64,28 @@ export const authOptions: NextAuthConfig = {
       if (account?.access_token) {
         token.accessToken = account.access_token;
         token.accessTokenExpires = account.expires_at ? account.expires_at * 1000 : 0;
+        
+        // Decode JWT to extract roles
+        try {
+          const base64Url = account.access_token.split('.')[1];
+          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+          const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          }).join(''));
+          
+          const decodedToken = JSON.parse(jsonPayload);
+          
+          // Extract roles from resource_access
+          let roles: string[] = [];
+          if (decodedToken.resource_access?.[clientId]?.roles) {
+            roles = decodedToken.resource_access[clientId].roles;
+          }
+          
+          token.roles = roles.filter(role => role && role.trim().length > 0);
+        } catch (error) {
+          console.error("Failed to decode JWT:", error);
+          token.roles = [];
+        }
       }
 
       if (profile) {
@@ -71,19 +93,6 @@ export const authOptions: NextAuthConfig = {
         token.id = anyProfile.sub ?? "";
         token.name = anyProfile.name ?? "";
         token.email = anyProfile.email ?? "";
-        
-        let clientRoles: string[] = [];
-        
-        if (anyProfile.resource_access?.[clientId]?.roles) {
-          clientRoles = anyProfile.resource_access[clientId].roles;
-        }
-        
-        const filteredRoles = clientRoles.filter(role => 
-          role && role.trim().length > 0
-        );
-        
-        token.role = filteredRoles;
-        token.permissions = (anyProfile.permissions as string[]) ?? [];
       }
 
       if (Date.now() > (token.accessTokenExpires ?? Infinity)) {
@@ -96,34 +105,9 @@ export const authOptions: NextAuthConfig = {
       session.user.id = token.id || "";
       session.user.name = token.name;
       session.user.email = token.email ?? "";
-      session.user.role = token.role;
+      session.user.roles = token.roles || [];
       session.accessToken = token.accessToken;
       session.error = token.error;
-      
-      if (token.accessToken && !token.permissions?.length) {
-        try {
-          const apiUrl = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL;
-          const response = await fetch(`${apiUrl}/api/v1/Users/permissions`, {
-            headers: {
-              "Authorization": `Bearer ${token.accessToken}`,
-              "Content-Type": "application/json",
-            },
-          });
-          
-          if (response.ok) {
-            const permissions = await response.json();
-            token.permissions = permissions;
-            session.user.permissions = permissions;
-          } else {
-            session.user.permissions = [];
-          }
-        } catch (error) {
-          console.error("Failed to fetch permissions:", error);
-          session.user.permissions = [];
-        }
-      } else {
-        session.user.permissions = token.permissions || [];
-      }
       
       return session;
     },

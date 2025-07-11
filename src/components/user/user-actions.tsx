@@ -12,7 +12,6 @@ import {
 import { useSession } from "next-auth/react";
 import { useI18n } from "@/i18n/client";
 import LogoutButton from "@/components/auth/logout-button";
-import { usePermissions } from "@/hooks/use-permissions";
 import LoginButton from "@/components/auth/login-button";
 import { checkAdminAccess } from "@/lib/auth-utils";
 
@@ -23,9 +22,8 @@ interface UserActionsProps {
 export function UserActions({ cartItemCount }: UserActionsProps = {}) {
   const { data: session, status } = useSession();
   const t = useI18n();
-  const { permissions } = usePermissions();
   
-  const hasAdminRole = session?.user?.role ? checkAdminAccess(session.user.role) : false;
+  const hasAdminRole = session?.user?.roles ? checkAdminAccess(session.user.roles) : false;
 
   if (status === "loading") {
     return <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse" />;
@@ -46,7 +44,7 @@ export function UserActions({ cartItemCount }: UserActionsProps = {}) {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>{session.user.name}</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {(permissions.includes("AdminPanel.Access") || hasAdminRole) && (
+          {hasAdminRole && (
             <DropdownMenuItem asChild>
               <Link href="/admin">
                 <Shield className="mr-2 h-4 w-4" />

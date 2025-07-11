@@ -17,7 +17,7 @@ interface UserData {
   name?: string | null;
   email?: string | null;
   picture?: string | null;
-  role?: string[] | null;
+  roles?: string[] | null;
   [key: string]: any;
 }
 

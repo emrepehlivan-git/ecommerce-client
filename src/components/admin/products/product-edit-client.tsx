@@ -31,6 +31,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { UpdateProductCommand, CategoryDto, ProductDto } from "@/api/generated/model";
 import { usePutApiV1ProductId } from "@/api/generated/product/product";
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { ProductImageManager } from "./product-image-manager";
 
 const formSchema = z.object({
   name: z
@@ -261,6 +262,13 @@ export function ProductEditClient({ categories, product }: ProductEditClientProp
           </Form>
         </CardContent>
       </Card>
+
+      {product?.id && (
+        <ProductImageManager 
+          productId={product.id}
+          maxImages={4}
+        />
+      )}
     </div>
   );
 }

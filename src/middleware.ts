@@ -22,7 +22,7 @@ export default auth((req) => {
     }
     
     // Admin rolüne sahip mi kontrol et
-    const hasAdmin = checkAdminAccess(req.auth.user.role);
+    const hasAdmin = checkAdminAccess(req.auth.user.roles);
     if (!hasAdmin) {
       const homeUrl = new URL('/', req.url);
       return NextResponse.redirect(homeUrl);

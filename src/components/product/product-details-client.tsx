@@ -25,6 +25,7 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
       <ProductImageGallery
         productName={product.name || defaultProductName}
         isOutOfStock={isOutOfStock}
+        images={product.images}
       />
 
       <div className="space-y-6">

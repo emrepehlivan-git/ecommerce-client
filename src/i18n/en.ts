@@ -226,5 +226,9 @@ export default {
       removedFromWishlist: "Product removed from wishlist",
       linkCopied: "Product link copied!",
     },
+    card: {
+      outOfStock: "Out of Stock",
+      inStock: "In Stock",
+    },
   },
 } as const;

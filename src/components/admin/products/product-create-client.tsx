@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { ArrowLeft, Loader2, Package, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -28,8 +29,9 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import type { CreateProductCommand, CategoryDto } from "@/api/generated/model";
-import { usePostApiV1Product } from "@/api/generated/product/product";
+import { usePostApiV1Product, usePostApiV1ProductIdImages } from "@/api/generated/product/product";
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { ProductImageUpload, type ProductImageData } from "./product-image-upload";
 
 const formSchema = z.object({
   name: z
@@ -59,6 +61,8 @@ interface ProductCreateClientProps {
 export function ProductCreateClient({ categories }: ProductCreateClientProps) {
   const router = useRouter();
   const { handleError } = useErrorHandler();
+  const [productImages, setProductImages] = useState<ProductImageData[]>([]);
+  const [createdProductId, setCreatedProductId] = useState<string | null>(null);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -73,12 +77,43 @@ export function ProductCreateClient({ categories }: ProductCreateClientProps) {
 
   const createMutation = usePostApiV1Product({
     mutation: {
+      onSuccess: (response) => {
+        const productId = response.data;
+        setCreatedProductId(productId);
+        
+        if (productImages.length > 0) {
+          uploadImagesMutation.mutate({ 
+            id: productId, 
+            data: {
+              Images: productImages.map(img => ({
+                file: img.file,
+                imageType: img.imageType,
+                displayOrder: img.displayOrder,
+                altText: img.altText || "",
+              }))
+            }
+          });
+        } else {
+          toast.success("Product created successfully");
+          router.push("/admin/products");
+        }
+      },
+      onError: (error) => {
+        handleError(error);
+      },
+    },
+  });
+
+  const uploadImagesMutation = usePostApiV1ProductIdImages({
+    mutation: {
       onSuccess: () => {
-        toast.success("Product created successfully");
+        toast.success("Product and images created successfully");
         router.push("/admin/products");
       },
       onError: (error) => {
         handleError(error);
+        toast.error("Product created but failed to upload images");
+        router.push("/admin/products");
       },
     },
   });
@@ -237,23 +272,29 @@ export function ProductCreateClient({ categories }: ProductCreateClientProps) {
                 />
               </div>
 
+              <ProductImageUpload
+                images={productImages}
+                onImagesChange={setProductImages}
+                disabled={createMutation.isPending || uploadImagesMutation.isPending}
+              />
+
               <div className="flex gap-4 pt-6">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={handleCancel}
-                  disabled={createMutation.isPending}
+                  disabled={createMutation.isPending || uploadImagesMutation.isPending}
                   className="flex-1 md:flex-none"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
-                  disabled={createMutation.isPending}
+                  disabled={createMutation.isPending || uploadImagesMutation.isPending}
                   className="flex-1 md:flex-none"
                 >
-                  {createMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Create Product
+                  {(createMutation.isPending || uploadImagesMutation.isPending) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {uploadImagesMutation.isPending ? "Uploading Images..." : "Create Product"}
                 </Button>
               </div>
             </form>

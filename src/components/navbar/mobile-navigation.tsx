@@ -19,7 +19,7 @@ import { useI18n } from "@/i18n/client";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Logo } from "./logo";
 import LogoutButton from "@/components/auth/logout-button";
-import { usePermissions } from "@/hooks/use-permissions";
+import { checkAdminAccess } from "@/lib/auth-utils";
 
 interface MobileNavigationProps {
   categories: CategoryDto[];
@@ -29,8 +29,9 @@ export function MobileNavigation({ categories }: MobileNavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { data: session } = useSession();
   const pathname = usePathname();
-  const { permissions } = usePermissions();
   const t  = useI18n();
+  
+  const hasAdminRole = session?.user?.roles ? checkAdminAccess(session.user.roles) : false;
 
   const isMobile = useIsMobile();
 
@@ -73,7 +74,7 @@ export function MobileNavigation({ categories }: MobileNavigationProps) {
                   {t("mobile_navigation.home")}
                 </Link>
               </SheetClose>
-              {permissions.includes("AdminPanel.Access") && (
+              {hasAdminRole && (
                 <SheetClose asChild>
                   <Link
                     href="/admin"

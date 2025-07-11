@@ -31,12 +31,17 @@ import type {
 
 import type {
   CreateProductCommand,
+  GetApiV1ProductIdImagesParams,
   GetApiV1ProductParams,
+  PostApiV1ProductIdImagesBody,
   ProblemDetails,
   ProductDto,
   ProductDtoListPagedResult,
+  ProductImageResponseDto,
+  UpdateImageOrderRequest,
   UpdateProductCommand,
-  UpdateProductStock
+  UpdateProductStock,
+  UploadProductImagesResponse
 } from '.././model';
 
 import { axiosClientMutator } from '../../../lib/axiosClient';
@@ -703,6 +708,340 @@ const {mutation: mutationOptions} = options ?
       > => {
 
       const mutationOptions = getPutApiV1ProductIdStockMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    export const getApiV1ProductIdImages = (
+    id: string,
+    params?: GetApiV1ProductIdImagesParams,
+ signal?: AbortSignal
+) => {
+      
+      
+      return axiosClientMutator<ProductImageResponseDto[]>(
+      {url: `/api/v1/Product/${id}/images`, method: 'GET',
+        params, signal
+    },
+      );
+    }
+  
+
+export const getGetApiV1ProductIdImagesQueryKey = (id: string,
+    params?: GetApiV1ProductIdImagesParams,) => {
+    return [`/api/v1/Product/${id}/images`, ...(params ? [params]: [])] as const;
+    }
+
+    
+export const getGetApiV1ProductIdImagesInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiV1ProductIdImages>>, GetApiV1ProductIdImagesParams['page']>, TError = ProblemDetails>(id: string,
+    params?: GetApiV1ProductIdImagesParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1ProductIdImages>>, TError, TData, Awaited<ReturnType<typeof getApiV1ProductIdImages>>, QueryKey, GetApiV1ProductIdImagesParams['page']>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiV1ProductIdImagesQueryKey(id,params);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiV1ProductIdImages>>, QueryKey, GetApiV1ProductIdImagesParams['page']> = ({ signal, pageParam }) => getApiV1ProductIdImages(id,{...params, 'page': pageParam || params?.['page']}, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id),  staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1ProductIdImages>>, TError, TData, Awaited<ReturnType<typeof getApiV1ProductIdImages>>, QueryKey, GetApiV1ProductIdImagesParams['page']> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiV1ProductIdImagesInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiV1ProductIdImages>>>
+export type GetApiV1ProductIdImagesInfiniteQueryError = ProblemDetails
+
+
+export function useGetApiV1ProductIdImagesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiV1ProductIdImages>>, GetApiV1ProductIdImagesParams['page']>, TError = ProblemDetails>(
+ id: string,
+    params: undefined |  GetApiV1ProductIdImagesParams, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1ProductIdImages>>, TError, TData, Awaited<ReturnType<typeof getApiV1ProductIdImages>>, QueryKey, GetApiV1ProductIdImagesParams['page']>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiV1ProductIdImages>>,
+          TError,
+          Awaited<ReturnType<typeof getApiV1ProductIdImages>>, QueryKey
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiV1ProductIdImagesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiV1ProductIdImages>>, GetApiV1ProductIdImagesParams['page']>, TError = ProblemDetails>(
+ id: string,
+    params?: GetApiV1ProductIdImagesParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1ProductIdImages>>, TError, TData, Awaited<ReturnType<typeof getApiV1ProductIdImages>>, QueryKey, GetApiV1ProductIdImagesParams['page']>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiV1ProductIdImages>>,
+          TError,
+          Awaited<ReturnType<typeof getApiV1ProductIdImages>>, QueryKey
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiV1ProductIdImagesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiV1ProductIdImages>>, GetApiV1ProductIdImagesParams['page']>, TError = ProblemDetails>(
+ id: string,
+    params?: GetApiV1ProductIdImagesParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1ProductIdImages>>, TError, TData, Awaited<ReturnType<typeof getApiV1ProductIdImages>>, QueryKey, GetApiV1ProductIdImagesParams['page']>>, }
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiV1ProductIdImagesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiV1ProductIdImages>>, GetApiV1ProductIdImagesParams['page']>, TError = ProblemDetails>(
+ id: string,
+    params?: GetApiV1ProductIdImagesParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1ProductIdImages>>, TError, TData, Awaited<ReturnType<typeof getApiV1ProductIdImages>>, QueryKey, GetApiV1ProductIdImagesParams['page']>>, }
+ , queryClient?: QueryClient 
+ ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiV1ProductIdImagesInfiniteQueryOptions(id,params,options)
+
+  const query = useInfiniteQuery(queryOptions , queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetApiV1ProductIdImagesQueryOptions = <TData = Awaited<ReturnType<typeof getApiV1ProductIdImages>>, TError = ProblemDetails>(id: string,
+    params?: GetApiV1ProductIdImagesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1ProductIdImages>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiV1ProductIdImagesQueryKey(id,params);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiV1ProductIdImages>>> = ({ signal }) => getApiV1ProductIdImages(id,params, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id),  staleTime: 10000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiV1ProductIdImages>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiV1ProductIdImagesQueryResult = NonNullable<Awaited<ReturnType<typeof getApiV1ProductIdImages>>>
+export type GetApiV1ProductIdImagesQueryError = ProblemDetails
+
+
+export function useGetApiV1ProductIdImages<TData = Awaited<ReturnType<typeof getApiV1ProductIdImages>>, TError = ProblemDetails>(
+ id: string,
+    params: undefined |  GetApiV1ProductIdImagesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1ProductIdImages>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiV1ProductIdImages>>,
+          TError,
+          Awaited<ReturnType<typeof getApiV1ProductIdImages>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiV1ProductIdImages<TData = Awaited<ReturnType<typeof getApiV1ProductIdImages>>, TError = ProblemDetails>(
+ id: string,
+    params?: GetApiV1ProductIdImagesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1ProductIdImages>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiV1ProductIdImages>>,
+          TError,
+          Awaited<ReturnType<typeof getApiV1ProductIdImages>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiV1ProductIdImages<TData = Awaited<ReturnType<typeof getApiV1ProductIdImages>>, TError = ProblemDetails>(
+ id: string,
+    params?: GetApiV1ProductIdImagesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1ProductIdImages>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiV1ProductIdImages<TData = Awaited<ReturnType<typeof getApiV1ProductIdImages>>, TError = ProblemDetails>(
+ id: string,
+    params?: GetApiV1ProductIdImagesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1ProductIdImages>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiV1ProductIdImagesQueryOptions(id,params,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const postApiV1ProductIdImages = (
+    id: string,
+    postApiV1ProductIdImagesBody: PostApiV1ProductIdImagesBody,
+ signal?: AbortSignal
+) => {
+      
+      const formData = new FormData();
+if(postApiV1ProductIdImagesBody.Images !== undefined) {
+ postApiV1ProductIdImagesBody.Images.forEach(value => formData.append(`Images`, JSON.stringify(value)));
+ }
+
+      return axiosClientMutator<UploadProductImagesResponse>(
+      {url: `/api/v1/Product/${id}/images`, method: 'POST',
+      headers: {'Content-Type': 'multipart/form-data', },
+       data: formData, signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiV1ProductIdImagesMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1ProductIdImages>>, TError,{id: string;data: PostApiV1ProductIdImagesBody}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiV1ProductIdImages>>, TError,{id: string;data: PostApiV1ProductIdImagesBody}, TContext> => {
+
+const mutationKey = ['postApiV1ProductIdImages'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiV1ProductIdImages>>, {id: string;data: PostApiV1ProductIdImagesBody}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  postApiV1ProductIdImages(id,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiV1ProductIdImagesMutationResult = NonNullable<Awaited<ReturnType<typeof postApiV1ProductIdImages>>>
+    export type PostApiV1ProductIdImagesMutationBody = PostApiV1ProductIdImagesBody
+    export type PostApiV1ProductIdImagesMutationError = ProblemDetails
+
+    export const usePostApiV1ProductIdImages = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1ProductIdImages>>, TError,{id: string;data: PostApiV1ProductIdImagesBody}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiV1ProductIdImages>>,
+        TError,
+        {id: string;data: PostApiV1ProductIdImagesBody},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiV1ProductIdImagesMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    export const deleteApiV1ProductIdImagesImageId = (
+    id: string,
+    imageId: string,
+ ) => {
+      
+      
+      return axiosClientMutator<void>(
+      {url: `/api/v1/Product/${id}/images/${imageId}`, method: 'DELETE'
+    },
+      );
+    }
+  
+
+
+export const getDeleteApiV1ProductIdImagesImageIdMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiV1ProductIdImagesImageId>>, TError,{id: string;imageId: string}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApiV1ProductIdImagesImageId>>, TError,{id: string;imageId: string}, TContext> => {
+
+const mutationKey = ['deleteApiV1ProductIdImagesImageId'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiV1ProductIdImagesImageId>>, {id: string;imageId: string}> = (props) => {
+          const {id,imageId} = props ?? {};
+
+          return  deleteApiV1ProductIdImagesImageId(id,imageId,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteApiV1ProductIdImagesImageIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiV1ProductIdImagesImageId>>>
+    
+    export type DeleteApiV1ProductIdImagesImageIdMutationError = ProblemDetails
+
+    export const useDeleteApiV1ProductIdImagesImageId = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiV1ProductIdImagesImageId>>, TError,{id: string;imageId: string}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteApiV1ProductIdImagesImageId>>,
+        TError,
+        {id: string;imageId: string},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteApiV1ProductIdImagesImageIdMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    export const putApiV1ProductIdImagesReorder = (
+    id: string,
+    updateImageOrderRequest: UpdateImageOrderRequest,
+ ) => {
+      
+      
+      return axiosClientMutator<void>(
+      {url: `/api/v1/Product/${id}/images/reorder`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: updateImageOrderRequest
+    },
+      );
+    }
+  
+
+
+export const getPutApiV1ProductIdImagesReorderMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiV1ProductIdImagesReorder>>, TError,{id: string;data: UpdateImageOrderRequest}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiV1ProductIdImagesReorder>>, TError,{id: string;data: UpdateImageOrderRequest}, TContext> => {
+
+const mutationKey = ['putApiV1ProductIdImagesReorder'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiV1ProductIdImagesReorder>>, {id: string;data: UpdateImageOrderRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  putApiV1ProductIdImagesReorder(id,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutApiV1ProductIdImagesReorderMutationResult = NonNullable<Awaited<ReturnType<typeof putApiV1ProductIdImagesReorder>>>
+    export type PutApiV1ProductIdImagesReorderMutationBody = UpdateImageOrderRequest
+    export type PutApiV1ProductIdImagesReorderMutationError = ProblemDetails
+
+    export const usePutApiV1ProductIdImagesReorder = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiV1ProductIdImagesReorder>>, TError,{id: string;data: UpdateImageOrderRequest}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof putApiV1ProductIdImagesReorder>>,
+        TError,
+        {id: string;data: UpdateImageOrderRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getPutApiV1ProductIdImagesReorderMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }

@@ -1,17 +1,14 @@
 import type { Session } from "next-auth";
 import { auth } from "./auth";
-import { getApiV1UsersPermissions } from "@/api/generated/users/users";
 
 /**
  * Kullanıcının belirli bir role sahip olup olmadığını kontrol eder
  */
 export async function hasRole(requiredRole: string): Promise<boolean> {
   const session = await auth();
-  if (!session?.user?.role) return false;
+  if (!session?.user?.roles) return false;
   
-  return Array.isArray(session.user.role) 
-    ? session.user.role.includes(requiredRole)
-    : session.user.role === requiredRole;
+  return session.user.roles.includes(requiredRole);
 }
 
 /**
@@ -26,50 +23,34 @@ export async function isAdmin(): Promise<boolean> {
  */
 export async function hasAdminAccess(): Promise<boolean> {
   const session = await auth();
-  if (!session?.user?.role) return false;
+  if (!session?.user?.roles) return false;
   
   const adminRoles = ["admin", "superadmin", "Admin", "SuperAdmin"];
-  const userRoles = Array.isArray(session.user.role) ? session.user.role : [session.user.role];
   
   return adminRoles.some(adminRole => 
-    userRoles.some(userRole => userRole.toLowerCase() === adminRole.toLowerCase())
+    session.user.roles.some(userRole => userRole.toLowerCase() === adminRole.toLowerCase())
   );
-}
-
-/**
- * Kullanıcının belirli permission'a sahip olup olmadığını kontrol eder
- */
-export async function hasPermission(requiredPermission: string): Promise<boolean> {
-  const session = await auth();
-  if (!session?.user?.permissions) return false;
-  
-  return Array.isArray(session.user.permissions) 
-    ? session.user.permissions.includes(requiredPermission)
-    : false;
 }
 
 /**
  * Client-side role kontrolü için hook benzeri fonksiyon
  */
-export function checkUserRole(userRole: string[] | string | undefined, requiredRole: string): boolean {
-  if (!userRole) return false;
+export function checkUserRole(userRoles: string[] | undefined, requiredRole: string): boolean {
+  if (!userRoles) return false;
   
-  return Array.isArray(userRole) 
-    ? userRole.includes(requiredRole)
-    : userRole === requiredRole;
+  return userRoles.includes(requiredRole);
 }
 
 /**
  * Client-side admin kontrolü
  */
-export function checkAdminAccess(userRole: string[] | string | undefined): boolean {
-  if (!userRole) return false;
+export function checkAdminAccess(userRoles: string[] | undefined): boolean {
+  if (!userRoles) return false;
   
   const adminRoles = ["admin", "superadmin", "Admin", "SuperAdmin"];
-  const roles = Array.isArray(userRole) ? userRole : [userRole];
   
   return adminRoles.some(adminRole => 
-    roles.some(role => role.toLowerCase() === adminRole.toLowerCase())
+    userRoles.some(role => role.toLowerCase() === adminRole.toLowerCase())
   );
 }
 
@@ -82,35 +63,6 @@ export function redirectUnauthorized(): never {
   }
   throw new Error('Unauthorized access');
 }
-
-async function getUserPermissions(): Promise<string[]> {
-  try {
-    const response = await getApiV1UsersPermissions();
-    return response.data;
-  } catch (error) {
-    return [];
-  }
-}
-
-export const hasAllPermissions = async (
-  permissions: string[],
-): Promise<boolean> => {
-  const session = await auth();
-  if (!session) return false;
-
-  const userPermissions = await getUserPermissions();
-  return permissions.every((p) => userPermissions.includes(p));
-};
-
-export const hasAnyPermission = async (
-  permissions: string[],
-): Promise<boolean> => {
-  const session = await auth();
-  if (!session) return false;
-
-  const userPermissions = await getUserPermissions();
-  return permissions.some((p) => userPermissions.includes(p));
-};
 
 export const getUserInfo = async (accessToken: string) => {
   const issuer = process.env.NEXT_PUBLIC_AUTH_SERVER_URL;

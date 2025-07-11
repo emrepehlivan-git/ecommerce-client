@@ -7,17 +7,11 @@
  */
 import type { ProductImageResponseDto } from './productImageResponseDto';
 
-export interface ProductDto {
-  id?: string;
+export interface UploadProductImagesResponse {
   /** @nullable */
-  name?: string | null;
+  uploadedImages?: ProductImageResponseDto[] | null;
+  successfulCount?: number;
+  totalCount?: number;
   /** @nullable */
-  description?: string | null;
-  price?: number;
-  /** @nullable */
-  categoryName?: string | null;
-  stockQuantity?: number;
-  isActive?: boolean;
-  /** @nullable */
-  images?: ProductImageResponseDto[] | null;
+  errors?: string[] | null;
 }
