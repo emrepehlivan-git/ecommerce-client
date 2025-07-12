@@ -32,6 +32,7 @@ import type {
 import type {
   AddUserAddressCommand,
   DeleteUserAddressRequest,
+  GetApiV1UserAddressesParams,
   GetApiV1UserAddressesUserUserIdParams,
   ProblemDetails,
   Result,
@@ -45,7 +46,470 @@ import { axiosClientMutator } from '../../../lib/axiosClient';
 
 
 
-export const getApiV1UserAddressesUserUserId = (
+export const getApiV1UserAddresses = (
+    params?: GetApiV1UserAddressesParams,
+ signal?: AbortSignal
+) => {
+      
+      
+      return axiosClientMutator<UserAddressDto[]>(
+      {url: `/api/v1/UserAddresses`, method: 'GET',
+        params, signal
+    },
+      );
+    }
+  
+
+export const getGetApiV1UserAddressesQueryKey = (params?: GetApiV1UserAddressesParams,) => {
+    return [`/api/v1/UserAddresses`, ...(params ? [params]: [])] as const;
+    }
+
+    
+export const getGetApiV1UserAddressesInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiV1UserAddresses>>, GetApiV1UserAddressesParams['page']>, TError = ProblemDetails>(params?: GetApiV1UserAddressesParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddresses>>, TError, TData, Awaited<ReturnType<typeof getApiV1UserAddresses>>, QueryKey, GetApiV1UserAddressesParams['page']>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiV1UserAddressesQueryKey(params);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiV1UserAddresses>>, QueryKey, GetApiV1UserAddressesParams['page']> = ({ signal, pageParam }) => getApiV1UserAddresses({...params, 'page': pageParam || params?.['page']}, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn,   staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddresses>>, TError, TData, Awaited<ReturnType<typeof getApiV1UserAddresses>>, QueryKey, GetApiV1UserAddressesParams['page']> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiV1UserAddressesInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiV1UserAddresses>>>
+export type GetApiV1UserAddressesInfiniteQueryError = ProblemDetails
+
+
+export function useGetApiV1UserAddressesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiV1UserAddresses>>, GetApiV1UserAddressesParams['page']>, TError = ProblemDetails>(
+ params: undefined |  GetApiV1UserAddressesParams, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddresses>>, TError, TData, Awaited<ReturnType<typeof getApiV1UserAddresses>>, QueryKey, GetApiV1UserAddressesParams['page']>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiV1UserAddresses>>,
+          TError,
+          Awaited<ReturnType<typeof getApiV1UserAddresses>>, QueryKey
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiV1UserAddressesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiV1UserAddresses>>, GetApiV1UserAddressesParams['page']>, TError = ProblemDetails>(
+ params?: GetApiV1UserAddressesParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddresses>>, TError, TData, Awaited<ReturnType<typeof getApiV1UserAddresses>>, QueryKey, GetApiV1UserAddressesParams['page']>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiV1UserAddresses>>,
+          TError,
+          Awaited<ReturnType<typeof getApiV1UserAddresses>>, QueryKey
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiV1UserAddressesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiV1UserAddresses>>, GetApiV1UserAddressesParams['page']>, TError = ProblemDetails>(
+ params?: GetApiV1UserAddressesParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddresses>>, TError, TData, Awaited<ReturnType<typeof getApiV1UserAddresses>>, QueryKey, GetApiV1UserAddressesParams['page']>>, }
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiV1UserAddressesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiV1UserAddresses>>, GetApiV1UserAddressesParams['page']>, TError = ProblemDetails>(
+ params?: GetApiV1UserAddressesParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddresses>>, TError, TData, Awaited<ReturnType<typeof getApiV1UserAddresses>>, QueryKey, GetApiV1UserAddressesParams['page']>>, }
+ , queryClient?: QueryClient 
+ ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiV1UserAddressesInfiniteQueryOptions(params,options)
+
+  const query = useInfiniteQuery(queryOptions , queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetApiV1UserAddressesQueryOptions = <TData = Awaited<ReturnType<typeof getApiV1UserAddresses>>, TError = ProblemDetails>(params?: GetApiV1UserAddressesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddresses>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiV1UserAddressesQueryKey(params);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiV1UserAddresses>>> = ({ signal }) => getApiV1UserAddresses(params, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn,   staleTime: 10000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddresses>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiV1UserAddressesQueryResult = NonNullable<Awaited<ReturnType<typeof getApiV1UserAddresses>>>
+export type GetApiV1UserAddressesQueryError = ProblemDetails
+
+
+export function useGetApiV1UserAddresses<TData = Awaited<ReturnType<typeof getApiV1UserAddresses>>, TError = ProblemDetails>(
+ params: undefined |  GetApiV1UserAddressesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddresses>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiV1UserAddresses>>,
+          TError,
+          Awaited<ReturnType<typeof getApiV1UserAddresses>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiV1UserAddresses<TData = Awaited<ReturnType<typeof getApiV1UserAddresses>>, TError = ProblemDetails>(
+ params?: GetApiV1UserAddressesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddresses>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiV1UserAddresses>>,
+          TError,
+          Awaited<ReturnType<typeof getApiV1UserAddresses>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiV1UserAddresses<TData = Awaited<ReturnType<typeof getApiV1UserAddresses>>, TError = ProblemDetails>(
+ params?: GetApiV1UserAddressesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddresses>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiV1UserAddresses<TData = Awaited<ReturnType<typeof getApiV1UserAddresses>>, TError = ProblemDetails>(
+ params?: GetApiV1UserAddressesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddresses>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiV1UserAddressesQueryOptions(params,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const postApiV1UserAddresses = (
+    addUserAddressCommand: AddUserAddressCommand,
+ signal?: AbortSignal
+) => {
+      
+      
+      return axiosClientMutator<string>(
+      {url: `/api/v1/UserAddresses`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: addUserAddressCommand, signal
+    },
+      );
+    }
+  
+
+
+export const getPostApiV1UserAddressesMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1UserAddresses>>, TError,{data: AddUserAddressCommand}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiV1UserAddresses>>, TError,{data: AddUserAddressCommand}, TContext> => {
+
+const mutationKey = ['postApiV1UserAddresses'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiV1UserAddresses>>, {data: AddUserAddressCommand}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiV1UserAddresses(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiV1UserAddressesMutationResult = NonNullable<Awaited<ReturnType<typeof postApiV1UserAddresses>>>
+    export type PostApiV1UserAddressesMutationBody = AddUserAddressCommand
+    export type PostApiV1UserAddressesMutationError = ProblemDetails
+
+    export const usePostApiV1UserAddresses = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1UserAddresses>>, TError,{data: AddUserAddressCommand}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiV1UserAddresses>>,
+        TError,
+        {data: AddUserAddressCommand},
+        TContext
+      > => {
+
+      const mutationOptions = getPostApiV1UserAddressesMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    export const getApiV1UserAddressesId = (
+    id: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return axiosClientMutator<UserAddressDto>(
+      {url: `/api/v1/UserAddresses/${id}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+export const getGetApiV1UserAddressesIdQueryKey = (id: string,) => {
+    return [`/api/v1/UserAddresses/${id}`] as const;
+    }
+
+    
+export const getGetApiV1UserAddressesIdInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiV1UserAddressesId>>>, TError = ProblemDetails>(id: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddressesId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiV1UserAddressesIdQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiV1UserAddressesId>>> = ({ signal }) => getApiV1UserAddressesId(id, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id),  staleTime: 10000,  ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddressesId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiV1UserAddressesIdInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiV1UserAddressesId>>>
+export type GetApiV1UserAddressesIdInfiniteQueryError = ProblemDetails
+
+
+export function useGetApiV1UserAddressesIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiV1UserAddressesId>>>, TError = ProblemDetails>(
+ id: string, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddressesId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiV1UserAddressesId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiV1UserAddressesId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiV1UserAddressesIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiV1UserAddressesId>>>, TError = ProblemDetails>(
+ id: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddressesId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiV1UserAddressesId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiV1UserAddressesId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiV1UserAddressesIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiV1UserAddressesId>>>, TError = ProblemDetails>(
+ id: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddressesId>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiV1UserAddressesIdInfinite<TData = InfiniteData<Awaited<ReturnType<typeof getApiV1UserAddressesId>>>, TError = ProblemDetails>(
+ id: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddressesId>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiV1UserAddressesIdInfiniteQueryOptions(id,options)
+
+  const query = useInfiniteQuery(queryOptions , queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetApiV1UserAddressesIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiV1UserAddressesId>>, TError = ProblemDetails>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddressesId>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiV1UserAddressesIdQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiV1UserAddressesId>>> = ({ signal }) => getApiV1UserAddressesId(id, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id),  staleTime: 10000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddressesId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiV1UserAddressesIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiV1UserAddressesId>>>
+export type GetApiV1UserAddressesIdQueryError = ProblemDetails
+
+
+export function useGetApiV1UserAddressesId<TData = Awaited<ReturnType<typeof getApiV1UserAddressesId>>, TError = ProblemDetails>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddressesId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiV1UserAddressesId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiV1UserAddressesId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiV1UserAddressesId<TData = Awaited<ReturnType<typeof getApiV1UserAddressesId>>, TError = ProblemDetails>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddressesId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiV1UserAddressesId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiV1UserAddressesId>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiV1UserAddressesId<TData = Awaited<ReturnType<typeof getApiV1UserAddressesId>>, TError = ProblemDetails>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddressesId>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiV1UserAddressesId<TData = Awaited<ReturnType<typeof getApiV1UserAddressesId>>, TError = ProblemDetails>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1UserAddressesId>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiV1UserAddressesIdQueryOptions(id,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const putApiV1UserAddressesId = (
+    id: string,
+    updateUserAddressRequest: UpdateUserAddressRequest,
+ ) => {
+      
+      
+      return axiosClientMutator<Result>(
+      {url: `/api/v1/UserAddresses/${id}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: updateUserAddressRequest
+    },
+      );
+    }
+  
+
+
+export const getPutApiV1UserAddressesIdMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiV1UserAddressesId>>, TError,{id: string;data: UpdateUserAddressRequest}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof putApiV1UserAddressesId>>, TError,{id: string;data: UpdateUserAddressRequest}, TContext> => {
+
+const mutationKey = ['putApiV1UserAddressesId'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiV1UserAddressesId>>, {id: string;data: UpdateUserAddressRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  putApiV1UserAddressesId(id,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutApiV1UserAddressesIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiV1UserAddressesId>>>
+    export type PutApiV1UserAddressesIdMutationBody = UpdateUserAddressRequest
+    export type PutApiV1UserAddressesIdMutationError = ProblemDetails
+
+    export const usePutApiV1UserAddressesId = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiV1UserAddressesId>>, TError,{id: string;data: UpdateUserAddressRequest}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof putApiV1UserAddressesId>>,
+        TError,
+        {id: string;data: UpdateUserAddressRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getPutApiV1UserAddressesIdMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    export const deleteApiV1UserAddressesId = (
+    id: string,
+    deleteUserAddressRequest: DeleteUserAddressRequest,
+ ) => {
+      
+      
+      return axiosClientMutator<Result>(
+      {url: `/api/v1/UserAddresses/${id}`, method: 'DELETE',
+      headers: {'Content-Type': 'application/json', },
+      data: deleteUserAddressRequest
+    },
+      );
+    }
+  
+
+
+export const getDeleteApiV1UserAddressesIdMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiV1UserAddressesId>>, TError,{id: string;data: DeleteUserAddressRequest}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApiV1UserAddressesId>>, TError,{id: string;data: DeleteUserAddressRequest}, TContext> => {
+
+const mutationKey = ['deleteApiV1UserAddressesId'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiV1UserAddressesId>>, {id: string;data: DeleteUserAddressRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  deleteApiV1UserAddressesId(id,data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteApiV1UserAddressesIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiV1UserAddressesId>>>
+    export type DeleteApiV1UserAddressesIdMutationBody = DeleteUserAddressRequest
+    export type DeleteApiV1UserAddressesIdMutationError = ProblemDetails
+
+    export const useDeleteApiV1UserAddressesId = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiV1UserAddressesId>>, TError,{id: string;data: DeleteUserAddressRequest}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteApiV1UserAddressesId>>,
+        TError,
+        {id: string;data: DeleteUserAddressRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteApiV1UserAddressesIdMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    export const getApiV1UserAddressesUserUserId = (
     userId: string,
     params?: GetApiV1UserAddressesUserUserIdParams,
  signal?: AbortSignal
@@ -202,181 +666,7 @@ export function useGetApiV1UserAddressesUserUserId<TData = Awaited<ReturnType<ty
 
 
 
-export const postApiV1UserAddresses = (
-    addUserAddressCommand: AddUserAddressCommand,
- signal?: AbortSignal
-) => {
-      
-      
-      return axiosClientMutator<string>(
-      {url: `/api/v1/UserAddresses`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: addUserAddressCommand, signal
-    },
-      );
-    }
-  
-
-
-export const getPostApiV1UserAddressesMutationOptions = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1UserAddresses>>, TError,{data: AddUserAddressCommand}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof postApiV1UserAddresses>>, TError,{data: AddUserAddressCommand}, TContext> => {
-
-const mutationKey = ['postApiV1UserAddresses'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiV1UserAddresses>>, {data: AddUserAddressCommand}> = (props) => {
-          const {data} = props ?? {};
-
-          return  postApiV1UserAddresses(data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PostApiV1UserAddressesMutationResult = NonNullable<Awaited<ReturnType<typeof postApiV1UserAddresses>>>
-    export type PostApiV1UserAddressesMutationBody = AddUserAddressCommand
-    export type PostApiV1UserAddressesMutationError = ProblemDetails
-
-    export const usePostApiV1UserAddresses = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1UserAddresses>>, TError,{data: AddUserAddressCommand}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postApiV1UserAddresses>>,
-        TError,
-        {data: AddUserAddressCommand},
-        TContext
-      > => {
-
-      const mutationOptions = getPostApiV1UserAddressesMutationOptions(options);
-
-      return useMutation(mutationOptions , queryClient);
-    }
-    export const putApiV1UserAddressesId = (
-    id: string,
-    updateUserAddressRequest: UpdateUserAddressRequest,
- ) => {
-      
-      
-      return axiosClientMutator<Result>(
-      {url: `/api/v1/UserAddresses/${id}`, method: 'PUT',
-      headers: {'Content-Type': 'application/json', },
-      data: updateUserAddressRequest
-    },
-      );
-    }
-  
-
-
-export const getPutApiV1UserAddressesIdMutationOptions = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiV1UserAddressesId>>, TError,{id: string;data: UpdateUserAddressRequest}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof putApiV1UserAddressesId>>, TError,{id: string;data: UpdateUserAddressRequest}, TContext> => {
-
-const mutationKey = ['putApiV1UserAddressesId'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiV1UserAddressesId>>, {id: string;data: UpdateUserAddressRequest}> = (props) => {
-          const {id,data} = props ?? {};
-
-          return  putApiV1UserAddressesId(id,data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PutApiV1UserAddressesIdMutationResult = NonNullable<Awaited<ReturnType<typeof putApiV1UserAddressesId>>>
-    export type PutApiV1UserAddressesIdMutationBody = UpdateUserAddressRequest
-    export type PutApiV1UserAddressesIdMutationError = ProblemDetails
-
-    export const usePutApiV1UserAddressesId = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiV1UserAddressesId>>, TError,{id: string;data: UpdateUserAddressRequest}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof putApiV1UserAddressesId>>,
-        TError,
-        {id: string;data: UpdateUserAddressRequest},
-        TContext
-      > => {
-
-      const mutationOptions = getPutApiV1UserAddressesIdMutationOptions(options);
-
-      return useMutation(mutationOptions , queryClient);
-    }
-    export const deleteApiV1UserAddressesId = (
-    id: string,
-    deleteUserAddressRequest: DeleteUserAddressRequest,
- ) => {
-      
-      
-      return axiosClientMutator<Result>(
-      {url: `/api/v1/UserAddresses/${id}`, method: 'DELETE',
-      headers: {'Content-Type': 'application/json', },
-      data: deleteUserAddressRequest
-    },
-      );
-    }
-  
-
-
-export const getDeleteApiV1UserAddressesIdMutationOptions = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiV1UserAddressesId>>, TError,{id: string;data: DeleteUserAddressRequest}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof deleteApiV1UserAddressesId>>, TError,{id: string;data: DeleteUserAddressRequest}, TContext> => {
-
-const mutationKey = ['deleteApiV1UserAddressesId'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiV1UserAddressesId>>, {id: string;data: DeleteUserAddressRequest}> = (props) => {
-          const {id,data} = props ?? {};
-
-          return  deleteApiV1UserAddressesId(id,data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type DeleteApiV1UserAddressesIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiV1UserAddressesId>>>
-    export type DeleteApiV1UserAddressesIdMutationBody = DeleteUserAddressRequest
-    export type DeleteApiV1UserAddressesIdMutationError = ProblemDetails
-
-    export const useDeleteApiV1UserAddressesId = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiV1UserAddressesId>>, TError,{id: string;data: DeleteUserAddressRequest}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deleteApiV1UserAddressesId>>,
-        TError,
-        {id: string;data: DeleteUserAddressRequest},
-        TContext
-      > => {
-
-      const mutationOptions = getDeleteApiV1UserAddressesIdMutationOptions(options);
-
-      return useMutation(mutationOptions , queryClient);
-    }
-    export const patchApiV1UserAddressesIdSetDefault = (
+export const patchApiV1UserAddressesIdSetDefault = (
     id: string,
     setDefaultRequest: SetDefaultRequest,
  ) => {

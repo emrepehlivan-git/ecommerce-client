@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { User, Shield } from "lucide-react";
+import { User, Shield, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useI18n } from "@/i18n/client";
 import LogoutButton from "@/components/auth/logout-button";
 import LoginButton from "@/components/auth/login-button";
@@ -59,8 +59,9 @@ export function UserActions({ cartItemCount }: UserActionsProps = {}) {
             <Link href="/profile/orders">{t("user_actions.my_orders")}</Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <LogoutButton />
+          <DropdownMenuItem onClick={() => signOut()} variant="destructive">
+            <LogOut />
+            {t("user_actions.logout")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

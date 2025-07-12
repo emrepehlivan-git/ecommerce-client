@@ -73,7 +73,9 @@ export function ProductEditClient({ categories, product }: ProductEditClientProp
     if (product && categories.length > 0) {
       const categoryId =
         categories.find(
-          (cat) => cat.name?.toLowerCase().trim() === product.categoryName?.toLowerCase().trim()
+          (cat) =>
+            (cat.name ?? "").toLowerCase().trim() ===
+            (product.categoryName ?? "").toLowerCase().trim()
         )?.id || "";
 
       const formData = {
@@ -84,12 +86,6 @@ export function ProductEditClient({ categories, product }: ProductEditClientProp
       };
 
       form.reset(formData);
-
-      if (categoryId) {
-        setTimeout(() => {
-          form.setValue("categoryId", categoryId);
-        }, 100);
-      }
     }
   }, [product, categories, form]);
 

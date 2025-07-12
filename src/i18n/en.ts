@@ -12,6 +12,14 @@ export default {
     description:
       "The e-commerce platform where you can find the highest quality products at affordable prices. With our wide product range, you can supply everything you need from a single point.",
   },
+  hero: {
+    title: "Welcome to Our Store",
+    subtitle: "Quality Products",
+    description: "Discover the products of your dreams at the most affordable prices and create special moments for your loved ones",
+    primaryAction: "Start Shopping",
+    secondaryAction: "Explore Categories",
+    badge: "New",
+  },
   notFound: {
     alt: "Not Found",
     backToHome: "Back to home",
@@ -230,5 +238,30 @@ export default {
       outOfStock: "Out of Stock",
       inStock: "In Stock",
     },
+    create: {
+      success: "Product created successfully",
+      error: "Error creating product",
+      title: "Create New Product",
+      description: "Create a new product",
+      name: "Product Name",
+      category: "Category",
+      price: "Price",
+      stockQuantity: "Stock Quantity",
+      uploadingImages: "Uploading images...",
+      create: "Create Product",
+      rollback: "Error creating product. Product deleted.",
+      rollbackFailed: "Error deleting product.",
+    },
+  },
+  common: {
+    "all": "All",
+    "or": "or",
+    "to": "to",
+    "cancel": "Cancel",
+    "session": {
+      "expired_title": "Session Expired",
+      "expired_description": "Your session has expired. Please log in again.",
+      "login": "Login"
+    }
   },
 } as const;

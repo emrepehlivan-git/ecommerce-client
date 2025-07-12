@@ -12,6 +12,14 @@ export default {
     description:
       "En kaliteli ürünleri uygun fiyatlarla bulabileceğiniz e-ticaret platformu. Geniş ürün yelpazemizle ihtiyacınız olan her şeyi tek bir noktadan temin edebilirsiniz.",
   },
+  hero: {
+    title: "Mağazamıza Hoş Geldiniz",
+    subtitle: "Kaliteli Ürünler",
+    description: "Hayalinizdeki ürünleri en uygun fiyatlarla keşfedin ve sevdiklerinize özel anlar yaşatın",
+    primaryAction: "Alışverişe Başla",
+    secondaryAction: "Kategorileri Keşfet",
+    badge: "Yeni",
+  },
   notFound: {
     alt: "Bulunamadı",
     backToHome: "Ana sayfaya dön",
@@ -231,5 +239,30 @@ export default {
       outOfStock: "Stokta Yok",
       inStock: "Stokta",
     },
+    create: {
+      success: "Ürün başarıyla oluşturuldu",
+      error: "Ürün oluşturulurken hata oluştu",
+      title: "Yeni Ürün Ekle",
+      description: "Yeni bir ürün oluşturun",
+      name: "Ürün Adı",
+      category: "Kategori",
+      price: "Fiyat",
+      stockQuantity: "Stok Miktarı",
+      uploadingImages: "Resimler yükleniyor...",
+      create: "Ürün Oluştur",
+      rollback: "Ürün oluşturulurken hata oluştu. Ürün silindi.",
+      rollbackFailed: "Ürün silinirken hata oluştu.",
+    },
+  },
+  common: {
+    "all": "Tümü",
+    "or": "veya",
+    "to": "için",
+    "cancel": "İptal",
+    "session": {
+      "expired_title": "Oturum Süreniz Doldu",
+      "expired_description": "Oturum süreniz doldu. Lütfen tekrar giriş yapın.",
+      "login": "Giriş Yap"
+    }
   },
 } as const;

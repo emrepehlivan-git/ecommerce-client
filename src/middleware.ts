@@ -13,15 +13,12 @@ const I18nMiddleware = createI18nMiddleware({
 export default auth((req) => {
   const { pathname } = req.nextUrl;
   
-  // Admin sayfalarına erişim kontrolü
   if (pathname.includes('/admin')) {
-    // Kullanıcı giriş yapmış mı kontrol et
     if (!req.auth?.user) {
       const loginUrl = new URL('/', req.url);
       return NextResponse.redirect(loginUrl);
     }
     
-    // Admin rolüne sahip mi kontrol et
     const hasAdmin = checkAdminAccess(req.auth.user.roles);
     if (!hasAdmin) {
       const homeUrl = new URL('/', req.url);

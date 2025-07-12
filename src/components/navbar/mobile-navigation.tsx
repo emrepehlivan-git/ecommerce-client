@@ -116,7 +116,7 @@ export function MobileNavigation({ categories }: MobileNavigationProps) {
             </div>
 
             {session && (
-              <div className="mt-auto">
+              <div className="mt-auto w-full">
                 <LogoutButton className="w-full!" variant="ghost" />
               </div>
             )}

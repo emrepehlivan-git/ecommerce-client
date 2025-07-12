@@ -31,8 +31,8 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
         <h3 className="text-lg font-bold mb-4">Users</h3>
         <UsersTable
           columns={userColumns}
-          data={response.data.value}
-          pagedInfo={response.data.pagedInfo}
+          data={response.value || []}
+          pagedInfo={response.pagedInfo}
         />
       </div>
     </Suspense>

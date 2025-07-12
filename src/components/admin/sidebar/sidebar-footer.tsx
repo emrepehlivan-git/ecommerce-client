@@ -1,6 +1,5 @@
 "use client";
 
-import LogoutButton from "@/components/auth/logout-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -17,9 +16,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Bell, Settings } from "lucide-react";
+import { Bell, LogOut, Settings } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useI18n } from "@/i18n/client";
+import { signOut } from "next-auth/react";
 
 export function AdminSidebarFooter() {
   const session = useSession();
@@ -78,8 +78,9 @@ export function AdminSidebarFooter() {
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <LogoutButton className="w-full" variant="ghost" />
+              <DropdownMenuItem onClick={() => signOut()} variant="destructive">
+                <LogOut />
+                {t("user_actions.logout")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

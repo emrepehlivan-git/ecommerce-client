@@ -24,11 +24,6 @@ export function RolesTable({ columns }: RolesTableProps) {
       PageSize: pageSize,
       Search: debouncedFilter,
     },
-    {
-      query: {
-        select: (data) => data.data,
-      },
-    }
   );
 
   return (

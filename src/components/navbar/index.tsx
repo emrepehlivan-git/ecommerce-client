@@ -8,7 +8,6 @@ import { SearchBar } from "./search-bar";
 import { UserActions } from "../user/user-actions";
 import { CategoryNavigation } from "../category/category-navigation";
 import { useGetApiV1Category } from "@/api/generated/category/category";
-import { DesktopNavigation } from "./desktop-navigation";
 import { useAppStore } from "@/stores/useAppStore";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LanguageSwitcher } from "./language-switcher";
@@ -17,6 +16,7 @@ export function Navbar() {
   const { totalItems: cartItemCount } = useAppStore();
   const { data } = useGetApiV1Category();
   const isMobile = useIsMobile();
+  const categories = data?.value || [];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -24,7 +24,7 @@ export function Navbar() {
 
       <div className="flex h-16 items-center px-4 lg:px-6">
         <div className="flex items-center gap-2 md:gap-4">
-          <MobileNavigation cartItemCount={cartItemCount} categories={data?.data.value || []} />
+          <MobileNavigation categories={categories} />
           <Logo />
         </div>
 
@@ -44,7 +44,7 @@ export function Navbar() {
 
       <div className="border-t bg-white px-4 lg:px-6 py-3">
         <div className="hidden md:block">
-          <CategoryNavigation categories={data?.data.value || []} maxVisible={10} />
+          <CategoryNavigation categories={categories} maxVisible={10} />
         </div>
       </div>
     </header>

@@ -136,11 +136,6 @@ export function CategoryPageClient() {
     setDeletingCategory(null);
   };
 
-  const handleCopyId = (id: string) => {
-    navigator.clipboard.writeText(id);
-    toast.success("ID copied to clipboard");
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -158,13 +153,12 @@ export function CategoryPageClient() {
         columns={getCategoryColumns({
           handleEdit,
           handleDeleteClick,
-          handleCopyId,
         })}
-        data={categoriesResponse?.data?.value ?? []}
+        data={categoriesResponse?.value ?? []}
         page={currentPage}
         pageSize={pageSize}
-        totalPages={categoriesResponse?.data?.pagedInfo?.totalPages ?? 1}
-        totalRecords={categoriesResponse?.data?.pagedInfo?.totalRecords ?? 0}
+        totalPages={categoriesResponse?.pagedInfo?.totalPages ?? 1}
+        totalRecords={categoriesResponse?.pagedInfo?.totalRecords ?? 0}
         onPageChange={setCurrentPage}
         onPageSizeChange={setPageSize}
         globalFilter={globalFilter}

@@ -59,7 +59,7 @@ export default async function ProductCreatePage() {
 
   return (
     <Suspense fallback={<ProductCreateSkeleton />}>
-      <ProductCreateClient categories={categoriesResponse.data.value ?? []} />
+      <ProductCreateClient categories={categoriesResponse.value ?? []} />
     </Suspense>
   );
 }

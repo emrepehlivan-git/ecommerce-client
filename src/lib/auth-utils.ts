@@ -65,42 +65,27 @@ export function redirectUnauthorized(): never {
 }
 
 export const getUserInfo = async (accessToken: string) => {
-  const issuer = process.env.NEXT_PUBLIC_AUTH_SERVER_URL;
+  const issuer =
+    process.env.INTERNAL_AUTH_SERVER_URL || process.env.NEXT_PUBLIC_AUTH_SERVER_URL;
   const normalizedIssuer = issuer?.endsWith("/") ? issuer : `${issuer}/`;
 
-  const getInternalIssuer = () => {
-    if (process.env.INTERNAL_AUTH_SERVER_URL) {
-      return process.env.INTERNAL_AUTH_SERVER_URL?.endsWith("/")
-        ? process.env.INTERNAL_AUTH_SERVER_URL
-        : `${process.env.INTERNAL_AUTH_SERVER_URL}/`;
-    }
-    return normalizedIssuer;
-  };
-  
   try {
-    const userinfoUrl =
-      typeof window === "undefined"
-        ? `${getInternalIssuer()}connect/userinfo`
-        : `${normalizedIssuer}connect/userinfo`;
+    const userinfoUrl = `${normalizedIssuer}connect/userinfo`;
 
     const response = await fetch(userinfoUrl, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
-      // @ts-ignore - Node.js specific option
-      ...(typeof window === "undefined" &&
-        process.env.NODE_ENV === "development" && {
-          agent: new (require("https").Agent)({ rejectUnauthorized: false }),
-        }),
     });
 
     if (!response.ok) {
-      throw new Error(`User info request failed: ${response.status}`);
+      console.error(`User info request failed with status: ${response.status}`);
+      return null;
     }
 
     return await response.json();
   } catch (error) {
     console.error("Error fetching user info:", error);
-    throw error;
+    return null;
   }
 }; 

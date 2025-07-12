@@ -70,15 +70,15 @@ export default async function ProductEditPage({ params }: ProductEditPageProps) 
     getApiV1ProductId(id),
   ]);
 
-  if (!productResponse.data) {
+  if (!productResponse) {
     notFound();
   }
 
   return (
     <Suspense fallback={<ProductEditSkeleton />}>
       <ProductEditClient
-        categories={categoriesResponse.data.value ?? []}
-        product={productResponse.data}
+        categories={categoriesResponse.value ?? []}
+        product={productResponse}
       />
     </Suspense>
   );

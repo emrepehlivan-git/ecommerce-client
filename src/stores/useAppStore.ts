@@ -9,7 +9,6 @@ import {
 import { CartDto, AddToCartCommand, UpdateCartItemQuantityCommand } from "@/api/generated/model";
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
 import { Session } from "next-auth";
-import { getUserInfo } from "@/lib/auth-utils";
 import React from "react";
 
 // User State and Actions
@@ -23,8 +22,6 @@ interface UserData {
 
 interface UserState {
   user: UserData | null;
-  isLoadingUser: boolean;
-  fetchUserInfo: (session: Session | null) => Promise<void>;
 }
 
 // Cart State and Actions
@@ -48,21 +45,6 @@ type AppState = UserState & CartState;
 export const useAppStore = create<AppState>((set, get) => ({
   // User initial state and actions
   user: null,
-  isLoadingUser: true,
-  fetchUserInfo: async (session) => {
-    if (!session?.accessToken) {
-      set({ user: null, isLoadingUser: false });
-      return;
-    }
-    try {
-      set({ isLoadingUser: true });
-      const userInfo = await getUserInfo(session.accessToken);
-      set({ user: userInfo, isLoadingUser: false });
-    } catch (error) {
-      console.error("Failed to fetch user info:", error);
-      set({ user: null, isLoadingUser: false });
-    }
-  },
 
   // Cart initial state and actions
   cart: undefined,
@@ -87,15 +69,23 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 }));
 
-// Hook for initializing cart state and actions
+let storeInitialized = false;
+
+export const initializeStore = (userInfo: UserData | null) => {
+  if (!storeInitialized) {
+    useAppStore.setState({ user: userInfo });
+    storeInitialized = true;
+  }
+};
+
 export const useInitializeCart = (session: Session | null) => {
     const { handleError, handleSuccess } = useErrorHandler({ context: "CartStore" });
 
     const { data: cartResponse, isLoading, error, refetch } = useGetApiV1Cart({
-        query: { enabled: !!session?.user?.id },
+        query: { enabled: !!session?.user?.id, },
     });
 
-    const cart = cartResponse?.data as CartDto | undefined;
+    const cart = cartResponse as CartDto | undefined;
     const totalItems = cart?.totalItems || 0;
     const totalAmount = cart?.totalAmount || 0;
     const isCartEmpty = !cart?.items || cart.items.length === 0;
@@ -162,16 +152,4 @@ export const useInitializeCart = (session: Session | null) => {
         await clearCartMutation.mutateAsync();
     };
 
-};
-
-// We need a wrapper component to use the hooks
-const StoreInitializer = ({ session }: { session: Session | null }) => {
-    const { fetchUserInfo } = useAppStore();
-    useInitializeCart(session);
-
-    React.useEffect(() => {
-        fetchUserInfo(session);
-    }, [session, fetchUserInfo]);
-
-    return null;
-} 
+}; 

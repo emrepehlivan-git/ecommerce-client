@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Upload, X, Edit2, Save, Loader2, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
@@ -25,7 +25,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/dialog";
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 
 import { 
@@ -155,10 +155,10 @@ export function ProductImageManager({ productId, maxImages = 4 }: ProductImageMa
 
     if (hasOrderChanged) {
       const reorderData: UpdateImageOrderRequest = {
-        imageOrders: currentImages.map(img => ({
-          imageId: img.id!,
-          displayOrder: img.id === editingImage.id ? editingImage.displayOrder : img.displayOrder!
-        }))
+        imageOrders: currentImages.reduce((acc, img) => {
+          acc[img.id!] = img.id === editingImage.id ? editingImage.displayOrder : img.displayOrder!;
+          return acc;
+        }, {} as Record<string, number>)
       };
 
       reorderMutation.mutate({ id: productId, data: reorderData });
@@ -182,10 +182,10 @@ export function ProductImageManager({ productId, maxImages = 4 }: ProductImageMa
     [reorderedImages[newIndex], reorderedImages[currentIndex]];
 
     const reorderData: UpdateImageOrderRequest = {
-      imageOrders: reorderedImages.map((img, index) => ({
-        imageId: img.id!,
-        displayOrder: index + 1
-      }))
+      imageOrders: reorderedImages.reduce((acc, img, index) => {
+        acc[img.id!] = index + 1;
+        return acc;
+      }, {} as Record<string, number>)
     };
 
     reorderMutation.mutate({ id: productId, data: reorderData });
@@ -356,9 +356,9 @@ export function ProductImageManager({ productId, maxImages = 4 }: ProductImageMa
                             <div>
                               <Label className="text-xs">Image Type</Label>
                               <Select
-                                value={editingImage.imageType.toString()}
+                                value={editingImage?.imageType.toString() || ""}
                                 onValueChange={(value) => 
-                                  setEditingImage({...editingImage, imageType: parseInt(value) as ImageType})
+                                  setEditingImage(prev => prev ? {...prev, imageType: parseInt(value) as ImageType} : null)
                                 }
                               >
                                 <SelectTrigger className="h-8">
@@ -378,9 +378,9 @@ export function ProductImageManager({ productId, maxImages = 4 }: ProductImageMa
                                 type="number"
                                 min="1"
                                 max={maxImages}
-                                value={editingImage.displayOrder}
+                                value={editingImage?.displayOrder.toString() || ""}
                                 onChange={(e) => 
-                                  setEditingImage({...editingImage, displayOrder: parseInt(e.target.value) || 1})
+                                  setEditingImage(prev => prev ? {...prev, displayOrder: parseInt(e.target.value) || 1} : null)
                                 }
                                 className="h-8"
                               />
@@ -390,9 +390,9 @@ export function ProductImageManager({ productId, maxImages = 4 }: ProductImageMa
                             <Label className="text-xs">Alt Text</Label>
                             <Input
                               placeholder="Describe the image for accessibility"
-                              value={editingImage.altText}
+                              value={editingImage?.altText || ""}
                               onChange={(e) => 
-                                setEditingImage({...editingImage, altText: e.target.value})
+                                setEditingImage(prev => prev ? {...prev, altText: e.target.value} : null)
                               }
                               className="h-8"
                             />

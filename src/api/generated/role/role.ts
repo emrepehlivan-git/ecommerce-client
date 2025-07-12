@@ -34,6 +34,7 @@ import type {
   GetApiV1RoleParams,
   ProblemDetails,
   RoleDto,
+  RoleIdRequest,
   UpdateRoleCommand,
   UserRoleDto
 } from '.././model';
@@ -649,7 +650,7 @@ export function useGetApiV1RoleUserUserId<TData = Awaited<ReturnType<typeof getA
 
 export const postApiV1RoleUserUserIdAddRole = (
     userId: string,
-    postApiV1RoleUserUserIdAddRoleBody: string,
+    roleIdRequest: RoleIdRequest,
  signal?: AbortSignal
 ) => {
       
@@ -657,7 +658,7 @@ export const postApiV1RoleUserUserIdAddRole = (
       return axiosClientMutator<void>(
       {url: `/api/v1/Role/user/${userId}/add-role`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
-      data: postApiV1RoleUserUserIdAddRoleBody, signal
+      data: roleIdRequest, signal
     },
       );
     }
@@ -665,8 +666,8 @@ export const postApiV1RoleUserUserIdAddRole = (
 
 
 export const getPostApiV1RoleUserUserIdAddRoleMutationOptions = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1RoleUserUserIdAddRole>>, TError,{userId: string;data: string}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof postApiV1RoleUserUserIdAddRole>>, TError,{userId: string;data: string}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1RoleUserUserIdAddRole>>, TError,{userId: string;data: RoleIdRequest}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiV1RoleUserUserIdAddRole>>, TError,{userId: string;data: RoleIdRequest}, TContext> => {
 
 const mutationKey = ['postApiV1RoleUserUserIdAddRole'];
 const {mutation: mutationOptions} = options ?
@@ -678,7 +679,7 @@ const {mutation: mutationOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiV1RoleUserUserIdAddRole>>, {userId: string;data: string}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiV1RoleUserUserIdAddRole>>, {userId: string;data: RoleIdRequest}> = (props) => {
           const {userId,data} = props ?? {};
 
           return  postApiV1RoleUserUserIdAddRole(userId,data,)
@@ -690,15 +691,15 @@ const {mutation: mutationOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PostApiV1RoleUserUserIdAddRoleMutationResult = NonNullable<Awaited<ReturnType<typeof postApiV1RoleUserUserIdAddRole>>>
-    export type PostApiV1RoleUserUserIdAddRoleMutationBody = string
+    export type PostApiV1RoleUserUserIdAddRoleMutationBody = RoleIdRequest
     export type PostApiV1RoleUserUserIdAddRoleMutationError = ProblemDetails
 
     export const usePostApiV1RoleUserUserIdAddRole = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1RoleUserUserIdAddRole>>, TError,{userId: string;data: string}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1RoleUserUserIdAddRole>>, TError,{userId: string;data: RoleIdRequest}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postApiV1RoleUserUserIdAddRole>>,
         TError,
-        {userId: string;data: string},
+        {userId: string;data: RoleIdRequest},
         TContext
       > => {
 
@@ -708,7 +709,7 @@ const {mutation: mutationOptions} = options ?
     }
     export const postApiV1RoleUserUserIdRemoveRole = (
     userId: string,
-    postApiV1RoleUserUserIdRemoveRoleBody: string,
+    roleIdRequest: RoleIdRequest,
  signal?: AbortSignal
 ) => {
       
@@ -716,7 +717,7 @@ const {mutation: mutationOptions} = options ?
       return axiosClientMutator<void>(
       {url: `/api/v1/Role/user/${userId}/remove-role`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
-      data: postApiV1RoleUserUserIdRemoveRoleBody, signal
+      data: roleIdRequest, signal
     },
       );
     }
@@ -724,8 +725,8 @@ const {mutation: mutationOptions} = options ?
 
 
 export const getPostApiV1RoleUserUserIdRemoveRoleMutationOptions = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1RoleUserUserIdRemoveRole>>, TError,{userId: string;data: string}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof postApiV1RoleUserUserIdRemoveRole>>, TError,{userId: string;data: string}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1RoleUserUserIdRemoveRole>>, TError,{userId: string;data: RoleIdRequest}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiV1RoleUserUserIdRemoveRole>>, TError,{userId: string;data: RoleIdRequest}, TContext> => {
 
 const mutationKey = ['postApiV1RoleUserUserIdRemoveRole'];
 const {mutation: mutationOptions} = options ?
@@ -737,7 +738,7 @@ const {mutation: mutationOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiV1RoleUserUserIdRemoveRole>>, {userId: string;data: string}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiV1RoleUserUserIdRemoveRole>>, {userId: string;data: RoleIdRequest}> = (props) => {
           const {userId,data} = props ?? {};
 
           return  postApiV1RoleUserUserIdRemoveRole(userId,data,)
@@ -749,15 +750,15 @@ const {mutation: mutationOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PostApiV1RoleUserUserIdRemoveRoleMutationResult = NonNullable<Awaited<ReturnType<typeof postApiV1RoleUserUserIdRemoveRole>>>
-    export type PostApiV1RoleUserUserIdRemoveRoleMutationBody = string
+    export type PostApiV1RoleUserUserIdRemoveRoleMutationBody = RoleIdRequest
     export type PostApiV1RoleUserUserIdRemoveRoleMutationError = ProblemDetails
 
     export const usePostApiV1RoleUserUserIdRemoveRole = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1RoleUserUserIdRemoveRole>>, TError,{userId: string;data: string}, TContext>, }
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1RoleUserUserIdRemoveRole>>, TError,{userId: string;data: RoleIdRequest}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postApiV1RoleUserUserIdRemoveRole>>,
         TError,
-        {userId: string;data: string},
+        {userId: string;data: RoleIdRequest},
         TContext
       > => {
 

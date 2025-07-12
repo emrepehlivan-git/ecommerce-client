@@ -5,7 +5,6 @@
  * ECommerce API with Keycloak Authentication and Versioning
  * OpenAPI spec version: v1
  */
-import type { ProductImageResponseDto } from './productImageResponseDto';
 
 export interface ProductDto {
   id?: string;
@@ -18,6 +17,4 @@ export interface ProductDto {
   categoryName?: string | null;
   stockQuantity?: number;
   isActive?: boolean;
-  /** @nullable */
-  images?: ProductImageResponseDto[] | null;
 }

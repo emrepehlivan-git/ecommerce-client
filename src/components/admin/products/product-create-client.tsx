@@ -7,6 +7,7 @@ import * as z from "zod";
 import { ArrowLeft, Loader2, Package, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -28,10 +29,12 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import type { CreateProductCommand, CategoryDto } from "@/api/generated/model";
-import { usePostApiV1Product, usePostApiV1ProductIdImages } from "@/api/generated/product/product";
+import type { CreateProductCommand, CategoryDto, UploadProductImagesResponse } from "@/api/generated/model";
+import { usePostApiV1Product, useDeleteApiV1ProductId } from "@/api/generated/product/product";
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
 import { ProductImageUpload, type ProductImageData } from "./product-image-upload";
+import { useI18n } from "@/i18n/client";
+import { axiosClientMutator } from "@/lib/axiosClient";
 
 const formSchema = z.object({
   name: z
@@ -59,10 +62,10 @@ interface ProductCreateClientProps {
 }
 
 export function ProductCreateClient({ categories }: ProductCreateClientProps) {
+  const t = useI18n();
   const router = useRouter();
   const { handleError } = useErrorHandler();
   const [productImages, setProductImages] = useState<ProductImageData[]>([]);
-  const [createdProductId, setCreatedProductId] = useState<string | null>(null);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -75,28 +78,10 @@ export function ProductCreateClient({ categories }: ProductCreateClientProps) {
     },
   });
 
-  const createMutation = usePostApiV1Product({
+  const deleteProductMutation = useDeleteApiV1ProductId({
     mutation: {
-      onSuccess: (response) => {
-        const productId = response.data;
-        setCreatedProductId(productId);
-        
-        if (productImages.length > 0) {
-          uploadImagesMutation.mutate({ 
-            id: productId, 
-            data: {
-              Images: productImages.map(img => ({
-                file: img.file,
-                imageType: img.imageType,
-                displayOrder: img.displayOrder,
-                altText: img.altText || "",
-              }))
-            }
-          });
-        } else {
-          toast.success("Product created successfully");
-          router.push("/admin/products");
-        }
+      onSuccess: () => {
+        toast.info(t("products.create.rollback"));
       },
       onError: (error) => {
         handleError(error);
@@ -104,16 +89,58 @@ export function ProductCreateClient({ categories }: ProductCreateClientProps) {
     },
   });
 
-  const uploadImagesMutation = usePostApiV1ProductIdImages({
+  const uploadImagesMutation = useMutation({
+    mutationFn: async ({
+      productId,
+      images,
+    }: {
+      productId: string;
+      images: ProductImageData[];
+    }) => {
+      const formData = new FormData();
+      images.forEach((image, index) => {
+        formData.append(`Images[${index}].File`, image.file);
+        formData.append(`Images[${index}].ImageType`, image.imageType.toString());
+        formData.append(`Images[${index}].DisplayOrder`, image.displayOrder.toString());
+        if (image.altText) {
+          formData.append(`Images[${index}].AltText`, image.altText);
+        }
+      });
+
+      return axiosClientMutator({
+        url: `/api/v1/Product/${productId}/images`,
+        method: "POST",
+        headers: { "Content-Type": "multipart/form-data" },
+        data: formData,
+      });
+    },
+    onSuccess: () => {
+      toast.success(t("products.create.success"));
+      router.push("/admin/products");
+    },
+    onError: (error, variables) => {
+      handleError(error);
+      deleteProductMutation.mutate({ id: variables.productId });
+    },
+  });
+
+  const createMutation = usePostApiV1Product({
     mutation: {
-      onSuccess: () => {
-        toast.success("Product and images created successfully");
-        router.push("/admin/products");
+      onSuccess: (response) => {
+        const productId = response;
+
+        if (productImages.length > 0) {
+          uploadImagesMutation.mutate({
+            productId,
+            images: productImages,
+          });
+        } else {
+          toast.success(t("products.create.success"));
+          router.push("/admin/products");
+        }
       },
       onError: (error) => {
         handleError(error);
-        toast.error("Product created but failed to upload images");
-        router.push("/admin/products");
       },
     },
   });
@@ -133,19 +160,24 @@ export function ProductCreateClient({ categories }: ProductCreateClientProps) {
     router.push("/admin/products");
   };
 
+  const isPending =
+    createMutation.isPending ||
+    uploadImagesMutation.isPending ||
+    deleteProductMutation.isPending;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" onClick={handleCancel} className="gap-2">
           <ArrowLeft className="h-4 w-4" />
-          Back
+          {t("common.back")}
         </Button>
         <div>
           <h3 className="text-2xl font-bold tracking-tight flex items-center gap-2">
             <Package className="h-6 w-6" />
-            Create New Product
+            {t("products.create.title")}
           </h3>
-          <p className="text-muted-foreground">Add a new product to the system</p>
+          <p className="text-muted-foreground">{t("products.create.description")}</p>
         </div>
       </div>
 
@@ -153,7 +185,7 @@ export function ProductCreateClient({ categories }: ProductCreateClientProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Plus className="h-5 w-5" />
-            Product Information
+            {t("products.create.title")}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -165,12 +197,12 @@ export function ProductCreateClient({ categories }: ProductCreateClientProps) {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Product Name *</FormLabel>
+                      <FormLabel>{t("products.create.name")} *</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Enter product name"
+                          placeholder={t("products.create.name")}
                           {...field}
-                          disabled={createMutation.isPending}
+                          disabled={isPending}
                         />
                       </FormControl>
                       <FormMessage />
@@ -183,15 +215,15 @@ export function ProductCreateClient({ categories }: ProductCreateClientProps) {
                   name="categoryId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Category *</FormLabel>
+                      <FormLabel>{t("products.create.category")} *</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         value={field.value}
-                        disabled={createMutation.isPending}
+                        disabled={isPending}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select category" />
+                            <SelectValue placeholder={t("products.create.category")} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -213,13 +245,13 @@ export function ProductCreateClient({ categories }: ProductCreateClientProps) {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>{t("products.create.description")}</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Product description (optional)"
+                        placeholder={t("products.create.description")}
                         className="resize-none min-h-[100px]"
                         {...field}
-                        disabled={createMutation.isPending}
+                        disabled={isPending}
                       />
                     </FormControl>
                     <FormMessage />
@@ -233,7 +265,7 @@ export function ProductCreateClient({ categories }: ProductCreateClientProps) {
                   name="price"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Price (₺) *</FormLabel>
+                      <FormLabel>{t("products.create.price")} (₺) *</FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -242,7 +274,7 @@ export function ProductCreateClient({ categories }: ProductCreateClientProps) {
                           placeholder="0.00"
                           {...field}
                           onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                          disabled={createMutation.isPending}
+                          disabled={isPending}
                         />
                       </FormControl>
                       <FormMessage />
@@ -255,7 +287,7 @@ export function ProductCreateClient({ categories }: ProductCreateClientProps) {
                   name="stockQuantity"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Initial Stock Quantity *</FormLabel>
+                      <FormLabel>{t("products.create.stockQuantity")} *</FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -263,7 +295,7 @@ export function ProductCreateClient({ categories }: ProductCreateClientProps) {
                           placeholder="0"
                           {...field}
                           onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                          disabled={createMutation.isPending}
+                          disabled={isPending}
                         />
                       </FormControl>
                       <FormMessage />
@@ -275,7 +307,7 @@ export function ProductCreateClient({ categories }: ProductCreateClientProps) {
               <ProductImageUpload
                 images={productImages}
                 onImagesChange={setProductImages}
-                disabled={createMutation.isPending || uploadImagesMutation.isPending}
+                disabled={isPending}
               />
 
               <div className="flex gap-4 pt-6">
@@ -283,18 +315,20 @@ export function ProductCreateClient({ categories }: ProductCreateClientProps) {
                   type="button"
                   variant="outline"
                   onClick={handleCancel}
-                  disabled={createMutation.isPending || uploadImagesMutation.isPending}
+                  disabled={isPending}
                   className="flex-1 md:flex-none"
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
                 <Button
                   type="submit"
-                  disabled={createMutation.isPending || uploadImagesMutation.isPending}
+                  disabled={isPending}
                   className="flex-1 md:flex-none"
                 >
-                  {(createMutation.isPending || uploadImagesMutation.isPending) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {uploadImagesMutation.isPending ? "Uploading Images..." : "Create Product"}
+                  {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {uploadImagesMutation.isPending
+                    ? t("products.create.uploadingImages")
+                    : t("products.create.create")}
                 </Button>
               </div>
             </form>

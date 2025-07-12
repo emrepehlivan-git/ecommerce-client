@@ -44,8 +44,8 @@ export function ProductInfiniteScroll({
     error,
   } = useGetApiV1ProductInfinite(queryParams, {
     query: {
-      getNextPageParam: (lastPage: { data: ProductDtoListPagedResult }) => {
-        const pagedInfo = lastPage.data.pagedInfo;
+      getNextPageParam: (lastPage: ProductDtoListPagedResult) => {
+        const pagedInfo = lastPage.pagedInfo;
         if (
           pagedInfo &&
           pagedInfo.pageNumber &&
@@ -84,20 +84,8 @@ export function ProductInfiniteScroll({
     return () => observer.disconnect();
   }, [handleIntersection]);
 
-  const allProducts = useMemo(() => {
-    if (infiniteData?.pages) {
-      return infiniteData.pages.reduce((acc: ProductDto[], page) => {
-        const products = page.data?.value || [];
-        if (Array.isArray(products)) {
-          return [...acc, ...products];
-        }
-        return acc;
-      }, []);
-    }
-    return [];
-  }, [infiniteData]);
-
-  const totalRecords = infiniteData?.pages[0]?.data?.pagedInfo?.totalRecords || 0;
+  const allProducts = infiniteData?.pages.flatMap((page) => page.value || []) || [];
+  const totalRecords = infiniteData?.pages[0]?.pagedInfo?.totalRecords || 0;
 
   if (isLoading) {
     return <ProductGridSkeleton count={initialPageSize} />;

@@ -105,11 +105,11 @@ export function ProductsPageClient() {
 
       <DataTable
         columns={columns}
-        data={productsResponse?.data?.value ?? []}
+        data={productsResponse?.value ?? []}
         page={currentPage}
         pageSize={pageSize}
-        totalPages={productsResponse?.data?.pagedInfo?.totalPages ?? 1}
-        totalRecords={productsResponse?.data?.pagedInfo?.totalRecords ?? 0}
+        totalPages={productsResponse?.pagedInfo?.totalPages ?? 1}
+        totalRecords={productsResponse?.pagedInfo?.totalRecords ?? 0}
         onPageChange={setCurrentPage}
         onPageSizeChange={setPageSize}
         globalFilter={globalFilter}

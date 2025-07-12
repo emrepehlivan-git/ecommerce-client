@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,16 +8,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useAppStore } from "@/stores/useAppStore";
 import LoginButton from "@/components/auth/login-button";
 import LogoutButton from "@/components/auth/logout-button";
 import Link from "next/link";
 import { useI18n } from "@/i18n/client";
+import { LogOut } from "lucide-react";
 
 export function UserNav() {
   const { data: session } = useSession();
-  const { user, isLoadingUser } = useAppStore();
+  const { user } = useAppStore();
   const t = useI18n();
   
   const getInitials = (name: string) => {
@@ -26,10 +26,6 @@ export function UserNav() {
       .map((n) => n[0])
       .join("");
   };
-
-  if (isLoadingUser) {
-    return <Skeleton className="h-8 w-8 rounded-full" />;
-  }
 
   if (!session) {
     return <LoginButton />;
@@ -60,7 +56,10 @@ export function UserNav() {
           </DropdownMenuItem>
         )}
         <DropdownMenuSeparator />
-        <LogoutButton className="w-full!" variant="ghost" />
+        <DropdownMenuItem onClick={() => signOut()} variant="destructive">
+            <LogOut />
+            {t("user_actions.logout")}
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { getSession } from "next-auth/react";
 import { auth } from "./auth";
+import { signOut } from "next-auth/react";
 
 const getBaseURL = () => {
   if (typeof window === "undefined") {
@@ -82,6 +83,9 @@ axiosClient.interceptors.response.use(
 
         if (session?.error === "RefreshAccessTokenError") {
           processQueue(error, null);
+          if (typeof window !== "undefined") {
+            window.location.href = "/session-expired";
+          }
           return Promise.reject(error);
         }
 
@@ -105,15 +109,19 @@ axiosClient.interceptors.response.use(
   }
 );
 
-export const axiosClientMutator = async (config: AxiosRequestConfig) => {
+export const axiosClientMutator = async <T>(config: AxiosRequestConfig): Promise<T> => {
+  const headers = config.headers || {};
   if (typeof window === "undefined") {
     const session = await auth();
     if (session?.accessToken) {
-      config.headers = {
-        ...config.headers,
-        Authorization: `Bearer ${session.accessToken}`,
-      };
+      headers["Authorization"] = `Bearer ${session.accessToken}`;
     }
   }
-  return axiosClient(config);
+
+  if (config.data instanceof FormData) {
+    headers["Content-Type"] = "multipart/form-data";
+  }
+
+  return axiosClient({ ...config, headers }).then((res) => res.data);
 };
+
