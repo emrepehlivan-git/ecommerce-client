@@ -84,7 +84,8 @@ axiosClient.interceptors.response.use(
         if (session?.error === "RefreshAccessTokenError") {
           processQueue(error, null);
           if (typeof window !== "undefined") {
-            window.location.href = "/session-expired";
+            const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+            window.location.href = `/session-expired?returnUrl=${returnUrl}`;
           }
           return Promise.reject(error);
         }

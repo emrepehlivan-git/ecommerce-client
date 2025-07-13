@@ -4,17 +4,24 @@ import { useEffect } from 'react';
 import { useScopedI18n } from '@/i18n/client';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import LoginButton from '@/components/auth/login-button';
-import { signOut } from '@/lib/auth';
+import { signOut, signIn, useSession } from 'next-auth/react';
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function SessionExpiredPage() {
     const t = useScopedI18n('common');
+    const {  data } = useSession();
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const returnUrl = searchParams.get("returnUrl") || "/";
 
     useEffect(() => {
-        signOut({ redirect: false });
-    }, []);
+        if (data?.user) {
+            signIn("keycloak", { callbackUrl: returnUrl });
+        }
+    }, [data, router, returnUrl]);
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div className="flex items-center justify-center min-h-screen">
             <Card className="w-full max-w-md mx-4">
                 <CardHeader>
                     <CardTitle className="text-center">{t('session.expired_title')}</CardTitle>
