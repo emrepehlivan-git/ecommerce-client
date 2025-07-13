@@ -18,17 +18,22 @@ import {
 import type { ProductDto } from "@/api/generated/model";
 
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
-import { useDebounce } from "@/hooks/use-debounce";
+import { useDataTable } from "@/hooks/use-data-table";
 import { getProductColumns } from "./products-table-columns";
 
 export function ProductsPageClient() {
   const router = useRouter();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [globalFilter, setGlobalFilter] = useState("");
+  const {
+    currentPage,
+    pageSize,
+    globalFilter,
+    debouncedGlobalFilter,
+    setCurrentPage,
+    setPageSize,
+    setGlobalFilter,
+  } = useDataTable();
   const [deletingProduct, setDeletingProduct] = useState<ProductDto | null>(null);
   const { handleError } = useErrorHandler();
-  const debouncedGlobalFilter = useDebounce(globalFilter);
 
   const queryClient = useQueryClient();
 

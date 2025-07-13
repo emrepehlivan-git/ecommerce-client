@@ -1,44 +1,43 @@
 "use client";
 
 import { DataTable } from "@/components/ui/data-table";
-import { RoleDto } from "@/api/generated/model";
+import { PagedInfo, RoleDto } from "@/api/generated/model";
 import { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
-import { useDebounce } from "@/hooks/use-debounce";
-import { useGetApiV1Role } from "@/api/generated/role/role";
+import { useTableParams } from "@/hooks/use-table-params";
 
 interface RolesTableProps {
   columns: ColumnDef<RoleDto>[];
+  roles: RoleDto[];
+  pagedInfo: PagedInfo;
+  isLoading: boolean;
 }
 
-export function RolesTable({ columns }: RolesTableProps) {
+export function RolesTable({roles, columns, pagedInfo, isLoading }: RolesTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [globalFilter, setGlobalFilter] = useState("");
   const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>({});
-  const debouncedFilter = useDebounce(globalFilter, 500);
-
-  const { data, isLoading, isFetching } = useGetApiV1Role(
-    {
-      Page: currentPage,
-      PageSize: pageSize,
-      Search: debouncedFilter,
-    },
-  );
+  const {
+    globalFilter,
+    isSearching,
+    handlePageChange,
+    handlePageSizeChange,
+    handleFilterChange,
+  } = useTableParams();
 
   return (
     <DataTable
       columns={columns}
-      data={data?.value ?? []}
+      data={roles}
       page={currentPage}
       pageSize={pageSize}
-      totalPages={data?.pagedInfo?.totalPages ?? 1}
-      totalRecords={data?.pagedInfo?.totalRecords ?? 0}
-      onPageChange={setCurrentPage}
-      onPageSizeChange={setPageSize}
+      totalPages={pagedInfo.totalPages ?? 1}
+      totalRecords={pagedInfo.totalRecords ?? 0}
+      onPageChange={handlePageChange}
+      onPageSizeChange={handlePageSizeChange}
       globalFilter={globalFilter}
-      onGlobalFilterChange={setGlobalFilter}
-      isLoading={isLoading || isFetching}
+      onGlobalFilterChange={handleFilterChange}
+      isLoading={isLoading || isSearching}
       rowSelection={rowSelection}
       onRowSelectionChange={setRowSelection}
     />

@@ -16,18 +16,23 @@ import {
 import type { OrderDto } from "@/api/generated/model";
 
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
-import { useDebounce } from "@/hooks/use-debounce";
+import { useDataTable } from "@/hooks/use-data-table";
 import { getOrderColumns } from "./orders-table-columns";
 import { OrderStatusModal } from "./order-status-modal";
 
 export function OrdersPageClient() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [globalFilter, setGlobalFilter] = useState("");
+  const {
+    currentPage,
+    pageSize,
+    globalFilter,
+    debouncedGlobalFilter,
+    setCurrentPage,
+    setPageSize,
+    setGlobalFilter,
+  } = useDataTable();
   const [deletingOrder, setDeletingOrder] = useState<OrderDto | null>(null);
   const [editingOrder, setEditingOrder] = useState<OrderDto | null>(null);
   const { handleError } = useErrorHandler();
-  const debouncedGlobalFilter = useDebounce(globalFilter);
 
   const queryClient = useQueryClient();
 

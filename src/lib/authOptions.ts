@@ -36,22 +36,6 @@ export const authOptions: NextAuthConfig = {
   ],
   session: {
     strategy: "jwt",
-    maxAge: 2 * 60 * 60, // 2 saat
-  },
-  jwt: {
-    maxAge: 2 * 60 * 60, // 2 saat
-  },
-  cookies: {
-    sessionToken: {
-      name: "next-auth.session-token",
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 2 * 60 * 60, // 2 saat
-      },
-    },
   },
   secret: process.env.NEXTAUTH_SECRET,
   debug: false,
@@ -65,7 +49,6 @@ export const authOptions: NextAuthConfig = {
         token.accessToken = account.access_token;
         token.accessTokenExpires = account.expires_at ? account.expires_at * 1000 : 0;
         
-        // Decode JWT to extract roles
         try {
           const base64Url = account.access_token.split('.')[1];
           const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -75,7 +58,6 @@ export const authOptions: NextAuthConfig = {
           
           const decodedToken = JSON.parse(jsonPayload);
           
-          // Extract roles from resource_access
           let roles: string[] = [];
           if (decodedToken.resource_access?.[clientId]?.roles) {
             roles = decodedToken.resource_access[clientId].roles;

@@ -24,18 +24,23 @@ import type {
 
 import { CategoryFormModal } from "@/components/admin/categories/category-form-modal";
 import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
-import { useDebounce } from "@/hooks/use-debounce";
+import { useDataTable } from "@/hooks/use-data-table";
 import { getCategoryColumns } from "./categories-table-columns";
 
 export function CategoryPageClient() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [globalFilter, setGlobalFilter] = useState("");
+  const {
+    currentPage,
+    pageSize,
+    globalFilter,
+    debouncedGlobalFilter,
+    setCurrentPage,
+    setPageSize,
+    setGlobalFilter,
+  } = useDataTable();
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<CategoryDto | null>(null);
   const [deletingCategory, setDeletingCategory] = useState<CategoryDto | null>(null);
   const { handleError } = useErrorHandler();
-  const debouncedGlobalFilter = useDebounce(globalFilter);
 
   const queryClient = useQueryClient();
 
