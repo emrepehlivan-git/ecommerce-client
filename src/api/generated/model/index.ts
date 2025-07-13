@@ -13,6 +13,7 @@ export * from './cartDto';
 export * from './cartItemDto';
 export * from './cartSummaryDto';
 export * from './categoryDto';
+export * from './categoryDtoListPagedResult';
 export * from './createCategoryCommand';
 export * from './createProductCommand';
 export * from './createRoleCommand';

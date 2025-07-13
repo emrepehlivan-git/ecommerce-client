@@ -31,6 +31,7 @@ import type {
 
 import type {
   CategoryDto,
+  CategoryDtoListPagedResult,
   CreateCategoryCommand,
   GetApiV1CategoryParams,
   ProblemDetails,
@@ -48,7 +49,7 @@ export const getApiV1Category = (
 ) => {
       
       
-      return axiosClientMutator<CategoryDto[]>(
+      return axiosClientMutator<CategoryDtoListPagedResult>(
       {url: `/api/v1/Category`, method: 'GET',
         params, signal
     },
