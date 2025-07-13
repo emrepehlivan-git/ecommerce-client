@@ -159,6 +159,12 @@ export default {
     categories: "Categories",
   },
   products: {
+    notFound: {
+      title: "Product Not Found",
+      description: "The product you are looking for was not found.",
+      backToProducts: "Back to Products",
+      home: "Home",
+    },
     page: {
       breadcrumb: {
         home: "Home Page",

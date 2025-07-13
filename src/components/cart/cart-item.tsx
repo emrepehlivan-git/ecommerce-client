@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { CartItemDto } from "@/api/generated/model";
-import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useErrorHandler } from "@/hooks/use-error-handling";
 import { useAppStore } from "@/stores/useAppStore";
 import { toast } from "sonner";
 

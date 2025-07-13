@@ -23,7 +23,7 @@ import { usePostApiV1OrderStatusOrderId } from "@/api/generated/order/order";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { getGetApiV1OrderQueryKey } from "@/api/generated/order/order";
-import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useErrorHandler } from "@/hooks/use-error-handling";
 
 interface OrderStatusModalProps {
   order: OrderDto | null;

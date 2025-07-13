@@ -17,7 +17,7 @@ import {
 } from "@/api/generated/product/product";
 import type { ProductDto } from "@/api/generated/model";
 
-import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useErrorHandler } from "@/hooks/use-error-handling";
 import { useDataTable } from "@/hooks/use-data-table";
 import { getProductColumns } from "./products-table-columns";
 

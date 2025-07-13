@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useErrorHandler } from "@/hooks/use-error-handling";
 import { Loader2, Save, X } from "lucide-react";
 import {
   Form,

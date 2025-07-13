@@ -30,7 +30,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import type { UpdateProductCommand, CategoryDto, ProductDto } from "@/api/generated/model";
 import { usePutApiV1ProductId } from "@/api/generated/product/product";
-import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useErrorHandler } from "@/hooks/use-error-handling";
 import { ProductImageManager } from "./product-image-manager";
 
 const formSchema = z.object({

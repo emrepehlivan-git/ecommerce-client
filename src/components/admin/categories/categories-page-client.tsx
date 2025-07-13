@@ -23,7 +23,7 @@ import type {
 } from "@/api/generated/model";
 
 import { CategoryFormModal } from "@/components/admin/categories/category-form-modal";
-import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useErrorHandler } from "@/hooks/use-error-handling";
 import { useDataTable } from "@/hooks/use-data-table";
 import { getCategoryColumns } from "./categories-table-columns";
 

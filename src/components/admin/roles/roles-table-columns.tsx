@@ -18,7 +18,7 @@ import {
 } from "@/api/generated/role/role";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useErrorHandler } from "@/hooks/use-error-handling";
 import { useState } from "react";
 import { RoleFormModal } from "./role-form-modal";
 import { ConfirmDialog } from "@/components/common/confirm-dialog";

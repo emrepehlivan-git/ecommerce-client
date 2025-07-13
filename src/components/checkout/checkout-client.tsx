@@ -9,7 +9,7 @@ import { OrderPlaceCommand, OrderItemRequest } from "@/api/generated/model";
 import { Button } from "@/components/ui/button";
 import { useGetApiV1UserAddressesUserUserId } from "@/api/generated/user-addresses/user-addresses";
 import { UserAddressDto } from "@/api/generated/model";
-import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useErrorHandler } from "@/hooks/use-error-handling";
 import { Skeleton } from "../ui/skeleton";
 import { Loader2 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";

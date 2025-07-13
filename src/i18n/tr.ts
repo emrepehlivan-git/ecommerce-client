@@ -159,6 +159,12 @@ export default {
     categories: "Kategoriler",
   },
   products: {
+    notFound: {
+      title: "Ürün Bulunamadı",
+      description: "Aradığınız ürün mevcut değil veya kaldırılmış olabilir.",
+      backToProducts: "Ürünlere Dön",
+      home: "Ana Sayfa",
+    },
     page: {
       breadcrumb: {
         home: "Ana Sayfa",
@@ -200,6 +206,8 @@ export default {
       notFound: {
         title: "Ürün Bulunamadı",
         description: "Aradığınız ürün bulunamadı.",
+        backToProducts: "Ürünlere Dön",
+        home: "Ana Sayfa",
       },
       metadata: {
         titleSuffix: "| E-Ticaret",

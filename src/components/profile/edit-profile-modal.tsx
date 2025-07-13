@@ -25,7 +25,7 @@ import { Calendar } from "../ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { usePutApiV1UsersIdBirthday } from "@/api/generated/users/users";
 import { useSession } from "next-auth/react";
-import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useErrorHandler } from "@/hooks/use-error-handling";
 import { format } from "date-fns";
 import { useI18n } from "@/i18n/client";
 

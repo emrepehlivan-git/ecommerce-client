@@ -40,7 +40,7 @@ import {
   useDeleteApiV1ProductIdImagesImageId,
   usePutApiV1ProductIdImagesReorder
 } from "@/api/generated/product/product";
-import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useErrorHandler } from "@/hooks/use-error-handling";
 
 interface ProductImageManagerProps {
   productId: string;

@@ -31,7 +31,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import type { CreateProductCommand, CategoryDto, UploadProductImagesResponse } from "@/api/generated/model";
 import { usePostApiV1Product, useDeleteApiV1ProductId } from "@/api/generated/product/product";
-import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useErrorHandler } from "@/hooks/use-error-handling";
 import { ProductImageUpload, type ProductImageData } from "./product-image-upload";
 import { useI18n } from "@/i18n/client";
 import { axiosClientMutator } from "@/lib/axiosClient";

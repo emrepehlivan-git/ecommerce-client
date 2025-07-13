@@ -19,7 +19,7 @@ import {
 } from "@/api/generated/user-addresses/user-addresses";
 import { UserAddressDto } from "@/api/generated/model";
 import { MapPin, Trash2, Star, StarOff, Edit } from "lucide-react";
-import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useErrorHandler } from "@/hooks/use-error-handling";
 import { useQueryClient } from "@tanstack/react-query";
 import { ErrorHelper } from "@/lib/errorHelper";
 import { AddressModal } from "./address-modal";

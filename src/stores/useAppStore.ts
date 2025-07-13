@@ -7,7 +7,7 @@ import {
   useDeleteApiV1CartClear,
 } from "@/api/generated/cart/cart";
 import { CartDto, AddToCartCommand, UpdateCartItemQuantityCommand } from "@/api/generated/model";
-import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useErrorHandler } from "@/hooks/use-error-handling";
 import { Session } from "next-auth";
 import React from "react";
 

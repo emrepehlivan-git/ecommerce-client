@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import { QuantitySelector } from "./quantity-selector";
-import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useErrorHandler } from "@/hooks/use-error-handling";
 import { useI18n } from "@/i18n/client";
 import { useAppStore } from "@/stores/useAppStore";
 import { toast } from "sonner";

@@ -15,16 +15,15 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const { id } = await params;
 
   const response = await getApiV1ProductId(id);
-  const product = response.data;
 
-  if (!product) {
+  if (!response) {
     notFound();
   }
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <ProductBreadcrumb product={product} />
-      <ProductDetailsClient product={product} />
+      <ProductBreadcrumb product={response} />
+      <ProductDetailsClient product={response} />
     </div>
   );
 }
@@ -34,9 +33,8 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
   const t = await getI18n();
 
   const response = await getApiV1ProductId(id);
-  const product = response.data;
 
-  if (!product) {
+  if (!response) {
     return {
       title: t("products.detail.notFound.title"),
       description: t("products.detail.notFound.description"),
@@ -44,12 +42,12 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
   }
 
   return {
-    title: `${product.name} ${t("products.detail.metadata.titleSuffix")}`,
+    title: `${response.name} ${t("products.detail.metadata.titleSuffix")}`,
     description:
-      product.description || `${product.name} ${t("products.detail.metadata.defaultDescription")}`,
+      response.description || `${response.name} ${t("products.detail.metadata.defaultDescription")}`,
     keywords: [
-      product.name,
-      product.categoryName,
+      response.name,
+      response.categoryName,
       ...t("products.detail.metadata.keywords").split(", "),
     ].filter(Boolean) as string[],
   };

@@ -15,7 +15,7 @@ import {
 } from "@/api/generated/order/order";
 import type { OrderDto } from "@/api/generated/model";
 
-import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useErrorHandler } from "@/hooks/use-error-handling";
 import { useDataTable } from "@/hooks/use-data-table";
 import { getOrderColumns } from "./orders-table-columns";
 import { OrderStatusModal } from "./order-status-modal";

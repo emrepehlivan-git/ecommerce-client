@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Plus } from "lucide-react";
 import { useAppStore } from "@/stores/useAppStore";
-import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useErrorHandler } from "@/hooks/use-error-handling";
 import { toast } from "sonner";
 
 interface QuickAddToCartProps {

@@ -32,7 +32,7 @@ import {
   AddUserAddressCommand,
   UpdateUserAddressRequest,
 } from "@/api/generated/model";
-import { useErrorHandler } from "@/lib/hooks/useErrorHandler";
+import { useErrorHandler } from "@/hooks/use-error-handling";
 import { useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@/i18n/client";
 
