@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState, useMemo, useRef, useCallback } from "react";
+import React, { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   CommandDialog,
   CommandInput,
@@ -14,7 +15,6 @@ import {
   CommandEmpty,
   CommandGroup,
   CommandItem,
-  CommandLoading
 } from "@/components/ui/command";
 import { 
   Search,
@@ -24,6 +24,8 @@ import {
 
 import { useGetApiV1CategoryInfinite} from "@/api/generated/category/category";
 import { CategoryDtoListPagedResult } from "@/api/generated/model";
+import { useDebounce } from "@/hooks/use-debounce";
+import { useI18n } from "@/i18n/client";
 
 interface CategoryNavigationProps {
   className?: string;
@@ -36,10 +38,22 @@ export function CategoryNavigation({
   maxVisible = 6,
   showSearchButton = true
 }: CategoryNavigationProps) {
+  const t = useI18n();
   const pathname = usePathname();
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const debouncedSearchTerm = useDebounce(searchTerm);
+
+  const handleSearch = useCallback((value: string) => {
+    setSearchTerm(value);
+    if (value) {
+      setIsSearching(true);
+    } else {
+      setIsSearching(false);
+    }
+  }, []);
   
   const {data: featuredData, isLoading: featuredLoading, isError: featuredError} = useGetApiV1CategoryInfinite({
     PageSize: maxVisible
@@ -50,9 +64,9 @@ export function CategoryNavigation({
     }
   });
 
-  const {data: searchData, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading: searchLoading} = useGetApiV1CategoryInfinite({
+  const {data: searchData, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading: searchLoading, isRefetching} = useGetApiV1CategoryInfinite({
     PageSize: 20,
-    ...(searchTerm && { Search: searchTerm })
+    ...(debouncedSearchTerm && { Search: debouncedSearchTerm })
   }, {
     query: {
       getNextPageParam: (lastPage: CategoryDtoListPagedResult) => {
@@ -69,8 +83,15 @@ export function CategoryNavigation({
       },
       initialPageParam: 1,
       enabled: isSearchOpen,
+      keepPreviousData: false,
     }
   });
+
+  useEffect(() => {
+    if (searchTerm && debouncedSearchTerm === searchTerm) {
+      setIsSearching(false);
+    }
+  }, [debouncedSearchTerm, searchTerm]);
 
   const featuredCategories = useMemo(() => {
     return featuredData?.pages[0]?.value || [];
@@ -93,10 +114,10 @@ export function CategoryNavigation({
     return (
       <div className={cn("w-full space-y-3", className)}>
         <div className="flex items-center gap-2">
-          <div className="animate-pulse bg-muted h-8 w-24 rounded"></div>
-          <div className="animate-pulse bg-muted h-8 w-20 rounded"></div>
-          <div className="animate-pulse bg-muted h-8 w-28 rounded"></div>
-          <div className="animate-pulse bg-muted h-8 w-32 rounded"></div>
+          <Skeleton className="h-8 w-24" />
+          <Skeleton className="h-8 w-20" />
+          <Skeleton className="h-8 w-28" />
+          <Skeleton className="h-8 w-32" />
         </div>
       </div>
     );
@@ -105,7 +126,7 @@ export function CategoryNavigation({
   if (featuredError) {
     return (
       <div className={cn("w-full p-2 text-center text-red-500 text-sm", className)}>
-        Failed to load categories
+        {t("categoryNavigation.failedToLoad")}
       </div>
     );
   }
@@ -149,7 +170,7 @@ export function CategoryNavigation({
               onClick={() => setIsSearchOpen(true)}
             >
               <Search className="h-3 w-3 mr-1" />
-              <span className="text-xs">More</span>
+              <span className="text-xs">{t("categoryNavigation.more")}</span>
             </Button>
           )}
         </div>
@@ -158,82 +179,86 @@ export function CategoryNavigation({
       <CommandDialog 
         open={isSearchOpen} 
         onOpenChange={setIsSearchOpen}
-        title="Search Categories"
-        description="Find and browse all available categories"
+        title={t("categoryNavigation.searchDialogTitle")}
+        description={t("categoryNavigation.searchDialogDescription")}
       >
         <CommandInput 
-          placeholder="Search categories..." 
+          placeholder={t("categoryNavigation.searchInputPlaceholder")}
           value={searchTerm}
-          onValueChange={setSearchTerm}
+          onValueChange={handleSearch}
         />
         <CommandList 
           ref={scrollRef}
           onScroll={handleScroll}
           className="max-h-[400px]"
         >
-          {searchLoading && (
-            <CommandLoading>Loading categories...</CommandLoading>
-          )}
-          
-          {!searchLoading && searchCategories.length === 0 && searchTerm && (
-            <CommandEmpty>No categories found.</CommandEmpty>
-          )}
-          
-          {!searchLoading && searchCategories.length === 0 && !searchTerm && (
-            <CommandEmpty>Start typing to search categories...</CommandEmpty>
-          )}
-          
-          {searchCategories.length > 0 && (
+          {(searchLoading || isRefetching || isSearching) ? (
             <CommandGroup>
-              <div className="flex items-center justify-between px-2 py-1 text-xs text-muted-foreground border-b">
-                <div className="flex items-center gap-2">
-                  <Grid3X3 className="h-3 w-3" />
-                  <span>{searchCategories.length} categories</span>
-                </div>
-                {hasNextPage && (
-                  <Badge variant="secondary" className="text-xs">
-                    <Loader2 className={cn("h-3 w-3 mr-1", isFetchingNextPage ? "animate-spin" : "hidden")} />
-                    {isFetchingNextPage ? "Loading..." : "More available"}
-                  </Badge>
-                )}
+              <div className="space-y-2 p-2">
+                <Skeleton className="h-8 w-full" />
+                <Skeleton className="h-8 w-3/4" />
+                <Skeleton className="h-8 w-1/2" />
+                <Skeleton className="h-8 w-2/3" />
               </div>
-              
-              {searchCategories.map((category) => {
-                const href = `/category/${category.id}`;
-                const isActive = pathname?.startsWith(href);
-                
-                return (
-                  <CommandItem 
-                    key={category.id} 
-                    value={category.name ?? ""}
-                    className={cn(
-                      "cursor-pointer",
-                      isActive && "bg-primary text-primary-foreground"
-                    )}
-                    onSelect={() => {
-                      setIsSearchOpen(false);
-                    }}
-                    asChild
-                  >
-                    <Link href={href}>
-                      <span>{category.name}</span>
-                      {isActive && (
-                        <Badge variant="secondary" className="ml-auto">
-                          Active
-                        </Badge>
-                      )}
-                    </Link>
-                  </CommandItem>
-                );
-              })}
-              
-              {isFetchingNextPage && (
-                <div className="flex items-center justify-center py-2">
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  <span className="text-sm text-muted-foreground">Loading more...</span>
-                </div>
-              )}
             </CommandGroup>
+          ) : (
+            <>
+              {searchCategories.length === 0 && debouncedSearchTerm && (
+                <CommandEmpty>{t("categoryNavigation.noCategoriesFound")}</CommandEmpty>
+              )}
+              {searchCategories.length === 0 && !debouncedSearchTerm && (
+                <CommandEmpty>{t("categoryNavigation.startTyping")}</CommandEmpty>
+              )}
+              {searchCategories.length > 0 && (
+                <CommandGroup>
+                  <div className="flex items-center justify-between px-2 py-1 text-xs text-muted-foreground border-b">
+                    <div className="flex items-center gap-2">
+                      <Grid3X3 className="h-3 w-3" />
+                      <span>{t("categoryNavigation.categoriesCount", { count: searchCategories.length })}</span>
+                    </div>
+                    {hasNextPage && (
+                      <Badge variant="secondary" className="text-xs">
+                        <Loader2 className={cn("h-3 w-3 mr-1", isFetchingNextPage ? "animate-spin" : "hidden")} />
+                        {isFetchingNextPage ? t("categoryNavigation.loading") : t("categoryNavigation.moreAvailable")}
+                      </Badge>
+                    )}
+                  </div>
+                  {searchCategories.map((category) => {
+                    const href = `/category/${category.id}`;
+                    const isActive = pathname?.startsWith(href);
+                    return (
+                      <CommandItem 
+                        key={category.id} 
+                        value={category.name ?? ""}
+                        className={cn(
+                          "cursor-pointer",
+                          isActive && "bg-primary text-primary-foreground"
+                        )}
+                        onSelect={() => {
+                          setIsSearchOpen(false);
+                        }}
+                        asChild
+                      >
+                        <Link href={href}>
+                          <span>{category.name}</span>
+                          {isActive && (
+                            <Badge variant="secondary" className="ml-auto">
+                              {t("categoryNavigation.active")}
+                            </Badge>
+                          )}
+                        </Link>
+                      </CommandItem>
+                    );
+                  })}
+                  {isFetchingNextPage && (
+                    <div className="flex items-center justify-center py-2">
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      <span className="text-sm text-muted-foreground">{t("categoryNavigation.loadingMore")}</span>
+                    </div>
+                  )}
+                </CommandGroup>
+              )}
+            </>
           )}
         </CommandList>
       </CommandDialog>
