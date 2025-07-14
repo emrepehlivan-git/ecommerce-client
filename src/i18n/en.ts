@@ -270,4 +270,18 @@ export default {
       "login": "Login"
     }
   },
+  categoryNavigation: {
+    more: "More",
+    searchDialogTitle: "Search Categories",
+    searchDialogDescription: "Find and browse all available categories",
+    searchInputPlaceholder: "Search categories...",
+    noCategoriesFound: "No categories found.",
+    startTyping: "Start typing to search categories...",
+    categoriesCount: "{count} categories",
+    moreAvailable: "More available",
+    loading: "Loading...",
+    active: "Active",
+    loadingMore: "Loading more...",
+    failedToLoad: "Failed to load categories",
+  },
 } as const;

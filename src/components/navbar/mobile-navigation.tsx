@@ -8,7 +8,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import type { CategoryDto } from "@/api/generated/model";
 import { Menu, Shield, Home, Folder } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -20,16 +19,17 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Logo } from "./logo";
 import LogoutButton from "@/components/auth/logout-button";
 import { checkAdminAccess } from "@/lib/auth-utils";
+import { useGetApiV1Category } from "@/api/generated/category/category";
 
 interface MobileNavigationProps {
-  categories: CategoryDto[];
 }
 
-export function MobileNavigation({ categories }: MobileNavigationProps) {
+export function MobileNavigation() {
   const [isOpen, setIsOpen] = useState(false);
   const { data: session } = useSession();
   const pathname = usePathname();
   const t  = useI18n();
+  const { data: categories } = useGetApiV1Category();
   
   const hasAdminRole = session?.user?.roles ? checkAdminAccess(session.user.roles) : false;
 
@@ -98,7 +98,7 @@ export function MobileNavigation({ categories }: MobileNavigationProps) {
                 <Folder className="inline mr-2 h-3 w-3" />
                 {t("mobile_navigation.categories")}
               </h3>
-              {categories.map((category) => (
+              {categories?.value?.map((category) => (
                 <SheetClose asChild key={category.id}>
                   <Link
                     href={`/category/${category.id}`}
