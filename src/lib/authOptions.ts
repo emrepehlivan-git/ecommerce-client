@@ -59,8 +59,8 @@ export const authOptions: NextAuthConfig = {
           const decodedToken = JSON.parse(jsonPayload);
           
           let roles: string[] = [];
-          if (decodedToken.resource_access?.[clientId]?.roles) {
-            roles = decodedToken.resource_access[clientId].roles;
+          if (decodedToken.resource_access?.['ecommerce-api']?.roles) {
+            roles = decodedToken.resource_access['ecommerce-api'].roles;
           }
           
           token.roles = roles.filter(role => role && role.trim().length > 0);
