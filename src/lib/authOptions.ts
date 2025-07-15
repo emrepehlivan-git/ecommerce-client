@@ -4,8 +4,7 @@ import Keycloak from "next-auth/providers/keycloak";
 
 const realm = "ecommerce";
 const issuer = process.env.NEXT_PUBLIC_AUTH_SERVER_URL;
-const clientId = process.env.NEXT_PUBLIC_OPENIDDICT_CLIENT_ID ?? "nextjs-client";
-const clientSecret = process.env.KEYCLOAK_CLIENT_SECRET ?? "";
+const clientId = process.env.NEXT_PUBLIC_CLIENT_ID;
 
 const normalizedIssuer = issuer?.endsWith("/") ? issuer : `${issuer}/`;
 
@@ -22,7 +21,7 @@ export const authOptions: NextAuthConfig = {
   providers: [
     Keycloak({
       clientId,
-      clientSecret,
+      clientSecret:"",
       issuer: `${normalizedIssuer}realms/${realm}`,
       authorization: {
         url: `${normalizedIssuer}realms/${realm}/protocol/openid-connect/auth`,

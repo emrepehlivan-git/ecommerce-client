@@ -287,4 +287,36 @@ export default {
       "login": "Giriş Yap"
     }
   },
+  role: {
+    form: {
+      editTitle: "Rolü Düzenle",
+      createTitle: "Yeni Rol Oluştur",
+      editDescription: "Rol adını güncelleyin.",
+      createDescription: "Yeni rol için bir ad girin.",
+      nameLabel: "Ad",
+      namePlaceholder: "Rol Adı",
+      nameRequired: "Rol adı gerekli",
+      saveButton: "Kaydet",
+      cancelButton: "İptal",
+      updateSuccess: "Rol başarıyla güncellendi",
+      createSuccess: "Rol başarıyla oluşturuldu",
+    },
+    table: {
+      title: "Roller",
+      create: "Rol Oluştur",
+      id: "ID",
+      name: "Ad",
+      edit: "Düzenle",
+      delete: "Sil",
+      openMenu: "Menüyü Aç",
+      deleteSuccess: "Rol başarıyla silindi",
+      deleteSelectedSuccess: "Seçili roller başarıyla silindi",
+      areYouSure: "Emin misiniz?",
+      deleteDescription: "Bu işlem geri alınamaz. Bu rol kalıcı olarak silinecek.",
+      deleteSelectedDescription: "Bu işlem geri alınamaz. Seçili roller kalıcı olarak silinecek.",
+      deleteSelected: "Seçili Rolleri Sil",
+      selectAll: "Tümünü Seç",
+      selectRow: "Satırı Seç"
+    }
+  },
 } as const;

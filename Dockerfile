@@ -37,7 +37,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # Only set minimal required variables for build
 ENV NEXT_PUBLIC_APP_URL="http://localhost:3000"
 ENV NEXT_PUBLIC_AUTH_SERVER_URL="http://localhost:8080/"
-ENV NEXT_PUBLIC_OPENIDDICT_CLIENT_ID="nextjs-client"    
+ENV NEXT_PUBLIC_CLIENT_ID="nextjs-client"    
 ENV NEXT_PUBLIC_API_URL="http://localhost:4000"
 
 RUN bun run build

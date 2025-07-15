@@ -33,6 +33,7 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useI18n } from "@/i18n/client";
 
 interface RoleFormModalProps {
   role: RoleDto | null;
@@ -40,11 +41,11 @@ interface RoleFormModalProps {
   onClose: () => void;
 }
 
-const formSchema = z.object({
-  name: z.string().min(1, { message: "Role name is required" }),
-});
-
 export const RoleFormModal = ({ role, isOpen, onClose }: RoleFormModalProps) => {
+  const t = useI18n();
+  const formSchema = z.object({
+    name: z.string().min(1, { message: t("role.form.nameRequired") }),
+  });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -67,7 +68,7 @@ export const RoleFormModal = ({ role, isOpen, onClose }: RoleFormModalProps) => 
 
   const commonMutationOptions = {
     onSuccess: () => {
-      toast.success(isEditMode ? "Role updated successfully" : "Role created successfully");
+      toast.success(isEditMode ? t("role.form.updateSuccess") : t("role.form.createSuccess"));
       queryClient.invalidateQueries({ queryKey: getGetApiV1RoleQueryKey() });
       router.refresh();
       onClose();
@@ -103,9 +104,9 @@ export const RoleFormModal = ({ role, isOpen, onClose }: RoleFormModalProps) => 
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{isEditMode ? "Edit Role" : "Create New Role"}</DialogTitle>
+          <DialogTitle>{isEditMode ? t("role.form.editTitle") : t("role.form.createTitle")}</DialogTitle>
           <DialogDescription>
-            {isEditMode ? "Update the role name." : "Enter a name for the new role."}
+            {isEditMode ? t("role.form.editDescription") : t("role.form.createDescription")}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -115,9 +116,9 @@ export const RoleFormModal = ({ role, isOpen, onClose }: RoleFormModalProps) => 
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>{t("role.form.nameLabel")}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Role Name" />
+                    <Input {...field} placeholder={t("role.form.namePlaceholder")}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -126,7 +127,7 @@ export const RoleFormModal = ({ role, isOpen, onClose }: RoleFormModalProps) => 
             <DialogFooter className="mt-3">
               <Button type="button" variant="outline" onClick={onClose}>
                 <X className="h-4 w-4" />
-                Cancel
+                {t("role.form.cancelButton")}
               </Button>
               <Button type="submit" disabled={mutation.isPending}>
                 {mutation.isPending ? (
@@ -134,7 +135,7 @@ export const RoleFormModal = ({ role, isOpen, onClose }: RoleFormModalProps) => 
                 ) : (
                   <Save className="h-4 w-4" />
                 )}
-                Save
+                {t("role.form.saveButton")}
               </Button>
             </DialogFooter>
           </form>

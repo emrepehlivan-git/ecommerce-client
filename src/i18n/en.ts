@@ -284,4 +284,36 @@ export default {
     loadingMore: "Loading more...",
     failedToLoad: "Failed to load categories",
   },
+  role: {
+    form: {
+      editTitle: "Edit Role",
+      createTitle: "Create New Role",
+      editDescription: "Update the role name.",
+      createDescription: "Enter a name for the new role.",
+      nameLabel: "Name",
+      namePlaceholder: "Role Name",
+      nameRequired: "Role name is required",
+      saveButton: "Save",
+      cancelButton: "Cancel",
+      updateSuccess: "Role updated successfully",
+      createSuccess: "Role created successfully",
+    },
+    table: {
+      title: "Roles",
+      create: "Create Role",
+      id: "ID",
+      name: "Name",
+      edit: "Edit",
+      delete: "Delete",
+      openMenu: "Open menu",
+      deleteSuccess: "Role deleted successfully",
+      deleteSelectedSuccess: "Selected roles deleted successfully",
+      areYouSure: "Are you sure?",
+      deleteDescription: "This action cannot be undone. This will permanently delete the role.",
+      deleteSelectedDescription: "This action cannot be undone. This will permanently delete the selected roles.",
+      deleteSelected: "Delete Selected Roles",
+      selectAll: "Select all",
+      selectRow: "Select row"
+    }
+  },
 } as const;

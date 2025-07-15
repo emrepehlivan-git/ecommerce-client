@@ -1,3 +1,4 @@
+import { PagedInfo } from "@/api/generated/model"
 import { getApiV1Role } from "@/api/generated/role/role"
 import { RolesPageClient } from "@/components/admin/roles/roles-page-client"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -24,7 +25,7 @@ export default async function RolesPage({ searchParams }: RolesPageProps) {
     <Suspense fallback={<RolesPageSkeleton />}>
       <RolesPageClient
         roles={response?.value ?? []}
-        pagedInfo={response?.pagedInfo} />
+        pagedInfo={response?.pagedInfo as PagedInfo} />
     </Suspense>
   )
 } 
