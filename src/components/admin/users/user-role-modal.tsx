@@ -23,8 +23,10 @@ import {
   useGetApiV1Role, 
   useGetApiV1RoleUserUserId,
   usePostApiV1RoleUserUserIdAddRole,
-  usePostApiV1RoleUserUserIdRemoveRole 
+  usePostApiV1RoleUserUserIdRemoveRole,
+  getGetApiV1RoleUserUserIdQueryKey
 } from "@/api/generated/role/role"
+import { getGetApiV1UsersQueryKey } from "@/api/generated/users/users"
 import { Search, User, Shield, AlertTriangle } from "lucide-react"
 
 interface UserRoleModalProps {
@@ -59,12 +61,14 @@ export function UserRoleModal({ user, isOpen, onClose }: UserRoleModalProps) {
   const addRoleMutation = usePostApiV1RoleUserUserIdAddRole({
     mutation: {
       onSuccess: () => {
+        console.log("Role assigned successfully");
         toast.success("Role assigned successfully")
-        queryClient.invalidateQueries({ queryKey: ["/api/v1/Role/user"] })
-        queryClient.invalidateQueries({ queryKey: ["/api/v1/Users"] })
+        queryClient.invalidateQueries({ queryKey: getGetApiV1RoleUserUserIdQueryKey(user?.id || "") })
+        queryClient.invalidateQueries({ queryKey: getGetApiV1UsersQueryKey() })
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.detail || "Failed to assign role")
+        console.error("Error assigning role:", error);
+        toast.error(error?.response?.data?.detail || error?.message || "Failed to assign role")
       }
     }
   })
@@ -72,12 +76,14 @@ export function UserRoleModal({ user, isOpen, onClose }: UserRoleModalProps) {
   const removeRoleMutation = usePostApiV1RoleUserUserIdRemoveRole({
     mutation: {
       onSuccess: () => {
+        console.log("Role removed successfully");
         toast.success("Role removed successfully")
-        queryClient.invalidateQueries({ queryKey: ["/api/v1/Role/user"] })
-        queryClient.invalidateQueries({ queryKey: ["/api/v1/Users"] })
+        queryClient.invalidateQueries({ queryKey: getGetApiV1RoleUserUserIdQueryKey(user?.id || "") })
+        queryClient.invalidateQueries({ queryKey: getGetApiV1UsersQueryKey() })
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.detail || "Failed to remove role")
+        console.error("Error removing role:", error);
+        toast.error(error?.response?.data?.detail || error?.message || "Failed to remove role")
       }
     }
   })
@@ -114,10 +120,16 @@ export function UserRoleModal({ user, isOpen, onClose }: UserRoleModalProps) {
   }
 
   const handleSave = async () => {
-    if (!user?.id) return
+    if (!user?.id) {
+      console.error("User ID is missing");
+      return;
+    }
 
     const rolesToAdd = selectedRoles.filter(role => !initialRoles.includes(role))
     const rolesToRemove = initialRoles.filter(role => !selectedRoles.includes(role))
+
+    console.log("Roles to add:", rolesToAdd);
+    console.log("Roles to remove:", rolesToRemove);
 
     // Find role IDs for the roles to add/remove
     const roleMap = new Map(availableRoles.map(role => [role.name, role.id]))
@@ -127,6 +139,7 @@ export function UserRoleModal({ user, isOpen, onClose }: UserRoleModalProps) {
       for (const roleName of rolesToAdd) {
         const roleId = roleMap.get(roleName)
         if (roleId) {
+          console.log("Adding role:", roleName, "with ID:", roleId);
           await addRoleMutation.mutateAsync({
             userId: user.id,
             data: { roleId }
@@ -138,6 +151,7 @@ export function UserRoleModal({ user, isOpen, onClose }: UserRoleModalProps) {
       for (const roleName of rolesToRemove) {
         const roleId = roleMap.get(roleName)
         if (roleId) {
+          console.log("Removing role:", roleName, "with ID:", roleId);
           await removeRoleMutation.mutateAsync({
             userId: user.id,
             data: { roleId }
@@ -147,7 +161,6 @@ export function UserRoleModal({ user, isOpen, onClose }: UserRoleModalProps) {
 
       onClose()
     } catch (error) {
-      // Individual errors are handled in the mutation callbacks
       console.error("Error updating user roles:", error)
     }
   }

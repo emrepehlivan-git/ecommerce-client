@@ -9,23 +9,21 @@ import { useTableParams } from "@/hooks/use-table-params";
 import { UserRoleModal } from "./user-role-modal";
 import { createUserColumns } from "./users-table-columns";
 import { 
+  getGetApiV1UsersQueryKey,
   usePostApiV1UsersActivateId, 
-  usePostApiV1UsersDeactivateId 
+  usePostApiV1UsersDeactivateId,
+  useGetApiV1Users
 } from "@/api/generated/users/users";
 import { useQueryClient } from "@tanstack/react-query";
 
 interface UsersTableProps {
   columns?: ColumnDef<UserDto>[];
-  data: UserDto[];
-  pagedInfo: {
-    pageNumber: number;
-    pageSize: number;
-    totalPages: number;
-    totalRecords: number;
-  };
+  page: number;
+  pageSize: number;
+  search?: string;
 }
 
-export function UsersTable({ columns: providedColumns, data, pagedInfo }: UsersTableProps) {
+export function UsersTable({ columns: providedColumns, page, pageSize, search }: UsersTableProps) {
   const [selectedUser, setSelectedUser] = useState<UserDto | null>(null);
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const queryClient = useQueryClient();
@@ -37,15 +35,22 @@ export function UsersTable({ columns: providedColumns, data, pagedInfo }: UsersT
     handleFilterChange,
   } = useTableParams();
 
+  // Kullanıcı listesini React Query ile çek
+  const { data, isLoading: isUsersLoading } = useGetApiV1Users({
+    Page: page,
+    PageSize: pageSize,
+    Search: search,
+  });
+
   // User activation/deactivation mutations
   const activateUserMutation = usePostApiV1UsersActivateId({
     mutation: {
       onSuccess: () => {
         toast.success("User activated successfully");
-        queryClient.invalidateQueries({ queryKey: ["/api/v1/Users"] });
+        queryClient.invalidateQueries({ queryKey: getGetApiV1UsersQueryKey({ Page: page, PageSize: pageSize, Search: search }) });
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.detail || "Failed to activate user");
+        toast.error(error?.response?.data?.detail || error?.message || "Failed to activate user");
       },
     },
   });
@@ -54,10 +59,10 @@ export function UsersTable({ columns: providedColumns, data, pagedInfo }: UsersT
     mutation: {
       onSuccess: () => {
         toast.success("User deactivated successfully");
-        queryClient.invalidateQueries({ queryKey: ["/api/v1/Users"] });
+        queryClient.invalidateQueries({ queryKey: getGetApiV1UsersQueryKey({ Page: page, PageSize: pageSize, Search: search }) });
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.detail || "Failed to deactivate user");
+        toast.error(error?.response?.data?.detail || error?.message || "Failed to deactivate user");
       },
     },
   });
@@ -69,17 +74,16 @@ export function UsersTable({ columns: providedColumns, data, pagedInfo }: UsersT
   };
 
   const handleToggleStatus = async (user: UserDto) => {
-    if (!user.id) return;
-
+    if (!user.id) {
+      return;
+    }
     try {
       if (user.isActive) {
         await deactivateUserMutation.mutateAsync({ id: user.id });
       } else {
         await activateUserMutation.mutateAsync({ id: user.id });
       }
-    } catch (error) {
-      // Error handling is done in the mutation callbacks
-    }
+    } catch (error) {}
   };
 
   // Create columns with action handlers
@@ -88,22 +92,24 @@ export function UsersTable({ columns: providedColumns, data, pagedInfo }: UsersT
     onToggleStatus: handleToggleStatus,
   });
 
+  const pagedInfo = data?.pagedInfo || { pageNumber: page, pageSize, totalPages: 1, totalRecords: 0 };
+  const users = data?.value || [];
+
   return (
     <>
       <DataTable
         columns={columns}
-        data={data}
-        page={pagedInfo.pageNumber}
-        pageSize={pagedInfo.pageSize}
-        totalPages={pagedInfo.totalPages}
-        totalRecords={pagedInfo.totalRecords}
+        data={users}
+        page={pagedInfo.pageNumber ?? 1}
+        pageSize={pagedInfo.pageSize ?? 10}
+        totalPages={pagedInfo.totalPages ?? 1}
+        totalRecords={pagedInfo.totalRecords ?? 0}
         onPageChange={handlePageChange}
         onPageSizeChange={handlePageSizeChange}
         globalFilter={globalFilter}
         onGlobalFilterChange={handleFilterChange}
-        isLoading={isSearching || activateUserMutation.isPending || deactivateUserMutation.isPending}
+        isLoading={isSearching || isUsersLoading || activateUserMutation.isPending || deactivateUserMutation.isPending}
       />
-      
       <UserRoleModal
         user={selectedUser}
         isOpen={isRoleModalOpen}

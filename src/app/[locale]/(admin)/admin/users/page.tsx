@@ -1,5 +1,4 @@
 import { getApiV1Users } from "@/api/generated/users/users";
-import { userColumns } from "@/components/admin/users/users-table-columns";
 import { UsersTable } from "@/components/admin/users/users-table";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -16,23 +15,19 @@ interface UsersPageProps {
   searchParams: { [key: string]: string | string[] | undefined };
 }
 
-export default async function UsersPage({ searchParams }: UsersPageProps) {
+export default function UsersPage({ searchParams }: UsersPageProps) {
   const page = Number(searchParams?.page ?? 1);
   const pageSize = Number(searchParams?.pageSize ?? 10);
-  const response = await getApiV1Users({
-    Page: page,
-    PageSize: pageSize,
-    Search: searchParams?.search as string,
-  });
+  const search = typeof searchParams?.search === "string" ? searchParams.search : "";
 
   return (
     <Suspense fallback={<UsersPageSkeleton />}>
       <div className="p-6">
         <h3 className="text-lg font-bold mb-4">Users</h3>
         <UsersTable
-          columns={userColumns}
-          data={response.value || []}
-          pagedInfo={response.pagedInfo}
+          page={page}
+          pageSize={pageSize}
+          search={search}
         />
       </div>
     </Suspense>

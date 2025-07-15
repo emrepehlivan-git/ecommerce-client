@@ -57,7 +57,10 @@ export const createUserColumns = ({ onManageRoles, onToggleStatus }: UserColumns
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
+            <Button 
+              variant="ghost" 
+              className="h-8 w-8 p-0"
+            >
               <span className="sr-only">Open menu</span>
               <MoreHorizontal className="h-4 w-4" />
             </Button>
@@ -65,11 +68,15 @@ export const createUserColumns = ({ onManageRoles, onToggleStatus }: UserColumns
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => onManageRoles(user)}>
+            <DropdownMenuItem onClick={() => {
+              onManageRoles(user);
+            }}>
               <Shield className="mr-2 h-4 w-4" />
               Manage Roles
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onToggleStatus(user)}>
+            <DropdownMenuItem onClick={() => {
+              onToggleStatus(user);
+            }}>
               {user.isActive ? (
                 <>
                   <UserX className="mr-2 h-4 w-4" />
@@ -91,6 +98,10 @@ export const createUserColumns = ({ onManageRoles, onToggleStatus }: UserColumns
 
 // Legacy export for backward compatibility
 export const userColumns: ColumnDef<UserDto>[] = createUserColumns({
-  onManageRoles: () => {},
-  onToggleStatus: () => {},
+  onManageRoles: () => {
+    console.log("Legacy onManageRoles called - this should not happen");
+  },
+  onToggleStatus: () => {
+    console.log("Legacy onToggleStatus called - this should not happen");
+  },
 }) 
