@@ -17,6 +17,7 @@ interface ProductDetailsClientProps {
 
 export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
   const t = useI18n();
+  console.log(product);
   const isOutOfStock = !product.isActive || (product.stockQuantity || 0) === 0;
   const defaultProductName = t("products.detail.defaultName");
 

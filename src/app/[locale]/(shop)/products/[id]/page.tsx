@@ -15,7 +15,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const { id } = await params;
 
   const response = await getApiV1ProductId(id);
-
+  console.log("response", response);
   if (!response) {
     notFound();
   }
