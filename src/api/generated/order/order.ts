@@ -32,6 +32,7 @@ import type {
 import type {
   GetApiV1OrderParams,
   OrderDto,
+  OrderDtoListPagedResult,
   OrderItemAddCommand,
   OrderPlaceCommand,
   OrderStatusUpdateCommand,
@@ -49,7 +50,7 @@ export const getApiV1Order = (
 ) => {
       
       
-      return axiosClientMutator<OrderDto[]>(
+      return axiosClientMutator<OrderDtoListPagedResult>(
       {url: `/api/v1/Order`, method: 'GET',
         params, signal
     },

@@ -34,6 +34,7 @@ import type {
   GetApiV1RoleParams,
   ProblemDetails,
   RoleDto,
+  RoleDtoListPagedResult,
   RoleIdRequest,
   UpdateRoleCommand,
   UserRoleDto
@@ -50,7 +51,7 @@ export const getApiV1Role = (
 ) => {
       
       
-      return axiosClientMutator<RoleDto[]>(
+      return axiosClientMutator<RoleDtoListPagedResult>(
       {url: `/api/v1/Role`, method: 'GET',
         params, signal
     },

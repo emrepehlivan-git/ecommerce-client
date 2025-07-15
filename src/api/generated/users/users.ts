@@ -32,7 +32,8 @@ import type {
 import type {
   GetApiV1UsersParams,
   ProblemDetails,
-  UserDto
+  UserDto,
+  UserDtoListPagedResult
 } from '.././model';
 
 import { axiosClientMutator } from '../../../lib/axiosClient';
@@ -46,7 +47,7 @@ export const getApiV1Users = (
 ) => {
       
       
-      return axiosClientMutator<UserDto[]>(
+      return axiosClientMutator<UserDtoListPagedResult>(
       {url: `/api/v1/Users`, method: 'GET',
         params, signal
     },
