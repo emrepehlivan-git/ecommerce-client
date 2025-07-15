@@ -134,7 +134,18 @@ export function CategoryNavigation({
   return (
     <div className={cn("w-full", className)}>
       <ScrollArea className="w-full">
-        <div className="flex items-center gap-2 pb-2">
+      <div className="flex items-center gap-2 pb-2">
+          {showSearchButton && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-shrink-0 hover:bg-primary/5"
+                onClick={() => setIsSearchOpen(true)}
+              >
+                <Search className="h-3 w-3 mr-1" />
+                <span className="text-xs">{t("categoryNavigation.more")}</span>
+              </Button>
+           )}
           {featuredCategories.map((category) => {
             const href = `/category/${category.id}`;
             const isActive = pathname?.startsWith(href);
@@ -161,18 +172,6 @@ export function CategoryNavigation({
               </Button>
             );
           })}
-          
-          {showSearchButton && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex-shrink-0 hover:bg-primary/5"
-              onClick={() => setIsSearchOpen(true)}
-            >
-              <Search className="h-3 w-3 mr-1" />
-              <span className="text-xs">{t("categoryNavigation.more")}</span>
-            </Button>
-          )}
         </div>
       </ScrollArea>
 

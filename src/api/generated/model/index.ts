@@ -49,6 +49,7 @@ export * from './postApiV1ProductIdImagesBody';
 export * from './problemDetails';
 export * from './productDto';
 export * from './productDtoListPagedResult';
+export * from './productImageDto';
 export * from './productImageResponseDto';
 export * from './productImageWebDto';
 export * from './result';
