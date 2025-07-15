@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import { useErrorHandler } from "@/hooks/use-error-handling";
 import { Loader2, Save, X } from "lucide-react";
 import {
@@ -51,6 +52,7 @@ export const RoleFormModal = ({ role, isOpen, onClose }: RoleFormModalProps) => 
     },
   });
   const queryClient = useQueryClient();
+  const router = useRouter();
   const { handleError } = useErrorHandler();
 
   const isEditMode = role !== null;
@@ -67,6 +69,7 @@ export const RoleFormModal = ({ role, isOpen, onClose }: RoleFormModalProps) => 
     onSuccess: () => {
       toast.success(isEditMode ? "Role updated successfully" : "Role created successfully");
       queryClient.invalidateQueries({ queryKey: getGetApiV1RoleQueryKey() });
+      router.refresh();
       onClose();
     },
     onError: (error: unknown) => {

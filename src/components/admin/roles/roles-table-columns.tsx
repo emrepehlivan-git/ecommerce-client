@@ -20,6 +20,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useErrorHandler } from "@/hooks/use-error-handling";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { RoleFormModal } from "./role-form-modal";
 import { ConfirmDialog } from "@/components/common/confirm-dialog";
 import React from "react";
@@ -29,12 +30,14 @@ const RoleActions = ({ role }: { role: RoleDto }) => {
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const queryClient = useQueryClient();
+  const router = useRouter();
   const { handleError } = useErrorHandler();
   const deleteRoleMutation = useDeleteApiV1RoleId({
     mutation: {
       onSuccess: () => {
         toast.success("Role deleted successfully");
         queryClient.invalidateQueries({ queryKey: getGetApiV1RoleQueryKey() });
+        router.refresh();
       },
       onError: (error) => {
         handleError(error);
@@ -132,6 +135,7 @@ export const columns: ColumnDef<RoleDto>[] = [
       const selectedRows = table.getSelectedRowModel().rows;
       const hasSelection = selectedRows.length > 0;
       const queryClient = useQueryClient();
+      const router = useRouter();
       const { handleError } = useErrorHandler();
       const [isBulkConfirmOpen, setIsBulkConfirmOpen] = React.useState(false);
       const deleteRolesMutation = usePostApiV1RoleDeleteMany({
@@ -139,6 +143,7 @@ export const columns: ColumnDef<RoleDto>[] = [
           onSuccess: () => {
             toast.success("Selected roles deleted successfully");
             queryClient.invalidateQueries({ queryKey: getGetApiV1RoleQueryKey() });
+            router.refresh();
             table.resetRowSelection();
           },
           onError: (error) => {
