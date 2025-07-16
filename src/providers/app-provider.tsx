@@ -7,6 +7,7 @@ import AuthSessionProvider from "./auth-session-provider";
 import { QueryProvider } from "./query-provider";
 import { BackToTop } from "@/components/ui/back-to-top";
 import { initializeStore } from "@/stores/useAppStore";
+import { CartProvider } from "./cart-provider";
 
 interface UserData {
   name?: string | null;
@@ -32,9 +33,11 @@ export function AppProvider({
     <I18nProviderClient locale={locale}>
       <AuthSessionProvider session={session}>
         <QueryProvider>
-          {children}
-          <Toaster />
-          <BackToTop />
+          <CartProvider session={session}>
+            {children}
+            <Toaster />
+            <BackToTop />
+          </CartProvider>
         </QueryProvider>
       </AuthSessionProvider>
     </I18nProviderClient>

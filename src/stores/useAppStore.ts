@@ -53,20 +53,11 @@ export const useAppStore = create<AppState>((set, get) => ({
   totalItems: 0,
   totalAmount: 0,
   isCartEmpty: true,
+  addToCart: async (productId, quantity) => {},
+  updateQuantity: async (productId, quantity) => {},
+  removeFromCart: async (productId) => {},
+  clearCart: async () => {},
   refetchCart: () => {},
-
-  addToCart: async (productId, quantity) => {
-    console.log("addToCart called with", { productId, quantity });
-  },
-  updateQuantity: async (productId, quantity) => {
-    console.log("updateQuantity called with", { productId, quantity });
-  },
-  removeFromCart: async (productId) => {
-    console.log("removeFromCart called with", { productId });
-  },
-  clearCart: async () => {
-    console.log("clearCart called");
-  },
 }));
 
 let storeInitialized = false;

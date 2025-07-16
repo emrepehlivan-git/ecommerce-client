@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { User, Shield, LogOut } from "lucide-react";
+import { User, Shield, LogOut, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -35,6 +35,16 @@ export function UserActions({ cartItemCount }: UserActionsProps = {}) {
 
   return (
     <div className="flex items-center gap-4">
+      <Button variant="ghost" size="icon" className="relative" asChild>
+        <Link href="/cart">
+          <ShoppingCart className="h-5 w-5" />
+          {cartItemCount > 0 && (
+            <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              {cartItemCount}
+            </span>
+          )}
+        </Link>
+      </Button>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="rounded-full">
