@@ -1,7 +1,7 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Pencil, Trash } from "lucide-react";
+import { CircleX, MoreHorizontal, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,15 +12,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { OrderDto } from "@/api/generated/model";
+import { formatPrice } from "@/lib/formatPrice";
 
 type GetOrderColumnsProps = {
   handleEdit: (order: OrderDto) => void;
-  handleDeleteClick: (order: OrderDto) => void;
+  handleCancelClick: (order: OrderDto) => void;
+  t: (key: string) => string;
 };
 
 export function getOrderColumns({
   handleEdit,
-  handleDeleteClick,
+  handleCancelClick,
+  t,
 }: GetOrderColumnsProps): ColumnDef<OrderDto>[] {
   return [
     {
@@ -48,12 +51,7 @@ export function getOrderColumns({
       header: "Total Amount",
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("totalAmount"));
-        const formatted = new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
-        }).format(amount);
-
-        return <div className="text-right font-medium">{formatted}</div>;
+        return <div className="text-right font-medium">{formatPrice(amount)}</div>;
       },
     },
     {
@@ -69,15 +67,15 @@ export function getOrderColumns({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>{t("admin.orders.actions")}</DropdownMenuLabel>
               <DropdownMenuItem onClick={() => handleEdit(order)}>
                 <Pencil className="mr-2 size-4" />
-                Edit
+                {t("admin.orders.edit")}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleDeleteClick(order)} variant="destructive">
-                <Trash className="mr-2 size-4" />
-                Delete
+              <DropdownMenuItem onClick={() => handleCancelClick(order)} variant="destructive">
+                <CircleX className="mr-2 size-4" />
+                {t("admin.orders.cancelOrder")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

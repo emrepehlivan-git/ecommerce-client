@@ -10,9 +10,11 @@ import { Separator } from "@/components/ui/separator";
 import { ShoppingCart, Trash2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { signIn } from "next-auth/react";
-import { formatPrice } from "@/lib/utils";
+import { useI18n } from "@/i18n/client";
+import { formatPrice } from "@/lib/formatPrice";
 
 export default function CartPageClient() {
+  const t = useI18n();
   const { data: session } = useSession();
   const { cart, isLoadingCart, isCartEmpty, clearCart, totalItems, totalAmount } = useAppStore();
 
@@ -22,13 +24,13 @@ export default function CartPageClient() {
         <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
           <ShoppingCart className="h-16 w-16 text-gray-400" />
           <h2 className="text-2xl font-semibold text-gray-700">
-            Sepetinizi görüntülemek için giriş yapın
+            {t("cart.loginTitle")}
           </h2>
           <p className="text-gray-500 text-center max-w-md">
-            Sepetinizdeki ürünleri görmek ve alışverişe devam etmek için lütfen hesabınıza giriş yapın.
+            {t("cart.loginDescription")}
           </p>
           <Button onClick={() => signIn("openiddict")} className="mt-4">
-            Giriş Yap
+            {t("cart.loginButton")}
           </Button>
         </div>
       </div>
@@ -40,7 +42,7 @@ export default function CartPageClient() {
   }
 
   if (isCartEmpty) {
-    return <EmptyCart />;
+    return <EmptyCart />; 
   }
 
   return (
@@ -48,9 +50,9 @@ export default function CartPageClient() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">Sepetim</h2>
+          <h2 className="text-3xl font-bold text-gray-900">{t("cart.title")}</h2>
           <p className="text-gray-600 mt-1">
-            {totalItems} ürün - Toplam: ₺{totalAmount.toLocaleString('tr-TR')}
+            {totalItems} {t("cart.items")} - {t("cart.total")} ₺{formatPrice(totalAmount)}
           </p>
         </div>
         
@@ -60,7 +62,7 @@ export default function CartPageClient() {
           className="flex items-center gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
         >
           <Trash2 className="h-4 w-4" />
-          Sepeti Temizle
+          {t("cart.clear")}
         </Button>
       </div>
 
@@ -76,7 +78,7 @@ export default function CartPageClient() {
             ))
           ) : (
             <div className="text-center py-8">
-              <p className="text-gray-500">Sepetinizde ürün bulunmuyor.</p>
+              <p className="text-gray-500">{t("cart.empty")}</p>
             </div>
           )}
         </div>

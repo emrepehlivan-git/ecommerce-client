@@ -11,13 +11,12 @@ export interface UseErrorHandlerOptions {
 export function useErrorHandler(options: UseErrorHandlerOptions = {}) {
   const { showToast = true, logError = true, context } = options;
 
-  const handleError = useCallback((error: unknown, fallbackMessage?: string) => {
+  const handleError = useCallback((error?: unknown, fallbackMessage?: string) => {
     if (logError) {
       ErrorHelper.logError(error, context);
     }
 
     if (showToast) {
-      // Eğer fallbackMessage spesifik bir mesaj ise onu kullan, yoksa API'den gelen mesajı parse et
       const message = fallbackMessage && fallbackMessage !== 'Bir hata oluştu' 
         ? fallbackMessage 
         : ErrorHelper.getToastErrorMessage(error, fallbackMessage);
@@ -35,10 +34,8 @@ export function useErrorHandler(options: UseErrorHandlerOptions = {}) {
     const validationErrors = ErrorHelper.getValidationErrors(error);
     
     if (showToast && validationErrors.length > 0) {
-      // İlk validation error'ı göster
       toast.error(validationErrors[0].message);
     } else if (showToast) {
-      // Validation error yoksa genel hata mesajı göster
       const message = ErrorHelper.getToastErrorMessage(error, 'Doğrulama hatası oluştu');
       toast.error(message);
     }

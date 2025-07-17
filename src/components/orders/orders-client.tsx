@@ -14,7 +14,7 @@ export default function OrdersClient({ userId }: OrdersClientProps) {
   const { data, isLoading, error } = useGetApiV1OrderUserUserId(userId, {
     query: { enabled: !!userId },
   });
-  const orders = data?.data ?? [];
+  const orders = data || [];
 
   if (isLoading) {
     return (

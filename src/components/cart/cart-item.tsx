@@ -9,7 +9,6 @@ import { Minus, Plus, Trash2 } from "lucide-react";
 import { CartItemDto } from "@/api/generated/model";
 import { useErrorHandler } from "@/hooks/use-error-handling";
 import { useAppStore } from "@/stores/useAppStore";
-import { toast } from "sonner";
 
 interface CartItemProps {
   item: CartItemDto;
@@ -53,7 +52,7 @@ export function CartItem({ item }: CartItemProps) {
           {/* Product Image */}
           <div className="relative w-full md:w-32 h-32 rounded-lg overflow-hidden bg-gray-100">
             <Image
-              src="/images/not-found-product.webp"
+              src={"/images/not-found-product.webp"}
               alt={item.productName || "Ürün"}
               fill
               className="object-cover"

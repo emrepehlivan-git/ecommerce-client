@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart, Plus } from "lucide-react";
 import { useAppStore } from "@/stores/useAppStore";
 import { useErrorHandler } from "@/hooks/use-error-handling";
-import { toast } from "sonner";
+import { useI18n } from "@/i18n/client";
 
 interface QuickAddToCartProps {
   productId: string;
@@ -20,6 +20,7 @@ export function QuickAddToCart({
   size = "default",
   className,
 }: QuickAddToCartProps) {
+  const t = useI18n();
   const [isLoading, setIsLoading] = useState(false);
   const { addToCart } = useAppStore();
   const { handleError } = useErrorHandler({
@@ -34,7 +35,7 @@ export function QuickAddToCart({
     try {
       await addToCart(productId, 1);
     } catch (error) {
-      handleError(error, "Ürün sepete eklenirken hata oluştu!");
+      handleError(error);
     } finally {
       setIsLoading(false);
     }
@@ -66,7 +67,7 @@ export function QuickAddToCart({
       className={`w-full ${className}`}
     >
       <ShoppingCart className="mr-2 h-4 w-4" />
-      {isLoading ? "Adding to cart..." : "Add to cart"}
+      {isLoading ? t("cart.loading") : t("cart.addToCart")}
     </Button>
   );
 }

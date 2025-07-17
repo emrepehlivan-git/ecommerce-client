@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Package } from "lucide-react";
+import { useI18n } from "@/i18n/client";
 
 export function EmptyCart() {
+  const t = useI18n();
   return (
     <div className="container mx-auto px-4 py-16">
       <div className="flex flex-col items-center justify-center min-h-[400px] space-y-6">
@@ -18,9 +20,9 @@ export function EmptyCart() {
         </div>
 
         <div className="text-center space-y-4 max-w-md">
-          <h2 className="text-2xl font-bold text-gray-900">Your cart is empty</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{t("cart.empty")}</h2>
           <p className="text-gray-600 leading-relaxed">
-            Your cart is empty. Choose your favorite products and start shopping!
+            {t("cart.emptyDescription")}
           </p>
         </div>
 
@@ -28,7 +30,7 @@ export function EmptyCart() {
           <Button asChild size="lg" className="px-8">
             <Link href="/products">
               <ShoppingCart className="mr-2 h-5 w-5" />
-              Start Shopping
+              {t("cart.startShopping")}
             </Link>
           </Button>
         </div>
@@ -38,24 +40,24 @@ export function EmptyCart() {
             <div className="bg-green-100 rounded-full p-3 w-fit mx-auto">
               <Package className="h-6 w-6 text-green-600" />
             </div>
-            <h3 className="font-medium text-gray-900">Free Shipping</h3>
-            <p className="text-sm text-gray-600">On purchases over 500$</p>
+            <h3 className="font-medium text-gray-900">{t("cart.freeShipping")}</h3>
+            <p className="text-sm text-gray-600">{t("cart.freeShippingDescription")}</p>
           </div>
 
           <div className="text-center space-y-2">
             <div className="bg-blue-100 rounded-full p-3 w-fit mx-auto">
               <ShoppingCart className="h-6 w-6" />
             </div>
-            <h3 className="font-medium text-gray-900">Easy Return</h3>
-            <p className="text-sm text-gray-600">Free return within 30 days</p>
+            <h3 className="font-medium text-gray-900">{t("cart.easyReturn")}</h3>
+            <p className="text-sm text-gray-600">{t("cart.easyReturnDescription")}</p>
           </div>
 
           <div className="text-center space-y-2">
             <div className="bg-purple-100 rounded-full p-3 w-fit mx-auto">
               <Package className="h-6 w-6 text-purple-600" />
             </div>
-            <h3 className="font-medium text-gray-900">Fast Delivery</h3>
-            <p className="text-sm text-gray-600">Same day shipping option</p>
+            <h3 className="font-medium text-gray-900">{t("cart.fastDelivery")}</h3>
+            <p className="text-sm text-gray-600">{t("cart.fastDeliveryDescription")}</p>
           </div>
         </div>
       </div>

@@ -124,7 +124,7 @@ export function AddressList({ userId }: AddressListProps) {
     return <AddressSkeleton />;
   }
 
-  if (!addresses?.data || addresses.data.length === 0) {
+  if (!addresses || addresses.length === 0) {
     return (
       <Card>
         <CardHeader>
@@ -138,7 +138,7 @@ export function AddressList({ userId }: AddressListProps) {
   return (
     <>
       <div className="grid gap-4">
-        {addresses.data.map((address: UserAddressDto) => (
+        {addresses.map((address: UserAddressDto) => (
           <Card key={address.id} className="relative">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">

@@ -19,8 +19,11 @@ import { useErrorHandler } from "@/hooks/use-error-handling";
 import { useDataTable } from "@/hooks/use-data-table";
 import { getOrderColumns } from "./orders-table-columns";
 import { OrderStatusModal } from "./order-status-modal";
+import { useI18n } from "@/i18n/client";
+import { useT } from "@/i18n/getT";
 
 export function OrdersPageClient() {
+  const t = useT();
   const {
     currentPage,
     pageSize,
@@ -30,7 +33,7 @@ export function OrdersPageClient() {
     setPageSize,
     setGlobalFilter,
   } = useDataTable();
-  const [deletingOrder, setDeletingOrder] = useState<OrderDto | null>(null);
+  const [cancellingOrder, setCancellingOrder] = useState<OrderDto | null>(null);
   const [editingOrder, setEditingOrder] = useState<OrderDto | null>(null);
   const { handleError } = useErrorHandler();
 
@@ -55,32 +58,32 @@ export function OrdersPageClient() {
   const cancelMutation = useMutation({
     mutationFn: getApiV1OrderCancelOrderId,
     onSuccess: () => {
-      toast.success("Order cancelled successfully");
+      toast.success(t("admin.orders.orderCancelledSuccessfully"));
       queryClient.invalidateQueries({ queryKey });
     },
     onError: (error) => {
       handleError(error);
     },
     onSettled: () => {
-      setDeletingOrder(null);
+      setCancellingOrder(null);
     },
   });
 
-  const handleDelete = () => {
-    if (!deletingOrder?.id) return;
-    cancelMutation.mutate(deletingOrder.id);
+  const handleCancel = () => {
+    if (!cancellingOrder?.id) return;
+    cancelMutation.mutate(cancellingOrder.id);
   };
 
   const handleEdit = (order: OrderDto) => {
     setEditingOrder(order);
   };
 
-  const handleDeleteClick = (order: OrderDto) => {
-    setDeletingOrder(order);
+  const handleCancelClick = (order: OrderDto) => {
+    setCancellingOrder(order);
   };
 
-  const handleCloseDeleteDialog = () => {
-    setDeletingOrder(null);
+  const handleCloseCancelDialog = () => {
+    setCancellingOrder(null);
   };
 
   const handleCloseEditModal = () => {
@@ -89,11 +92,9 @@ export function OrdersPageClient() {
 
   const columns = getOrderColumns({
     handleEdit,
-    handleDeleteClick,
+    handleCancelClick,
+    t,
   });
-
-  // @ts-ignore
-  const pagedData = ordersResponse?.data;
 
   return (
     <>
@@ -107,19 +108,19 @@ export function OrdersPageClient() {
           <div>
             <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
               <Package className="h-6 w-6" />
-              Orders
+              {t("admin.orders.title")}
             </h2>
-            <p className="text-muted-foreground">Manage customer orders</p>
+            <p className="text-muted-foreground">{t("admin.orders.manageCustomerOrders")}</p>
           </div>
         </div>
 
         <DataTable
           columns={columns}
-          data={pagedData?.value ?? []}
+          data={ordersResponse?.value ?? []}
           page={currentPage}
           pageSize={pageSize}
-          totalPages={pagedData?.pagedInfo?.totalPages ?? 1}
-          totalRecords={pagedData?.pagedInfo?.totalRecords ?? 0}
+          totalPages={ordersResponse?.pagedInfo?.totalPages ?? 1}
+          totalRecords={ordersResponse?.pagedInfo?.totalRecords ?? 0}
           onPageChange={setCurrentPage}
           onPageSizeChange={setPageSize}
           globalFilter={globalFilter}
@@ -128,11 +129,11 @@ export function OrdersPageClient() {
         />
 
         <ConfirmDialog
-          isOpen={!!deletingOrder}
-          onClose={handleCloseDeleteDialog}
-          onConfirm={handleDelete}
-          title="Cancel Order"
-          description={`Are you sure you want to cancel this order?`}
+          isOpen={!!cancellingOrder}
+          onClose={handleCloseCancelDialog}
+          onConfirm={handleCancel}
+          title={t("admin.orders.cancelOrder")}
+          description={t("admin.orders.cancelOrderDescription")}
           isPending={cancelMutation.isPending}
         />
       </div>

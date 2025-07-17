@@ -12,32 +12,31 @@ import { UserAddressDto } from "@/api/generated/model";
 import { useErrorHandler } from "@/hooks/use-error-handling";
 import { Skeleton } from "../ui/skeleton";
 import { Loader2 } from "lucide-react";
-import { formatPrice } from "@/lib/utils";
+import { useI18n } from "@/i18n/client";
 
 export default function CheckoutClient() {
+  const t = useI18n();
   const { data: session } = useSession();
   const { cart, isLoadingCart, totalAmount, totalItems, clearCart } = useAppStore();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const { handleError, handleSuccess: handleSuccessHandler } = useErrorHandler({ context: "CheckoutClient" });
+  const { handleError } = useErrorHandler({ context: "CheckoutClient" });
   const userId = session?.user?.id || cart?.userId;
   if (!userId) {
     return (
       <div className="container mx-auto py-8 text-center">
-        <h2 className="text-2xl font-bold mb-4">You must be logged in to place an order.</h2>
+        <h2 className="text-2xl font-bold mb-4">{t("checkout.loginRequired")}</h2>
       </div>
     );
   }
   const { data: addressesData, isLoading: addressesLoading } =
     useGetApiV1UserAddressesUserUserId(userId);
-  const addresses: UserAddressDto[] = addressesData?.data || [];
+  const addresses: UserAddressDto[] = addressesData || [];
   const defaultAddress = addresses.find((a) => a.isDefault) || addresses[0];
   const [selectedAddressId, setSelectedAddressId] = useState<string | undefined>(
     defaultAddress?.id
   );
-
-  const createOrderMutation = usePostApiV1Order();
 
   const postOrder = usePostApiV1Order({
     mutation: {
@@ -48,7 +47,7 @@ export default function CheckoutClient() {
         router.push("/profile/orders");
       },
       onError: (error) => {
-        handleError(error, "An error occurred while creating the order.");
+        handleError(error);
         setLoading(false);
       },
     },
@@ -56,16 +55,16 @@ export default function CheckoutClient() {
 
   const handleOrder = async () => {
     if (!cart || !cart.items || cart.items.length === 0) {
-      handleError("Your cart is empty.");
+      handleError();
       return;
     }
     if (!selectedAddressId) {
-      handleError("Please select a delivery address.");
+      handleError();
       return;
     }
     const address = addresses.find((a) => a.id === selectedAddressId);
     if (!address) {
-      handleError("Selected address not found.");
+      handleError();
       return;
     }
     setLoading(true);
@@ -104,19 +103,19 @@ export default function CheckoutClient() {
   if (success) {
     return (
       <div className="container mx-auto py-8 text-center">
-        <h2 className="text-2xl font-bold mb-4">Your order has been created successfully!</h2>
+        <h2 className="text-2xl font-bold mb-4">{t("checkout.success")}</h2>
       </div>
     );
   }
 
   return (
     <div className="container mx-auto max-w-lg py-8">
-      <h2 className="text-3xl font-bold mb-6">Complete Order</h2>
+      <h2 className="text-3xl font-bold mb-6">{t("checkout.title")}</h2>
       <div className="mb-4 p-4 border rounded bg-gray-50">
-        <h3 className="font-semibold mb-2">Delivery Address</h3>
+        <h3 className="font-semibold mb-2">{t("checkout.deliveryAddress")}</h3>
         {addresses.length === 0 ? (
           <div className="text-sm text-red-600">
-            You have no address. Please add an address from your profile.
+            {t("checkout.noAddress")}
           </div>
         ) : (
           <div className="space-y-2">
@@ -134,7 +133,7 @@ export default function CheckoutClient() {
                   {address.label ? address.label + " - " : ""}
                   {address.street}, {address.city} {address.zipCode}, {address.country}
                   {address.isDefault && (
-                    <span className="ml-2 text-xs text-green-600">(Default)</span>
+                    <span className="ml-2 text-xs text-green-600">({t("profile.addresses.list.defaultBadge")})</span>
                   )}
                 </span>
               </label>
@@ -143,16 +142,16 @@ export default function CheckoutClient() {
         )}
       </div>
       <div className="mb-4 p-4 border rounded bg-gray-50">
-        <h3 className="font-semibold mb-2">Cart Summary</h3>
-        <div className="text-sm mb-2">{totalItems} products</div>
-        <div className="text-lg font-bold">Total: ₺{totalAmount?.toLocaleString("tr-TR")}</div>
+        <h3 className="font-semibold mb-2">{t("checkout.cartSummary")}</h3>
+        <div className="text-sm mb-2">{t("checkout.productsCount", { count: totalItems })}</div>
+        <div className="text-lg font-bold">{t("checkout.total")} ₺{totalAmount?.toLocaleString("tr-TR")}</div>
       </div>
       <Button
         onClick={handleOrder}
         className="w-full h-12 text-lg"
         disabled={loading || addresses.length === 0}
       >
-        {loading ? <Loader2 className="animate-spin" /> : "Complete Order"}
+        {loading ? <Loader2 className="animate-spin" /> : t("checkout.completeOrder")}
       </Button>
     </div>
   );
