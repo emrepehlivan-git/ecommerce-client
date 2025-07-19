@@ -9,10 +9,16 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
+import { Metadata } from "next";
 import { Suspense } from "react";
 
 interface UsersPageProps {
   searchParams: { [key: string]: string | string[] | undefined };
+}
+
+export const metadata: Metadata = {
+  title: "Users",
+  description: "Users",
 }
 
 export default function UsersPage({ searchParams }: UsersPageProps) {

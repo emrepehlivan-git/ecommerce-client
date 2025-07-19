@@ -377,6 +377,7 @@ export default {
       orders: "Siparişler",
       stockManagement: "Stok Yönetimi",
       settings: "Ayarlar",
+      emailSettings: "E-posta Ayarları",
       security: "Güvenlik"
     },
     orders: {
@@ -467,6 +468,97 @@ export default {
       newCategory: "Yeni Kategori",
       deleteTitle: "Kategoriyi Sil",
       deleteDesc: "'{name}' adlı kategoriyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
-    }
+    },
+    settings: {
+      title: "Ayarlar",
+      description: "Sistem yapılandırması ve ayarları",
+      emailSettings: {
+        title: "E-posta Ayarları",
+        description: "E-posta teslimatı için SMTP ayarlarını yapılandırın",
+        smtpConfiguration: "SMTP Yapılandırması",
+        configurationDescription: "Sipariş onayları, şifre sıfırlama ve diğer bildirimler için e-posta teslimatını etkinleştirmek üzere SMTP sunucu ayarlarınızı yapılandırın.",
+        form: {
+          smtpHost: {
+            label: "SMTP Sunucusu",
+            placeholder: "smtp.gmail.com",
+            description: "SMTP sunucunuzun ana bilgisayar adı veya IP adresi",
+          },
+          smtpPort: {
+            label: "SMTP Portu",
+            placeholder: "587",
+            description: "Yaygın portlar: 587 (STARTTLS), 465 (SSL), 25 (şifresiz)",
+          },
+          smtpUser: {
+            label: "SMTP Kullanıcı Adı",
+            placeholder: "email-adresiniz@gmail.com",
+            description: "SMTP kimlik doğrulaması için kullanıcı adı",
+          },
+          smtpPassword: {
+            label: "SMTP Şifresi",
+            placeholder: "••••••••",
+            description: "SMTP kimlik doğrulaması için şifre veya uygulamaya özel şifre",
+          },
+          fromEmail: {
+            label: "Gönderen E-posta",
+            placeholder: "noreply@maganiz.com",
+            description: "Gönderen olarak görünecek e-posta adresi",
+          },
+          fromName: {
+            label: "Gönderen Adı",
+            placeholder: "Mağaza Adınız",
+            description: "Gönderen olarak görünecek görünen ad",
+          },
+          saveButton: "Ayarları Kaydet",
+          savingButton: "Kaydediliyor...",
+        },
+        validation: {
+          smtpHostRequired: "SMTP Sunucusu gereklidir",
+          smtpHostMaxLength: "SMTP Sunucusu 255 karakteri geçmemelidir",
+          smtpPortRequired: "SMTP Portu gereklidir",
+          smtpPortRange: "Port 1-65535 arasında olmalıdır",
+          smtpUserRequired: "SMTP Kullanıcısı gereklidir",
+          smtpUserMaxLength: "SMTP Kullanıcısı 255 karakteri geçmemelidir",
+          smtpPasswordRequired: "SMTP Şifresi gereklidir",
+          smtpPasswordMinLength: "Şifre en az 6 karakter olmalıdır",
+          fromEmailRequired: "Gönderen E-posta gereklidir",
+          fromEmailValid: "Lütfen geçerli bir e-posta adresi girin",
+          fromEmailMaxLength: "Gönderen E-posta 255 karakteri geçmemelidir",
+          fromNameRequired: "Gönderen adı gereklidir",
+          fromNameMaxLength: "Gönderen adı 100 karakteri geçmemelidir",
+        },
+        testEmail: {
+          title: "Test E-postası",
+          button: "Test E-postası",
+          modal: {
+            title: "Test E-postası Gönder",
+            description: "SMTP yapılandırmanızın doğru çalıştığını doğrulamak için bir test e-postası gönderin.",
+            toEmailLabel: "Alıcı E-posta Adresi",
+            toEmailPlaceholder: "test@example.com",
+            subjectLabel: "Konu",
+            subjectDefault: "E-Ticaret Sisteminden Test E-postası",
+            messageLabel: "Mesaj",
+            messageDefault: "Bu, SMTP yapılandırmanızın doğru çalıştığını doğrulamak için bir test e-postasıdır.\n\nBu e-postayı aldıysanız, e-posta ayarlarınız doğru şekilde yapılandırılmıştır!",
+            cancelButton: "İptal",
+            sendButton: "Test E-postası Gönder",
+            sendingButton: "Gönderiliyor...",
+            successMessage: "{email} adresine test e-postası gönderildi",
+            errorMessage: "Test e-postası gönderilemedi. Lütfen SMTP ayarlarınızı kontrol edin.",
+          },
+        },
+        help: {
+          title: "Yaygın SMTP Yapılandırmaları:",
+          gmail: "Gmail: smtp.gmail.com:587 (Uygulama Şifresi Kullanın)",
+          outlook: "Outlook: smtp-mail.outlook.com:587",
+          yahoo: "Yahoo: smtp.mail.yahoo.com:587",
+          sendgrid: "SendGrid: smtp.sendgrid.net:587",
+        },
+        messages: {
+          updateSuccess: "E-posta ayarları başarıyla güncellendi",
+          loadError: "E-posta Ayarları Yükleme Hatası",
+          loadErrorDescription: "E-posta ayarları yüklenemedi. Lütfen sayfayı yenilemeyi deneyin.",
+          retryButton: "Tekrar Dene",
+        },
+      },
+    },
   },
 } as const;

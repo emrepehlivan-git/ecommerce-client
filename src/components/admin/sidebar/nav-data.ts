@@ -67,6 +67,12 @@ export const getNavSecondary = (t: (key: string) => string) => ([
     title: t("admin.sidebar.settings"),
     url: "/admin/settings",
     icon: Settings,
+    items: [
+      {
+        title: t("admin.sidebar.emailSettings"),
+        url: "/admin/settings/email",
+      },
+    ],
   },
   {
     title: t("admin.sidebar.security"),

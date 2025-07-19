@@ -3,7 +3,13 @@ import { getApiV1Role } from "@/api/generated/role/role"
 import { RolesPageClient } from "@/components/admin/roles/roles-page-client"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
+import { Metadata } from "next"
 import { Suspense } from "react"
+
+export const metadata: Metadata = {
+  title: "Roles",
+  description: "Roles",
+}
 
 interface RolesPageProps {
   searchParams: {
