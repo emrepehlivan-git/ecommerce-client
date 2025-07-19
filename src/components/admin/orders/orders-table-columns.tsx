@@ -3,6 +3,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { CircleX, MoreHorizontal, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,12 +13,29 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { OrderDto } from "@/api/generated/model";
+import { OrderStatus } from "@/api/generated/model";
 import { formatPrice } from "@/lib/formatPrice";
 
 type GetOrderColumnsProps = {
   handleEdit: (order: OrderDto) => void;
   handleCancelClick: (order: OrderDto) => void;
   t: (key: string) => string;
+};
+
+const statusLabels: Record<number, string> = {
+  [OrderStatus.NUMBER_0]: "Pending",
+  [OrderStatus.NUMBER_1]: "Processing",
+  [OrderStatus.NUMBER_2]: "Shipped",
+  [OrderStatus.NUMBER_3]: "Delivered",
+  [OrderStatus.NUMBER_4]: "Cancelled",
+};
+
+const statusVariants: Record<number, "default" | "secondary" | "destructive" | "outline"> = {
+  [OrderStatus.NUMBER_0]: "secondary",
+  [OrderStatus.NUMBER_1]: "default",
+  [OrderStatus.NUMBER_2]: "default",
+  [OrderStatus.NUMBER_3]: "outline",
+  [OrderStatus.NUMBER_4]: "destructive",
 };
 
 export function getOrderColumns({
@@ -45,6 +63,16 @@ export function getOrderColumns({
     {
       accessorKey: "status",
       header: "Status",
+      cell: ({ row }) => {
+        const status = row.getValue<number>("status");
+        if (status === undefined || status === null) return "N/A";
+        
+        return (
+          <Badge variant={statusVariants[status] || "outline"}>
+            {statusLabels[status] || status}
+          </Badge>
+        );
+      },
     },
     {
       accessorKey: "totalAmount",
