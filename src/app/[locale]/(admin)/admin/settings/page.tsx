@@ -3,7 +3,7 @@ import { Metadata } from "next"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Settings, Mail, Shield, Database, Globe } from "lucide-react"
+import { Settings, Mail, Shield, Database, Globe, Cloud } from "lucide-react"
 import Link from "next/link"
 import { getI18n } from "@/i18n/server"
 
@@ -51,22 +51,29 @@ async function SettingsPageContent() {
       available: true,
     },
     {
-      title: "Security Settings",
-      description: "Manage authentication and security policies",
+      title: t("admin.settings.cloudinarySettings.title"),
+      description: t("admin.settings.cloudinarySettings.description"),
+      icon: Cloud,
+      href: "/admin/settings/cloudinary",
+      available: true,
+    },
+    {
+      title: t("admin.settings.security.title"),
+      description: t("admin.settings.security.description"),
       icon: Shield,
       href: "/admin/settings/security",
       available: false,
     },
     {
-      title: "Database Settings",
-      description: "Configure database connections and backups",
+      title: t("admin.settings.databaseSettings.title"),
+      description: t("admin.settings.databaseSettings.description"),
       icon: Database,
       href: "/admin/settings/database",
       available: false,
     },
     {
-      title: "General Settings",
-      description: "Basic system configuration and preferences",
+      title: t("admin.settings.generalSettings.title"),
+      description: t("admin.settings.generalSettings.description"),
       icon: Globe,
       href: "/admin/settings/general",
       available: false,

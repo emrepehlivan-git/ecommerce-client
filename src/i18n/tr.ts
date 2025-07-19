@@ -378,7 +378,8 @@ export default {
       stockManagement: "Stok Yönetimi",
       settings: "Ayarlar",
       emailSettings: "E-posta Ayarları",
-      security: "Güvenlik"
+      security: "Güvenlik",
+      cloudinarySettings: "Cloudinary Ayarları",
     },
     orders: {
       title: "Siparişler",
@@ -558,6 +559,22 @@ export default {
           loadErrorDescription: "E-posta ayarları yüklenemedi. Lütfen sayfayı yenilemeyi deneyin.",
           retryButton: "Tekrar Dene",
         },
+      },
+      cloudinarySettings: {
+        title: "Cloudinary Ayarları",
+        description: "Resim yükleme ve dönüştürme ayarlarını yapılandırın",
+      },
+      security: {
+        title: "Güvenlik Ayarları",
+        description: "Kimlik doğrulama ve güvenlik politikalarını yönetin",
+      },
+      databaseSettings: {
+        title: "Veritabanı Ayarları",
+        description: "Veritabanı bağlantılarını ve yedeklemeleri yapılandırın",
+      },
+      generalSettings: {
+        title: "Genel Ayarlar",
+        description: "Temel sistem yapılandırması ve tercihleri",
       },
     },
   },

@@ -375,7 +375,8 @@ export default {
       stockManagement: "Stock Management",
       settings: "Settings",
       emailSettings: "Email Settings",
-      security: "Security"
+      security: "Security",
+      cloudinarySettings: "Cloudinary Settings",
     },
     products: {
       title: "Products",
@@ -555,6 +556,22 @@ export default {
           loadErrorDescription: "Failed to load email settings. Please try refreshing the page.",
           retryButton: "Retry",
         },
+      },
+      cloudinarySettings: {
+        title: "Cloudinary Settings",
+        description: "Configure image upload and transformation settings",
+      },
+      security: {
+        title: "Security Settings",
+        description: "Manage authentication and security policies",
+      },
+      databaseSettings: {
+        title: "Database Settings",
+        description: "Configure database connections and backups",
+      },
+      generalSettings: {
+        title: "General Settings",
+        description: "Basic system configuration and preferences",
       },
     },
   },

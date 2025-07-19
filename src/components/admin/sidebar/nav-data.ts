@@ -72,6 +72,10 @@ export const getNavSecondary = (t: (key: string) => string) => ([
         title: t("admin.sidebar.emailSettings"),
         url: "/admin/settings/email",
       },
+      {
+        title: "Cloudinary Settings",
+        url: "/admin/settings/cloudinary",
+      },
     ],
   },
   {
