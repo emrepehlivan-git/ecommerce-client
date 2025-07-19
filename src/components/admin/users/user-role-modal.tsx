@@ -28,6 +28,8 @@ import {
 } from "@/api/generated/role/role"
 import { getGetApiV1UsersQueryKey } from "@/api/generated/users/users"
 import { Search, User, Shield, AlertTriangle } from "lucide-react"
+import { useI18n } from "@/i18n/client"
+import { useErrorHandler } from "@/hooks/use-error-handling"
 
 interface UserRoleModalProps {
   user: UserDto | null
@@ -36,18 +38,17 @@ interface UserRoleModalProps {
 }
 
 export function UserRoleModal({ user, isOpen, onClose }: UserRoleModalProps) {
+  const t = useI18n()
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedRoles, setSelectedRoles] = useState<string[]>([])
-  const [initialRoles, setInitialRoles] = useState<string[]>([])
+  const [selectedRoleIds, setSelectedRoleIds] = useState<string[]>([])
+  const [initialRoleIds, setInitialRoleIds] = useState<string[]>([])
   const queryClient = useQueryClient()
+  const { handleError } = useErrorHandler()
 
-  // Fetch all available roles
   const { data: rolesData, isLoading: rolesLoading } = useGetApiV1Role({
-    pageSize: 100,
-    search: searchTerm
+    PageSize: 100
   })
 
-  // Fetch user's current roles
   const { data: userRolesData, isLoading: userRolesLoading } = useGetApiV1RoleUserUserId(
     user?.id || "",
     {
@@ -57,18 +58,17 @@ export function UserRoleModal({ user, isOpen, onClose }: UserRoleModalProps) {
     }
   )
 
-  // Mutations for role assignment
+  const availableRoles = rolesData?.value || []
+
   const addRoleMutation = usePostApiV1RoleUserUserIdAddRole({
     mutation: {
       onSuccess: () => {
-        console.log("Role assigned successfully");
-        toast.success("Role assigned successfully")
+        toast.success(t("admin.users.roleModal.roleAssignedSuccess"))
         queryClient.invalidateQueries({ queryKey: getGetApiV1RoleUserUserIdQueryKey(user?.id || "") })
         queryClient.invalidateQueries({ queryKey: getGetApiV1UsersQueryKey() })
       },
       onError: (error: any) => {
-        console.error("Error assigning role:", error);
-        toast.error(error?.response?.data?.detail || error?.message || "Failed to assign role")
+        handleError(error)
       }
     }
   })
@@ -76,100 +76,101 @@ export function UserRoleModal({ user, isOpen, onClose }: UserRoleModalProps) {
   const removeRoleMutation = usePostApiV1RoleUserUserIdRemoveRole({
     mutation: {
       onSuccess: () => {
-        console.log("Role removed successfully");
-        toast.success("Role removed successfully")
+        toast.success(t("admin.users.roleModal.roleRemovedSuccess"))
         queryClient.invalidateQueries({ queryKey: getGetApiV1RoleUserUserIdQueryKey(user?.id || "") })
         queryClient.invalidateQueries({ queryKey: getGetApiV1UsersQueryKey() })
       },
       onError: (error: any) => {
-        console.error("Error removing role:", error);
-        toast.error(error?.response?.data?.detail || error?.message || "Failed to remove role")
+        handleError(error)
       }
     }
   })
 
-  // Initialize selected roles when user roles data is loaded
   useEffect(() => {
-    if (userRolesData?.roles) {
-      const currentRoles = userRolesData.roles.filter(role => role) as string[]
-      setSelectedRoles(currentRoles)
-      setInitialRoles(currentRoles)
+    if (userRolesData?.roles && availableRoles.length > 0) {
+      const currentRoleNames = userRolesData.roles.filter((role: string) => role) as string[]
+      const currentRoleIds = availableRoles
+        .filter((role: RoleDto) => currentRoleNames.includes(role.name || ""))
+        .map((role: RoleDto) => role.id)
+        .filter(Boolean) as string[]
+      
+      setSelectedRoleIds(currentRoleIds)
+      setInitialRoleIds(currentRoleIds)
     }
-  }, [userRolesData])
+  }, [userRolesData, availableRoles])
 
-  // Reset state when modal closes
   useEffect(() => {
     if (!isOpen) {
       setSearchTerm("")
-      setSelectedRoles([])
-      setInitialRoles([])
+      setSelectedRoleIds([])
+      setInitialRoleIds([])
     }
   }, [isOpen])
 
-  const availableRoles = rolesData?.data || []
-  const filteredRoles = availableRoles.filter(role => 
+  const filteredRoles = availableRoles.filter((role: RoleDto) => 
     role.name?.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  const handleRoleToggle = (roleId: string, roleName: string, isChecked: boolean) => {
+  const handleRoleToggle = (roleId: string, isChecked: boolean) => {
+    const role = availableRoles.find((r: RoleDto) => r.id === roleId)
+    if (role?.name === "Customer") {
+      return
+    }
+    
     if (isChecked) {
-      setSelectedRoles(prev => [...prev, roleName])
+      setSelectedRoleIds(prev => [...prev, roleId])
     } else {
-      setSelectedRoles(prev => prev.filter(r => r !== roleName))
+      setSelectedRoleIds(prev => prev.filter(id => id !== roleId))
     }
   }
 
   const handleSave = async () => {
     if (!user?.id) {
-      console.error("User ID is missing");
+      handleError(new Error("User ID is missing"))
       return;
     }
 
-    const rolesToAdd = selectedRoles.filter(role => !initialRoles.includes(role))
-    const rolesToRemove = initialRoles.filter(role => !selectedRoles.includes(role))
+    const rolesToAdd = selectedRoleIds.filter(roleId => !initialRoleIds.includes(roleId))
+    const rolesToRemove = initialRoleIds.filter(roleId => !selectedRoleIds.includes(roleId))
 
-    console.log("Roles to add:", rolesToAdd);
-    console.log("Roles to remove:", rolesToRemove);
+    const protectedRoleIds = availableRoles
+      .filter((role: RoleDto) => role.name === "Customer")
+      .map((role: RoleDto) => role.id)
+      .filter(Boolean) as string[]
 
-    // Find role IDs for the roles to add/remove
-    const roleMap = new Map(availableRoles.map(role => [role.name, role.id]))
+    const safeRolesToRemove = rolesToRemove.filter(roleId => !protectedRoleIds.includes(roleId))
 
     try {
-      // Add new roles
-      for (const roleName of rolesToAdd) {
-        const roleId = roleMap.get(roleName)
-        if (roleId) {
-          console.log("Adding role:", roleName, "with ID:", roleId);
-          await addRoleMutation.mutateAsync({
-            userId: user.id,
-            data: { roleId }
-          })
-        }
+      for (const roleId of rolesToAdd) {
+        await addRoleMutation.mutateAsync({
+          userId: user.id,
+          data: { roleId }
+        })
       }
 
-      // Remove old roles
-      for (const roleName of rolesToRemove) {
-        const roleId = roleMap.get(roleName)
-        if (roleId) {
-          console.log("Removing role:", roleName, "with ID:", roleId);
-          await removeRoleMutation.mutateAsync({
-            userId: user.id,
-            data: { roleId }
-          })
-        }
+      for (const roleId of safeRolesToRemove) {
+        await removeRoleMutation.mutateAsync({
+          userId: user.id,
+          data: { roleId }
+        })
       }
 
       onClose()
     } catch (error) {
-      console.error("Error updating user roles:", error)
+      handleError(error)
     }
   }
 
   const hasChanges = () => {
-    return JSON.stringify(selectedRoles.sort()) !== JSON.stringify(initialRoles.sort())
+    return JSON.stringify(selectedRoleIds.sort()) !== JSON.stringify(initialRoleIds.sort())
   }
 
   const isLoading = addRoleMutation.isPending || removeRoleMutation.isPending
+
+  const currentRoleNames = availableRoles
+    .filter((role: RoleDto) => selectedRoleIds.includes(role.id || ""))
+    .map((role: RoleDto) => role.name)
+    .filter((name): name is string => Boolean(name))
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -177,26 +178,27 @@ export function UserRoleModal({ user, isOpen, onClose }: UserRoleModalProps) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
-            Manage User Roles
+            {t("admin.users.roleModal.title")}
           </DialogTitle>
           <DialogDescription>
-            Assign or remove roles for <strong>{user?.fullName}</strong> ({user?.email})
+            {t("admin.users.roleModal.description", { 
+              fullName: user?.fullName || "", 
+              email: user?.email || "" 
+            })}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Search */}
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search roles..."
+              placeholder={t("admin.users.roleModal.searchPlaceholder")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
           </div>
 
-          {/* Current Roles */}
           {userRolesLoading ? (
             <div className="space-y-2">
               <Skeleton className="h-4 w-32" />
@@ -207,25 +209,24 @@ export function UserRoleModal({ user, isOpen, onClose }: UserRoleModalProps) {
             </div>
           ) : (
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Current Roles</Label>
+              <Label className="text-sm font-medium">{t("admin.users.roleModal.currentRoles")}</Label>
               <div className="flex flex-wrap gap-2">
-                {selectedRoles.length > 0 ? (
-                  selectedRoles.map(role => (
-                    <Badge key={role} variant="secondary" className="flex items-center gap-1">
+                {currentRoleNames.length > 0 ? (
+                  currentRoleNames.map((roleName: string) => (
+                    <Badge key={roleName} variant="secondary" className="flex items-center gap-1">
                       <Shield className="h-3 w-3" />
-                      {role}
+                      {roleName}
                     </Badge>
                   ))
                 ) : (
-                  <span className="text-sm text-muted-foreground">No roles assigned</span>
+                  <span className="text-sm text-muted-foreground">{t("admin.users.roleModal.noRolesAssigned")}</span>
                 )}
               </div>
             </div>
           )}
 
-          {/* Available Roles */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Available Roles</Label>
+            <Label className="text-sm font-medium">{t("admin.users.roleModal.availableRoles")}</Label>
             <ScrollArea className="h-[200px] border rounded-md p-3">
               {rolesLoading ? (
                 <div className="space-y-3">
@@ -238,42 +239,49 @@ export function UserRoleModal({ user, isOpen, onClose }: UserRoleModalProps) {
                 </div>
               ) : filteredRoles.length > 0 ? (
                 <div className="space-y-3">
-                  {filteredRoles.map(role => (
-                    <div key={role.id} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={role.id}
-                        checked={selectedRoles.includes(role.name || "")}
-                        onCheckedChange={(checked) => 
-                          handleRoleToggle(role.id || "", role.name || "", checked as boolean)
-                        }
-                        disabled={isLoading}
-                      />
-                      <Label 
-                        htmlFor={role.id} 
-                        className="text-sm font-normal cursor-pointer flex-1"
-                      >
-                        <div className="flex items-center justify-between">
-                          <span>{role.name}</span>
-                          {role.name === "Customer" && (
-                            <Badge variant="outline" className="ml-2">
-                              <AlertTriangle className="h-3 w-3 mr-1" />
-                              Protected
-                            </Badge>
+                  {filteredRoles.map((role: RoleDto) => {
+                    const isProtected = role.name === "Customer"
+                    const isSelected = selectedRoleIds.includes(role.id || "")
+                    
+                    return (
+                      <div key={role.id} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={role.id}
+                          checked={isSelected}
+                          onCheckedChange={(checked) => 
+                            handleRoleToggle(role.id || "", checked as boolean)
+                          }
+                          disabled={isLoading || isProtected}
+                        />
+                        <Label 
+                          htmlFor={role.id} 
+                          className={`text-sm font-normal cursor-pointer flex-1 ${
+                            isProtected ? 'opacity-60 cursor-not-allowed' : ''
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span>{role.name}</span>
+                            {isProtected && (
+                              <Badge variant="outline" className="ml-2">
+                                <AlertTriangle className="h-3 w-3 mr-1" />
+                                {t("admin.users.roleModal.protectedBadge")}
+                              </Badge>
+                            )}
+                          </div>
+                          {isProtected && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {t("admin.users.roleModal.protectedRoleMessage")}
+                            </p>
                           )}
-                        </div>
-                        {role.description && (
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {role.description}
-                          </p>
-                        )}
-                      </Label>
-                    </div>
-                  ))}
+                        </Label>
+                      </div>
+                    )
+                  })}
                 </div>
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
                   <Shield className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">No roles found</p>
+                  <p className="text-sm">{t("admin.users.roleModal.noRolesFound")}</p>
                 </div>
               )}
             </ScrollArea>
@@ -282,14 +290,14 @@ export function UserRoleModal({ user, isOpen, onClose }: UserRoleModalProps) {
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose} disabled={isLoading}>
-            Cancel
+            {t("admin.users.roleModal.cancelButton")}
           </Button>
           <Button 
             onClick={handleSave} 
             disabled={!hasChanges() || isLoading}
             className="min-w-[100px]"
           >
-            {isLoading ? "Saving..." : "Save Changes"}
+            {isLoading ? t("admin.users.roleModal.savingButton") : t("admin.users.roleModal.saveButton")}
           </Button>
         </DialogFooter>
       </DialogContent>

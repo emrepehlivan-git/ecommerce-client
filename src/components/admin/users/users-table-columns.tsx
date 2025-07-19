@@ -18,90 +18,91 @@ import { MoreHorizontal, Shield, UserCheck, UserX } from "lucide-react"
 interface UserColumnsProps {
   onManageRoles: (user: UserDto) => void
   onToggleStatus: (user: UserDto) => void
+  t: (key: string) => string
 }
 
-export const createUserColumns = ({ onManageRoles, onToggleStatus }: UserColumnsProps): ColumnDef<UserDto>[] => [
-  {
-    accessorKey: "id",
-    header: "ID",
-    enableGlobalFilter: false,
-  },
-  {
-    accessorKey: "fullName",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Full Name" />,
-    enableSorting: true,
-    enableGlobalFilter: true,
-  },
-  {
-    accessorKey: "email",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
-    enableSorting: true,
-    enableGlobalFilter: true,
-  },
-  {
-    accessorKey: "isActive",
-    header: "Active",
-    cell: ({ row }) => row.original.isActive ? <Badge variant="outline">Active</Badge> : <Badge variant="destructive">Inactive</Badge>,
-  },
-  {
-    accessorKey: "birthday",
-    header: "Birthday",
-    cell: ({ row }) => row.original.birthday ? new Date(row.original.birthday).toLocaleDateString() : '-',
-  },
-  {
-    id: "actions",
-    header: "Actions",
-    cell: ({ row }) => {
-      const user = row.original
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button 
-              variant="ghost" 
-              className="h-8 w-8 p-0"
-            >
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => {
-              onManageRoles(user);
-            }}>
-              <Shield className="mr-2 h-4 w-4" />
-              Manage Roles
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => {
-              onToggleStatus(user);
-            }}>
-              {user.isActive ? (
-                <>
-                  <UserX className="mr-2 h-4 w-4" />
-                  Deactivate User
-                </>
-              ) : (
-                <>
-                  <UserCheck className="mr-2 h-4 w-4" />
-                  Activate User
-                </>
-              )}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
+export const createUserColumns = ({ onManageRoles, onToggleStatus, t }: UserColumnsProps): ColumnDef<UserDto>[] => {
+  return [
+    {
+      accessorKey: "id",
+      header: t("admin.users.table.id"),
+      enableGlobalFilter: false,
     },
-  },
-]
+    {
+      accessorKey: "fullName",
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t("admin.users.table.fullName")} />,
+      enableSorting: true,
+      enableGlobalFilter: true,
+    },
+    {
+      accessorKey: "email",
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t("admin.users.table.email")} />,
+      enableSorting: true,
+      enableGlobalFilter: true,
+    },
+    {
+      accessorKey: "isActive",
+      header: t("admin.users.table.actions"),
+      cell: ({ row }) => row.original.isActive ? 
+        <Badge variant="outline">{t("admin.users.table.active")}</Badge> : 
+        <Badge variant="destructive">{t("admin.users.table.inactive")}</Badge>,
+    },
+    {
+      accessorKey: "birthday",
+      header: t("admin.users.table.birthday"),
+      cell: ({ row }) => row.original.birthday ? new Date(row.original.birthday).toLocaleDateString() : '-',
+    },
+    {
+      id: "actions",
+      header: t("admin.users.table.actions"),
+      cell: ({ row }) => {
+        const user = row.original
 
-// Legacy export for backward compatibility
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                className="h-8 w-8 p-0"
+              >
+                <span className="sr-only">{t("admin.users.table.openMenu")}</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>{t("admin.users.table.actionsLabel")}</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => {
+                onManageRoles(user);
+              }}>
+                <Shield className="mr-2 h-4 w-4" />
+                {t("admin.users.table.manageRoles")}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {
+                onToggleStatus(user);
+              }}>
+                {user.isActive ? (
+                  <>
+                    <UserX className="mr-2 h-4 w-4" />
+                    {t("admin.users.table.deactivateUser")}
+                  </>
+                ) : (
+                  <>
+                    <UserCheck className="mr-2 h-4 w-4" />
+                    {t("admin.users.table.activateUser")}
+                  </>
+                )}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )
+      },
+    },
+  ]
+}
+
 export const userColumns: ColumnDef<UserDto>[] = createUserColumns({
-  onManageRoles: () => {
-    console.log("Legacy onManageRoles called - this should not happen");
-  },
-  onToggleStatus: () => {
-    console.log("Legacy onToggleStatus called - this should not happen");
-  },
+  onManageRoles: () => {},
+  onToggleStatus: () => {},
+  t: (key: string) => key,
 }) 

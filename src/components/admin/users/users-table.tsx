@@ -11,10 +11,11 @@ import { createUserColumns } from "./users-table-columns";
 import { 
   getGetApiV1UsersQueryKey,
   usePostApiV1UsersActivateId, 
-  usePostApiV1UsersDeactivateId,
+  usePostApiV1UsersDeactivateId,  
   useGetApiV1Users
 } from "@/api/generated/users/users";
 import { useQueryClient } from "@tanstack/react-query";
+import { useT } from "@/i18n/getT";
 
 interface UsersTableProps {
   columns?: ColumnDef<UserDto>[];
@@ -24,6 +25,7 @@ interface UsersTableProps {
 }
 
 export function UsersTable({ columns: providedColumns, page, pageSize, search }: UsersTableProps) {
+  const t = useT();
   const [selectedUser, setSelectedUser] = useState<UserDto | null>(null);
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const queryClient = useQueryClient();
@@ -35,22 +37,20 @@ export function UsersTable({ columns: providedColumns, page, pageSize, search }:
     handleFilterChange,
   } = useTableParams();
 
-  // Kullanıcı listesini React Query ile çek
   const { data, isLoading: isUsersLoading } = useGetApiV1Users({
     Page: page,
     PageSize: pageSize,
     Search: search,
   });
 
-  // User activation/deactivation mutations
   const activateUserMutation = usePostApiV1UsersActivateId({
     mutation: {
       onSuccess: () => {
-        toast.success("User activated successfully");
+        toast.success(t("admin.users.table.userActivatedSuccess"));
         queryClient.invalidateQueries({ queryKey: getGetApiV1UsersQueryKey({ Page: page, PageSize: pageSize, Search: search }) });
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.detail || error?.message || "Failed to activate user");
+        toast.error(error?.response?.data?.detail || error?.message || t("admin.users.table.userActivationError"));
       },
     },
   });
@@ -58,16 +58,15 @@ export function UsersTable({ columns: providedColumns, page, pageSize, search }:
   const deactivateUserMutation = usePostApiV1UsersDeactivateId({
     mutation: {
       onSuccess: () => {
-        toast.success("User deactivated successfully");
+        toast.success(t("admin.users.table.userDeactivatedSuccess"));
         queryClient.invalidateQueries({ queryKey: getGetApiV1UsersQueryKey({ Page: page, PageSize: pageSize, Search: search }) });
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.detail || error?.message || "Failed to deactivate user");
+        toast.error(error?.response?.data?.detail || error?.message || t("admin.users.table.userDeactivationError"));
       },
     },
   });
 
-  // Event handlers
   const handleManageRoles = (user: UserDto) => {
     setSelectedUser(user);
     setIsRoleModalOpen(true);
@@ -86,10 +85,10 @@ export function UsersTable({ columns: providedColumns, page, pageSize, search }:
     } catch (error) {}
   };
 
-  // Create columns with action handlers
   const columns = providedColumns || createUserColumns({
     onManageRoles: handleManageRoles,
     onToggleStatus: handleToggleStatus,
+    t,
   });
 
   const pagedInfo = data?.pagedInfo || { pageNumber: page, pageSize, totalPages: 1, totalRecords: 0 };
