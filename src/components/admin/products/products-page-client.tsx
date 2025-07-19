@@ -20,6 +20,7 @@ import type { ProductDto } from "@/api/generated/model";
 import { useErrorHandler } from "@/hooks/use-error-handling";
 import { useDataTable } from "@/hooks/use-data-table";
 import { getProductColumns } from "./products-table-columns";
+import { useI18n } from "@/i18n/client";
 
 export function ProductsPageClient() {
   const router = useRouter();
@@ -34,6 +35,7 @@ export function ProductsPageClient() {
   } = useDataTable();
   const [deletingProduct, setDeletingProduct] = useState<ProductDto | null>(null);
   const { handleError } = useErrorHandler();
+  const t = useI18n();
 
   const queryClient = useQueryClient();
 
@@ -98,13 +100,13 @@ export function ProductsPageClient() {
         <div>
           <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
             <Package className="h-6 w-6" />
-            Products
+            {t("admin.products.title")}
           </h2>
-          <p className="text-muted-foreground">Product management and stock control</p>
+          <p className="text-muted-foreground">{t("admin.products.managementDesc")}</p>
         </div>
         <Button onClick={handleAddNew} className="gap-2">
           <Plus className="h-4 w-4" />
-          New Product
+          {t("admin.products.newProduct")}
         </Button>
       </div>
 
@@ -126,8 +128,8 @@ export function ProductsPageClient() {
         isOpen={!!deletingProduct}
         onClose={handleCloseDeleteDialog}
         onConfirm={handleDelete}
-        title="Delete Product"
-        description={`Are you sure you want to delete the product "${deletingProduct?.name}"? This action cannot be undone.`}
+        title={t("admin.products.deleteTitle")}
+        description={t("admin.products.deleteDesc", { name: deletingProduct?.name })}
         isPending={deleteMutation.isPending}
       />
     </div>

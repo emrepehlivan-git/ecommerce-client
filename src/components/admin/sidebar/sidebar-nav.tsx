@@ -13,7 +13,8 @@ import {
 } from "@/components/ui/sidebar"
 import { ChevronRight } from "lucide-react"
 import Link from "next/link"
-import { NavItem } from "./nav-data"
+import { getNavMain, getNavSecondary } from "./nav-data";
+import { useT } from "@/i18n/getT";
 
 interface AdminSidebarNavProps {
   label: string
@@ -22,11 +23,13 @@ interface AdminSidebarNavProps {
 }
 
 export function AdminSidebarNav({ label, navItems, className }: AdminSidebarNavProps) {
+  const t = useT();
+  const items = typeof navItems === "function" ? navItems(t) : navItems;
   return (
     <SidebarGroup className={className}>
       <SidebarGroupLabel>{label}</SidebarGroupLabel>
       <SidebarMenu>
-        {navItems.map((item) =>
+        {items.map((item) =>
           item.items?.length ? (
             <Collapsible key={item.title} asChild defaultOpen={item.isActive} className="group/collapsible">
               <SidebarMenuItem>

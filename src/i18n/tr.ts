@@ -281,6 +281,7 @@ export default {
     "or": "veya",
     "to": "için",
     "cancel": "İptal",
+    "confirm": "Onayla",
     "back": "Geri",
     "session": {
       "expired_title": "Oturum Süreniz Doldu",
@@ -363,6 +364,21 @@ export default {
     loading: "Ekleniyor...",
   },
   admin: {
+    sidebar: {
+      goToApp: "Uygulamaya git",
+      dashboard: "Yönetim Paneli",
+      adminPanel: "Admin Paneli",
+      enterprise: "Kurumsal",
+      identityManagement: "Kimlik Yönetimi",
+      allUsers: "Tüm Kullanıcılar",
+      roles: "Roller",
+      categories: "Kategoriler",
+      products: "Ürünler",
+      orders: "Siparişler",
+      stockManagement: "Stok Yönetimi",
+      settings: "Ayarlar",
+      security: "Güvenlik"
+    },
     orders: {
       title: "Siparişler",
       manageCustomerOrders: "Müşteri siparişlerini yönetin",
@@ -438,5 +454,19 @@ export default {
         userDeactivationError: "Kullanıcı pasifleştirilirken hata oluştu",
       },
     },
+    products: {
+      title: "Ürünler",
+      managementDesc: "Ürün yönetimi ve stok kontrolü",
+      newProduct: "Yeni Ürün",
+      deleteTitle: "Ürünü Sil",
+      deleteDesc: "'{name}' adlı ürünü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
+    },
+    categories: {
+      title: "Kategoriler",
+      managementDesc: "Ürün kategorilerini yönetin",
+      newCategory: "Yeni Kategori",
+      deleteTitle: "Kategoriyi Sil",
+      deleteDesc: "'{name}' adlı kategoriyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
+    }
   },
 } as const;

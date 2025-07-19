@@ -13,64 +13,64 @@ export type NavSubItem = {
   url: string;
 };
 
-export const navMain: NavItem[] = [
+export const getNavMain = (t: (key: string) => string) => ([
   {
-    title: "Go to app",
+    title: t("admin.sidebar.goToApp"),
     url: "/",
     icon: Home,
   },
   {
-    title: "Dashboard",
+    title: t("admin.sidebar.dashboard"),
     url: "/admin",
     icon: Home,
     isActive: true,
   },
   {
-    title: "Identity Management",
+    title: t("admin.sidebar.identityManagement"),
     url: "/admin/users",
     icon: Users,
     items: [
       {
-        title: "All Users",
+        title: t("admin.sidebar.allUsers"),
         url: "/admin/users",
       },
       {
-        title: "Roles",
+        title: t("admin.sidebar.roles"),
         url: "/admin/roles",
       },
     ],
   },
   {
-    title: "Categories",
+    title: t("admin.sidebar.categories"),
     url: "/admin/categories",
     icon: FileText,
   },
   {
-    title: "Products",
+    title: t("admin.sidebar.products"),
     url: "/admin/products",
     icon: FileText,
   },
   {
-    title: "Orders",
+    title: t("admin.sidebar.orders"),
     url: "/admin/orders",
     icon: BarChart3,
   },
   {
-    title: "Stock Management",
+    title: t("admin.sidebar.stockManagement"),
     url: "/admin/stock",
     icon: Zap,
   },
-];
+]);
 
-export const navSecondary: NavItem[] = [
+export const getNavSecondary = (t: (key: string) => string) => ([
   {
-    title: "Settings",
+    title: t("admin.sidebar.settings"),
     url: "/admin/settings",
     icon: Settings,
   },
   {
-    title: "Security",
+    title: t("admin.sidebar.security"),
     url: "/admin/security",
     icon: Shield,
   },
-];
+]);

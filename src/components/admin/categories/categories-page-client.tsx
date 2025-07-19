@@ -26,8 +26,10 @@ import { CategoryFormModal } from "@/components/admin/categories/category-form-m
 import { useErrorHandler } from "@/hooks/use-error-handling";
 import { useDataTable } from "@/hooks/use-data-table";
 import { getCategoryColumns } from "./categories-table-columns";
+import { useI18n } from "@/i18n/client";
 
 export function CategoryPageClient() {
+  const t = useI18n();
   const {
     currentPage,
     pageSize,
@@ -145,12 +147,12 @@ export function CategoryPageClient() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Categories</h2>
-          <p className="text-muted-foreground">Manage product categories</p>
+          <h2 className="text-2xl font-bold tracking-tight">{t("admin.categories.title")}</h2>
+          <p className="text-muted-foreground">{t("admin.categories.managementDesc")}</p>
         </div>
         <Button onClick={handleAddNew} className="gap-2">
           <Plus className="h-4 w-4" />
-          New Category
+          {t("admin.categories.newCategory")}
         </Button>
       </div>
 
@@ -183,8 +185,8 @@ export function CategoryPageClient() {
         isOpen={!!deletingCategory}
         onClose={handleCloseDeleteDialog}
         onConfirm={handleDelete}
-        title="Delete Category"
-        description={`Are you sure you want to delete the category "${deletingCategory?.name}"? This action cannot be undone.`}
+        title={t("admin.categories.deleteTitle")}
+        description={t("admin.categories.deleteDesc", { name: deletingCategory?.name })}
         isPending={deleteMutation.isPending}
       />
     </div>

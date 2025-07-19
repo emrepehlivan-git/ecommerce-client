@@ -260,15 +260,16 @@ export default {
     },
   },
   common: {
-    "back": "Back",
-    "all": "All",
-    "or": "or",
-    "to": "to",
-    "cancel": "Cancel",
-    "session": {
-      "expired_title": "Session Expired",
-      "expired_description": "Your session has expired. Please log in again.",
-      "login": "Login"
+    back: "Back",
+    all: "All",
+    or: "or",
+    to: "to",
+    cancel: "Cancel",
+    confirm: "Confirm",
+    session: {
+      expired_title: "Session Expired",
+      expired_description: "Your session has expired. Please log in again.",
+      login: "Login"
     }
   },
   categoryNavigation: {
@@ -360,6 +361,35 @@ export default {
     loading: "Adding to cart...",
   },
   admin: {
+    sidebar: {
+      goToApp: "Go to app",
+      dashboard: "Dashboard",
+      adminPanel: "Admin Panel",
+      enterprise: "Enterprise",
+      identityManagement: "Identity Management",
+      allUsers: "All Users",
+      roles: "Roles",
+      categories: "Categories",
+      products: "Products",
+      orders: "Orders",
+      stockManagement: "Stock Management",
+      settings: "Settings",
+      security: "Security"
+    },
+    products: {
+      title: "Products",
+      managementDesc: "Product management and stock control",
+      newProduct: "New Product",
+      deleteTitle: "Delete Product",
+      deleteDesc: "Are you sure you want to delete the product '{name}'? This action cannot be undone."
+    },
+    categories: {
+      title: "Categories",
+      managementDesc: "Manage product categories",
+      newCategory: "New Category",
+      deleteTitle: "Delete Category",
+      deleteDesc: "Are you sure you want to delete the category '{name}'? This action cannot be undone."
+    },
     orders: {
       title: "Orders",
       manageCustomerOrders: "Manage customer orders",

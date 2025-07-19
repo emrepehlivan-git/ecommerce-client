@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Check, Loader2, X } from "lucide-react"
+import { useI18n } from "@/i18n/client";
 
 interface ConfirmDialogProps {
   isOpen: boolean
@@ -28,6 +29,7 @@ export const ConfirmDialog = ({
   description,
   isPending = false,
 }: ConfirmDialogProps) => {
+  const t = useI18n();
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
@@ -38,12 +40,12 @@ export const ConfirmDialog = ({
         <DialogFooter>
           <Button variant="outline" onClick={onClose} disabled={isPending}>
             <X className="h-4 w-4" />
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button onClick={onConfirm} disabled={isPending}>
             {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
             <Check className="h-4 w-4" />
-            Confirm
+            {t("common.confirm")}
           </Button>
         </DialogFooter>
       </DialogContent>

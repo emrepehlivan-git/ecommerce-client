@@ -1,8 +1,10 @@
 import { SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
 import { Zap } from "lucide-react"
 import Link from "next/link"
+import { useT } from "@/i18n/getT"
 
 export function AdminSidebarHeader() {
+  const t = useT();
   return (
     <SidebarHeader>
       <SidebarMenu>
@@ -13,8 +15,8 @@ export function AdminSidebarHeader() {
                 <Zap className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">Admin Panel</span>
-                <span className="truncate text-xs">Enterprise</span>
+                <span className="truncate font-semibold">{t("admin.sidebar.adminPanel")}</span>
+                <span className="truncate text-xs">{t("admin.sidebar.enterprise")}</span>
               </div>
             </Link>
           </SidebarMenuButton>
