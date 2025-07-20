@@ -560,6 +560,48 @@ export default {
       cloudinarySettings: {
         title: "Cloudinary Settings",
         description: "Configure image upload and transformation settings",
+        breadcrumb: {
+          admin: "Admin",
+          settings: "Settings",
+          cloudinarySettings: "Cloudinary Settings",
+        },
+        backToSettings: "Back to Settings",
+        configuration: {
+          title: "Configuration",
+          description: "Configure your Cloudinary settings for image upload, storage, and transformation.",
+        },
+        about: {
+          title: "About Cloudinary",
+          description: "Cloudinary is a cloud-based image and video management service that provides upload, storage, manipulation, optimization, and delivery capabilities.",
+          keyFeatures: "Key Features:",
+          features: {
+            optimization: "Automatic image optimization and format conversion",
+            transformations: "Real-time image transformations via URL parameters",
+            cdn: "Global CDN for fast image delivery",
+            security: "Advanced security and access control",
+            analytics: "Comprehensive analytics and monitoring",
+          },
+          gettingStarted: "Getting Started:",
+          steps: {
+            step1: "Create a free Cloudinary account at cloudinary.com",
+            step2: "Find your Cloud Name, API Key, and API Secret in your dashboard",
+            step3: "Enter your credentials in the form above",
+            step4: "Test the connection to ensure everything is working",
+            step5: "Configure upload and transformation settings as needed",
+          },
+        },
+        connectionTest: {
+          successful: "Successful",
+          failed: "Failed",
+          title: "Connection Test",
+        },
+        messages: {
+          updateSuccess: "Cloudinary settings updated successfully!",
+          updateError: "Failed to update Cloudinary settings. Please try again.",
+          testSuccess: "Cloudinary connection test successful!",
+          testError: "Cloudinary connection test failed!",
+          testFailed: "Failed to test connection. Please check your credentials.",
+        },
       },
       security: {
         title: "Security Settings",

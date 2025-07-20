@@ -563,6 +563,48 @@ export default {
       cloudinarySettings: {
         title: "Cloudinary Ayarları",
         description: "Resim yükleme ve dönüştürme ayarlarını yapılandırın",
+        breadcrumb: {
+          admin: "Admin",
+          settings: "Ayarlar",
+          cloudinarySettings: "Cloudinary Ayarları",
+        },
+        backToSettings: "Ayarlara Dön",
+        configuration: {
+          title: "Yapılandırma",
+          description: "Resim yükleme, depolama ve dönüştürme için Cloudinary ayarlarınızı yapılandırın.",
+        },
+        about: {
+          title: "Cloudinary Hakkında",
+          description: "Cloudinary, yükleme, depolama, manipülasyon, optimizasyon ve teslimat yetenekleri sağlayan bulut tabanlı bir resim ve video yönetim hizmetidir.",
+          keyFeatures: "Temel Özellikler:",
+          features: {
+            optimization: "Otomatik resim optimizasyonu ve format dönüştürme",
+            transformations: "URL parametreleri ile gerçek zamanlı resim dönüştürme",
+            cdn: "Hızlı resim teslimatı için global CDN",
+            security: "Gelişmiş güvenlik ve erişim kontrolü",
+            analytics: "Kapsamlı analitik ve izleme",
+          },
+          gettingStarted: "Başlarken:",
+          steps: {
+            step1: "cloudinary.com adresinden ücretsiz Cloudinary hesabı oluşturun",
+            step2: "Dashboard'ınızda Cloud Name, API Key ve API Secret'ı bulun",
+            step3: "Yukarıdaki formda kimlik bilgilerinizi girin",
+            step4: "Her şeyin çalıştığından emin olmak için bağlantıyı test edin",
+            step5: "Gerekli olarak yükleme ve dönüştürme ayarlarını yapılandırın",
+          },
+        },
+        connectionTest: {
+          successful: "Başarılı",
+          failed: "Başarısız",
+          title: "Bağlantı Testi",
+        },
+        messages: {
+          updateSuccess: "Cloudinary ayarları başarıyla güncellendi!",
+          updateError: "Cloudinary ayarları güncellenirken hata oluştu. Lütfen tekrar deneyin.",
+          testSuccess: "Cloudinary bağlantı testi başarılı!",
+          testError: "Cloudinary bağlantı testi başarısız!",
+          testFailed: "Bağlantı testi başarısız oldu. Lütfen kimlik bilgilerinizi kontrol edin.",
+        },
       },
       security: {
         title: "Güvenlik Ayarları",

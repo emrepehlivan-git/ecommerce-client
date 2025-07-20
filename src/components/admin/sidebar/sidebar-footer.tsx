@@ -21,6 +21,7 @@ import { useSession } from "next-auth/react";
 import { useI18n } from "@/i18n/client";
 import { signOut } from "next-auth/react";
 
+
 export function AdminSidebarFooter() {
   const session = useSession();
   const user = session?.data?.user;
@@ -85,6 +86,8 @@ export function AdminSidebarFooter() {
             </DropdownMenuContent>
           </DropdownMenu>
         </SidebarMenuItem>
+        
+
       </SidebarMenu>
     </SidebarFooter>
   );
