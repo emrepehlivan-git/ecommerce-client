@@ -31,6 +31,7 @@ import {
 import { usePutApiV1ProductIdStock } from "@/api/generated/product/product";
 import type { ProductDto } from "@/api/generated/model";
 import { useErrorHandler } from "@/hooks/use-error-handling";
+import { useI18n } from "@/i18n/client";
 
 const stockUpdateSchema = z.object({
   stockQuantity: z.number().min(0, "Stock quantity must be 0 or greater"),
@@ -48,6 +49,7 @@ interface StockUpdateModalProps {
 export function StockUpdateModal({ product, isOpen, onClose, onSuccess }: StockUpdateModalProps) {
   const [adjustmentMode, setAdjustmentMode] = useState<"set" | "adjust">("set");
   const { handleError } = useErrorHandler();
+  const t = useI18n();
 
   const form = useForm<StockUpdateForm>({
     resolver: zodResolver(stockUpdateSchema),
@@ -112,43 +114,43 @@ export function StockUpdateModal({ product, isOpen, onClose, onSuccess }: StockU
   const finalStock = adjustmentMode === "adjust" ? Math.max(0, currentStock + formValue) : formValue;
 
   const getStockStatus = (quantity: number) => {
-    if (quantity === 0) return { variant: "destructive" as const, label: "Out of Stock" };
-    if (quantity <= 10) return { variant: "warning" as const, label: "Low Stock" };
-    return { variant: "success" as const, label: "In Stock" };
+    if (quantity === 0) return { variant: "destructive" as const, key: "outOfStockStatus" };
+    if (quantity <= 10) return { variant: "warning" as const, key: "lowStockStatus" };
+    return { variant: "success" as const, key: "inStock" };
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Package className="h-5 w-5" />
-            Update Stock
+            {t("admin.stock.updateStock")}
           </DialogTitle>
           <DialogDescription>
-            Update the stock quantity for <strong>{product?.name}</strong>
+            {t("admin.stock.updateStockDesc", { 0: product?.name ?? "" })}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Current Stock Info */}
           <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
             <div>
-              <Label className="text-sm font-medium">Current Stock</Label>
+              <Label className="text-sm font-medium">{t("admin.stock.currentStock")}</Label>
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-lg font-bold">{currentStock}</span>
                 <Badge variant={getStockStatus(currentStock).variant}>
-                  {getStockStatus(currentStock).label}
+                  {getStockStatus(currentStock).key === "inStock" && t("admin.stock.inStock")}
+                  {getStockStatus(currentStock).key === "lowStockStatus" && t("admin.stock.lowStockStatus")}
+                  {getStockStatus(currentStock).key === "outOfStockStatus" && t("admin.stock.outOfStockStatus")}
                 </Badge>
               </div>
             </div>
             <div className="text-right">
-              <Label className="text-sm font-medium">Unit Price</Label>
+              <Label className="text-sm font-medium">{t("admin.stock.unitPrice")}</Label>
               <div className="text-lg font-semibold">₺{product?.price?.toLocaleString("tr-TR")}</div>
             </div>
           </div>
 
-          {/* Mode Selection */}
           <div className="flex gap-2">
             <Button
               type="button"
@@ -159,7 +161,7 @@ export function StockUpdateModal({ product, isOpen, onClose, onSuccess }: StockU
                 form.setValue("stockQuantity", currentStock);
               }}
             >
-              Set Amount
+              {t("admin.stock.setAmount")}
             </Button>
             <Button
               type="button"
@@ -170,7 +172,7 @@ export function StockUpdateModal({ product, isOpen, onClose, onSuccess }: StockU
                 form.setValue("stockQuantity", 0);
               }}
             >
-              Adjust (+/-)
+              {t("admin.stock.adjustAmount")}
             </Button>
           </div>
 
@@ -184,7 +186,9 @@ export function StockUpdateModal({ product, isOpen, onClose, onSuccess }: StockU
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {adjustmentMode === "set" ? "New Stock Quantity" : "Adjustment Amount"}
+                      {adjustmentMode === "set"
+                        ? t("admin.stock.newStockQuantity")
+                        : t("admin.stock.adjustmentAmount")}
                     </FormLabel>
                     <FormControl>
                       <div className="flex items-center gap-2">
@@ -219,109 +223,39 @@ export function StockUpdateModal({ product, isOpen, onClose, onSuccess }: StockU
                 )}
               />
 
-              {/* Quick Adjustment Buttons */}
               <div className="flex flex-wrap gap-2">
                 {adjustmentMode === "adjust" ? (
                   <>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleQuickAdjust(-10)}
-                    >
-                      -10
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleQuickAdjust(-5)}
-                    >
-                      -5
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleQuickAdjust(5)}
-                    >
-                      +5
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleQuickAdjust(10)}
-                    >
-                      +10
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleQuickAdjust(50)}
-                    >
-                      +50
-                    </Button>
+                    <Button type="button" variant="outline" size="sm" onClick={() => handleQuickAdjust(-10)}>-10</Button>
+                    <Button type="button" variant="outline" size="sm" onClick={() => handleQuickAdjust(-5)}>-5</Button>
+                    <Button type="button" variant="outline" size="sm" onClick={() => handleQuickAdjust(5)}>+5</Button>
+                    <Button type="button" variant="outline" size="sm" onClick={() => handleQuickAdjust(10)}>+10</Button>
+                    <Button type="button" variant="outline" size="sm" onClick={() => handleQuickAdjust(50)}>+50</Button>
                   </>
                 ) : (
                   <>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => form.setValue("stockQuantity", 0)}
-                    >
-                      0
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => form.setValue("stockQuantity", 10)}
-                    >
-                      10
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => form.setValue("stockQuantity", 25)}
-                    >
-                      25
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => form.setValue("stockQuantity", 50)}
-                    >
-                      50
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => form.setValue("stockQuantity", 100)}
-                    >
-                      100
-                    </Button>
+                    <Button type="button" variant="outline" size="sm" onClick={() => form.setValue("stockQuantity", 0)}>0</Button>
+                    <Button type="button" variant="outline" size="sm" onClick={() => form.setValue("stockQuantity", 10)}>10</Button>
+                    <Button type="button" variant="outline" size="sm" onClick={() => form.setValue("stockQuantity", 25)}>25</Button>
+                    <Button type="button" variant="outline" size="sm" onClick={() => form.setValue("stockQuantity", 50)}>50</Button>
+                    <Button type="button" variant="outline" size="sm" onClick={() => form.setValue("stockQuantity", 100)}>100</Button>
                   </>
                 )}
               </div>
 
-              {/* Preview */}
               <div className="p-3 bg-muted rounded-lg">
-                <Label className="text-sm font-medium">Final Stock Amount</Label>
+                <Label className="text-sm font-medium">{t("admin.stock.finalStockAmount")}</Label>
                 <div className="flex items-center justify-between mt-1">
                   <div className="flex items-center gap-2">
                     <span className="text-lg font-bold">{finalStock}</span>
                     <Badge variant={getStockStatus(finalStock).variant}>
-                      {getStockStatus(finalStock).label}
+                      {getStockStatus(finalStock).key === "inStock" && t("admin.stock.inStock")}
+                      {getStockStatus(finalStock).key === "lowStockStatus" && t("admin.stock.lowStockStatus")}
+                      {getStockStatus(finalStock).key === "outOfStockStatus" && t("admin.stock.outOfStockStatus")}
                     </Badge>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm text-muted-foreground">Stock Value</div>
+                    <div className="text-sm text-muted-foreground">{t("admin.stock.stockValue")}</div>
                     <div className="font-semibold">
                       ₺{(finalStock * (product?.price || 0)).toLocaleString("tr-TR")}
                     </div>
@@ -331,10 +265,10 @@ export function StockUpdateModal({ product, isOpen, onClose, onSuccess }: StockU
 
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={onClose}>
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
                 <Button type="submit" disabled={stockMutation.isPending}>
-                  {stockMutation.isPending ? "Updating..." : "Update Stock"}
+                  {stockMutation.isPending ? t("admin.stock.updating") : t("admin.stock.updateStock")}
                 </Button>
               </DialogFooter>
             </form>
