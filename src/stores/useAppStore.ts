@@ -11,7 +11,6 @@ import { useErrorHandler } from "@/hooks/use-error-handling";
 import { Session } from "next-auth";
 import React from "react";
 
-// User State and Actions
 interface UserData {
   name?: string | null;
   email?: string | null;
@@ -24,7 +23,6 @@ interface UserState {
   user: UserData | null;
 }
 
-// Cart State and Actions
 interface CartState {
   cart: CartDto | undefined;
   isLoadingCart: boolean;
@@ -39,14 +37,10 @@ interface CartState {
   refetchCart: () => void;
 }
 
-// Combined Store
 type AppState = UserState & CartState;
 
 export const useAppStore = create<AppState>((set, get) => ({
-  // User initial state and actions
   user: null,
-
-  // Cart initial state and actions
   cart: undefined,
   isLoadingCart: true,
   errorCart: null,
@@ -104,7 +98,16 @@ export const useInitializeCart = (session: Session | null) => {
 
     const clearCartMutation = useDeleteApiV1CartClear({
         mutation: {
-            onSuccess: () => { handleSuccess("Sepet temizlendi!"); refetch(); },
+            onSuccess: () => { 
+                handleSuccess("Sepet temizlendi!"); 
+                useAppStore.setState({
+                    cart: undefined,
+                    totalItems: 0,
+                    totalAmount: 0,
+                    isCartEmpty: true,
+                });
+                refetch(); 
+            },
             onError: (error) => { handleError(error); },
         },
     });

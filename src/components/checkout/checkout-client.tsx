@@ -40,10 +40,14 @@ export default function CheckoutClient() {
 
   const postOrder = usePostApiV1Order({
     mutation: {
-      onSuccess: () => {
+      onSuccess: async () => {
         setSuccess(true);
         setLoading(false);
-        clearCart();
+        try {
+          await clearCart();
+        } catch (error) {
+          console.error('Cart clearing failed:', error);
+        }
         router.push("/profile/orders");
       },
       onError: (error) => {
