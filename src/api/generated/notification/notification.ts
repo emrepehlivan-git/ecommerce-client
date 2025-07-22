@@ -16,8 +16,9 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
-  NotificationRequest,
-  SendNotificationCommand
+  AnnouncementRequest,
+  SendBulkNotificationCommand,
+  SendSystemNotificationCommand
 } from '.././model';
 
 import { axiosClientMutator } from '../../../lib/axiosClient';
@@ -25,27 +26,27 @@ import { axiosClientMutator } from '../../../lib/axiosClient';
 
 
 
-export const postApiV1NotificationSend = (
-    sendNotificationCommand: SendNotificationCommand,
+export const postApiV1NotificationSystem = (
+    sendSystemNotificationCommand: SendSystemNotificationCommand,
  signal?: AbortSignal
 ) => {
       
       
       return axiosClientMutator<void>(
-      {url: `/api/v1/Notification/send`, method: 'POST',
+      {url: `/api/v1/Notification/system`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
-      data: sendNotificationCommand, signal
+      data: sendSystemNotificationCommand, signal
     },
       );
     }
   
 
 
-export const getPostApiV1NotificationSendMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1NotificationSend>>, TError,{data: SendNotificationCommand}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof postApiV1NotificationSend>>, TError,{data: SendNotificationCommand}, TContext> => {
+export const getPostApiV1NotificationSystemMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1NotificationSystem>>, TError,{data: SendSystemNotificationCommand}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiV1NotificationSystem>>, TError,{data: SendSystemNotificationCommand}, TContext> => {
 
-const mutationKey = ['postApiV1NotificationSend'];
+const mutationKey = ['postApiV1NotificationSystem'];
 const {mutation: mutationOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -55,10 +56,10 @@ const {mutation: mutationOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiV1NotificationSend>>, {data: SendNotificationCommand}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiV1NotificationSystem>>, {data: SendSystemNotificationCommand}> = (props) => {
           const {data} = props ?? {};
 
-          return  postApiV1NotificationSend(data,)
+          return  postApiV1NotificationSystem(data,)
         }
 
         
@@ -66,45 +67,44 @@ const {mutation: mutationOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PostApiV1NotificationSendMutationResult = NonNullable<Awaited<ReturnType<typeof postApiV1NotificationSend>>>
-    export type PostApiV1NotificationSendMutationBody = SendNotificationCommand
-    export type PostApiV1NotificationSendMutationError = unknown
+    export type PostApiV1NotificationSystemMutationResult = NonNullable<Awaited<ReturnType<typeof postApiV1NotificationSystem>>>
+    export type PostApiV1NotificationSystemMutationBody = SendSystemNotificationCommand
+    export type PostApiV1NotificationSystemMutationError = unknown
 
-    export const usePostApiV1NotificationSend = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1NotificationSend>>, TError,{data: SendNotificationCommand}, TContext>, }
+    export const usePostApiV1NotificationSystem = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1NotificationSystem>>, TError,{data: SendSystemNotificationCommand}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postApiV1NotificationSend>>,
+        Awaited<ReturnType<typeof postApiV1NotificationSystem>>,
         TError,
-        {data: SendNotificationCommand},
+        {data: SendSystemNotificationCommand},
         TContext
       > => {
 
-      const mutationOptions = getPostApiV1NotificationSendMutationOptions(options);
+      const mutationOptions = getPostApiV1NotificationSystemMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }
-    export const postApiV1NotificationSendToUserUserId = (
-    userId: string,
-    notificationRequest: NotificationRequest,
+    export const postApiV1NotificationBulk = (
+    sendBulkNotificationCommand: SendBulkNotificationCommand,
  signal?: AbortSignal
 ) => {
       
       
       return axiosClientMutator<void>(
-      {url: `/api/v1/Notification/send-to-user/${userId}`, method: 'POST',
+      {url: `/api/v1/Notification/bulk`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
-      data: notificationRequest, signal
+      data: sendBulkNotificationCommand, signal
     },
       );
     }
   
 
 
-export const getPostApiV1NotificationSendToUserUserIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1NotificationSendToUserUserId>>, TError,{userId: string;data: NotificationRequest}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof postApiV1NotificationSendToUserUserId>>, TError,{userId: string;data: NotificationRequest}, TContext> => {
+export const getPostApiV1NotificationBulkMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1NotificationBulk>>, TError,{data: SendBulkNotificationCommand}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiV1NotificationBulk>>, TError,{data: SendBulkNotificationCommand}, TContext> => {
 
-const mutationKey = ['postApiV1NotificationSendToUserUserId'];
+const mutationKey = ['postApiV1NotificationBulk'];
 const {mutation: mutationOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -114,10 +114,10 @@ const {mutation: mutationOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiV1NotificationSendToUserUserId>>, {userId: string;data: NotificationRequest}> = (props) => {
-          const {userId,data} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiV1NotificationBulk>>, {data: SendBulkNotificationCommand}> = (props) => {
+          const {data} = props ?? {};
 
-          return  postApiV1NotificationSendToUserUserId(userId,data,)
+          return  postApiV1NotificationBulk(data,)
         }
 
         
@@ -125,44 +125,44 @@ const {mutation: mutationOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PostApiV1NotificationSendToUserUserIdMutationResult = NonNullable<Awaited<ReturnType<typeof postApiV1NotificationSendToUserUserId>>>
-    export type PostApiV1NotificationSendToUserUserIdMutationBody = NotificationRequest
-    export type PostApiV1NotificationSendToUserUserIdMutationError = unknown
+    export type PostApiV1NotificationBulkMutationResult = NonNullable<Awaited<ReturnType<typeof postApiV1NotificationBulk>>>
+    export type PostApiV1NotificationBulkMutationBody = SendBulkNotificationCommand
+    export type PostApiV1NotificationBulkMutationError = unknown
 
-    export const usePostApiV1NotificationSendToUserUserId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1NotificationSendToUserUserId>>, TError,{userId: string;data: NotificationRequest}, TContext>, }
+    export const usePostApiV1NotificationBulk = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1NotificationBulk>>, TError,{data: SendBulkNotificationCommand}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postApiV1NotificationSendToUserUserId>>,
+        Awaited<ReturnType<typeof postApiV1NotificationBulk>>,
         TError,
-        {userId: string;data: NotificationRequest},
+        {data: SendBulkNotificationCommand},
         TContext
       > => {
 
-      const mutationOptions = getPostApiV1NotificationSendToUserUserIdMutationOptions(options);
+      const mutationOptions = getPostApiV1NotificationBulkMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }
-    export const postApiV1NotificationSendToAll = (
-    notificationRequest: NotificationRequest,
+    export const postApiV1NotificationAnnouncement = (
+    announcementRequest: AnnouncementRequest,
  signal?: AbortSignal
 ) => {
       
       
       return axiosClientMutator<void>(
-      {url: `/api/v1/Notification/send-to-all`, method: 'POST',
+      {url: `/api/v1/Notification/announcement`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
-      data: notificationRequest, signal
+      data: announcementRequest, signal
     },
       );
     }
   
 
 
-export const getPostApiV1NotificationSendToAllMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1NotificationSendToAll>>, TError,{data: NotificationRequest}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof postApiV1NotificationSendToAll>>, TError,{data: NotificationRequest}, TContext> => {
+export const getPostApiV1NotificationAnnouncementMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1NotificationAnnouncement>>, TError,{data: AnnouncementRequest}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof postApiV1NotificationAnnouncement>>, TError,{data: AnnouncementRequest}, TContext> => {
 
-const mutationKey = ['postApiV1NotificationSendToAll'];
+const mutationKey = ['postApiV1NotificationAnnouncement'];
 const {mutation: mutationOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -172,10 +172,10 @@ const {mutation: mutationOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiV1NotificationSendToAll>>, {data: NotificationRequest}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiV1NotificationAnnouncement>>, {data: AnnouncementRequest}> = (props) => {
           const {data} = props ?? {};
 
-          return  postApiV1NotificationSendToAll(data,)
+          return  postApiV1NotificationAnnouncement(data,)
         }
 
         
@@ -183,20 +183,20 @@ const {mutation: mutationOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PostApiV1NotificationSendToAllMutationResult = NonNullable<Awaited<ReturnType<typeof postApiV1NotificationSendToAll>>>
-    export type PostApiV1NotificationSendToAllMutationBody = NotificationRequest
-    export type PostApiV1NotificationSendToAllMutationError = unknown
+    export type PostApiV1NotificationAnnouncementMutationResult = NonNullable<Awaited<ReturnType<typeof postApiV1NotificationAnnouncement>>>
+    export type PostApiV1NotificationAnnouncementMutationBody = AnnouncementRequest
+    export type PostApiV1NotificationAnnouncementMutationError = unknown
 
-    export const usePostApiV1NotificationSendToAll = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1NotificationSendToAll>>, TError,{data: NotificationRequest}, TContext>, }
+    export const usePostApiV1NotificationAnnouncement = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiV1NotificationAnnouncement>>, TError,{data: AnnouncementRequest}, TContext>, }
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postApiV1NotificationSendToAll>>,
+        Awaited<ReturnType<typeof postApiV1NotificationAnnouncement>>,
         TError,
-        {data: NotificationRequest},
+        {data: AnnouncementRequest},
         TContext
       > => {
 
-      const mutationOptions = getPostApiV1NotificationSendToAllMutationOptions(options);
+      const mutationOptions = getPostApiV1NotificationAnnouncementMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }
