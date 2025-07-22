@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { ProductDto } from "@/api/generated/model";
 import Link from "next/link";
 import { useI18n } from "@/i18n/client";
+import { useState } from "react";
 
 interface ProductCardProps {
   product: ProductDto;
@@ -11,6 +12,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const t = useI18n() ;
+  const [isImageLoading, setImageLoading] = useState(true);
   const isOutOfStock = !product.isActive || (product.stockQuantity || 0) === 0;
 
   const getProductImage = () => {
@@ -30,7 +32,12 @@ export function ProductCard({ product }: ProductCardProps) {
             src={getProductImage()}
             alt={product.name || "Ürün"}
             fill
-            className="object-cover transition-transform duration-200 group-hover:scale-105"
+            className={`object-cover transition-all duration-500 group-hover:scale-105 ${
+              isImageLoading ? "blur-sm scale-110" : "blur-0 scale-100"
+            }`}
+            onLoad={() => setImageLoading(false)}
+            placeholder="blur"
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyvcW2YellmjMo3tp5XZOqc2w3DEF2s7FZpMRFhVxDEiZEGI2nD7xUOwMlNhYF+rjD3mNjPdwwcdcyHbJ3+1SqhSUYfcD3RFY4rSb9yEeFVm3BPqNMXw1uXhJktdPPKmEhzKf5yZHmhBLRGK2k6UlBxkSJEsEYnr+Ub0ndGLcjOsB7gtQKajvww3Y6DWQIqlgM86+1BXCPwFhfCXlqfgwVWn0z/2Q=="
           />
           {isOutOfStock && (
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
