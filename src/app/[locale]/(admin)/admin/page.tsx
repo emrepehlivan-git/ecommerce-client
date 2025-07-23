@@ -1,16 +1,13 @@
-import { getDashboardStats, getRecentActivity } from '@/api/dashboard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import { 
   Bell, 
   Users, 
   ShoppingCart, 
-  Package, 
   AlertTriangle,
   TrendingUp,
   Activity
 } from 'lucide-react';
+import { getApiV1DashboardStats, getApiV1DashboardRecentActivity } from '@/api/generated/dashboard/dashboard';
 
 interface DashboardStats {
   totalUsers: number;
@@ -37,14 +34,10 @@ async function getDashboardData(): Promise<{
   activities: RecentActivity[];
 }> {
   try {
-    // Note: These would need authentication headers in a real implementation
-    const [statsResponse, activitiesResponse] = await Promise.all([
-      fetch('http://localhost:4000/api/v1/dashboard/stats'),
-      fetch('http://localhost:4000/api/v1/dashboard/recent-activity')
+    const [stats, activities] = await Promise.all([
+      getApiV1DashboardStats(),
+      getApiV1DashboardRecentActivity()
     ]);
-
-    const stats = statsResponse.ok ? await statsResponse.json() : null;
-    const activities = activitiesResponse.ok ? await activitiesResponse.json() : [];
 
     return {
       stats: stats || {
@@ -186,4 +179,4 @@ export default async function AdminPage() {
       </Card>
     </div>
   );
-}
+  }
