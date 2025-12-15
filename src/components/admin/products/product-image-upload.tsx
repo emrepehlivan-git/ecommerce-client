@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Upload, X, Image as ImageIcon } from "lucide-react";
+import { Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -48,18 +48,7 @@ export function ProductImageUpload({
     }
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    
-    if (disabled || images.length >= maxImages) return;
-
-    const files = Array.from(e.dataTransfer.files);
-    processFiles(files);
-  }, [disabled, images.length, maxImages]);
-
-  const processFiles = (fileList: File[]) => {
+  const processFiles = useCallback((fileList: File[]) => {
     const imageFiles = fileList.filter(file => file.type.startsWith('image/'));
     const availableSlots = maxImages - images.length;
     const filesToProcess = imageFiles.slice(0, availableSlots);
@@ -79,7 +68,18 @@ export function ProductImageUpload({
       };
       reader.readAsDataURL(file);
     });
-  };
+  }, [images, maxImages, onImagesChange]);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    if (disabled || images.length >= maxImages) return;
+
+    const files = Array.from(e.dataTransfer.files);
+    processFiles(files);
+  }, [disabled, images.length, maxImages, processFiles]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {

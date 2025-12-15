@@ -64,7 +64,7 @@ export const RoleFormModal = ({ role, isOpen, onClose }: RoleFormModalProps) => 
         form.setValue("name", role.name);
       }
     }
-  }, [isOpen, isEditMode, role]);
+  }, [isOpen, isEditMode, role, form]);
 
   const commonMutationOptions = {
     onSuccess: () => {

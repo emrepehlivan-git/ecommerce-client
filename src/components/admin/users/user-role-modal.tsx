@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
@@ -58,7 +58,7 @@ export function UserRoleModal({ user, isOpen, onClose }: UserRoleModalProps) {
     }
   )
 
-  const availableRoles = rolesData?.value || []
+  const availableRoles = useMemo(() => rolesData?.value || [], [rolesData?.value]);
 
   const addRoleMutation = usePostApiV1RoleUserUserIdAddRole({
     mutation: {
