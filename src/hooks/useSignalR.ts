@@ -23,6 +23,7 @@ export interface UseSignalRReturn {
   sendNotification: (content: NotificationContent) => Promise<void>;
   joinGroup: (groupName: string) => Promise<void>;
   leaveGroup: (groupName: string) => Promise<void>;
+  stopConnection: () => Promise<void>;
 }
 
 export const useSignalR = (
@@ -84,7 +85,7 @@ export const useSignalR = (
         handleError(err);
       }
     }
-  }, [connection, isConnected]);
+  }, [connection, isConnected, handleError]);
 
   const sendNotification = useCallback(async (content: NotificationContent) => {
     if (connection && isConnected) {
@@ -97,7 +98,7 @@ export const useSignalR = (
     } else {
       throw new Error('SignalR connection not established');
     }
-  }, [connection, isConnected]);
+  }, [connection, isConnected, handleError]);
 
   const joinGroup = useCallback(async (groupName: string) => {
     if (connection && isConnected) {
@@ -108,7 +109,7 @@ export const useSignalR = (
         throw err;
       }
     }
-  }, [connection, isConnected]);
+  }, [connection, isConnected, handleError]);
 
   const leaveGroup = useCallback(async (groupName: string) => {
     if (connection && isConnected) {
@@ -119,7 +120,7 @@ export const useSignalR = (
         throw err;
       }
     }
-  }, [connection, isConnected]);
+  }, [connection, isConnected, handleError]);
 
   useEffect(() => {
     const newConnection = createConnection();
@@ -165,6 +166,7 @@ export const useSignalR = (
     error,
     sendNotification,
     joinGroup,
-    leaveGroup
+    leaveGroup,
+    stopConnection
   };
 };

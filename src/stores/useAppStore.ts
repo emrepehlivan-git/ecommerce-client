@@ -9,7 +9,7 @@ import {
 import { CartDto, AddToCartCommand, UpdateCartItemQuantityCommand } from "@/api/generated/model";
 import { useErrorHandler } from "@/hooks/use-error-handling";
 import { Session } from "next-auth";
-import React from "react";
+import React, { useCallback } from "react";
 
 interface UserData {
   name?: string | null;
@@ -39,7 +39,7 @@ interface CartState {
 
 type AppState = UserState & CartState;
 
-export const useAppStore = create<AppState>((set, get) => ({
+export const useAppStore = create<AppState>(() => ({
   user: null,
   cart: undefined,
   isLoadingCart: true,
@@ -47,9 +47,9 @@ export const useAppStore = create<AppState>((set, get) => ({
   totalItems: 0,
   totalAmount: 0,
   isCartEmpty: true,
-  addToCart: async (productId, quantity) => {},
-  updateQuantity: async (productId, quantity) => {},
-  removeFromCart: async (productId) => {},
+  addToCart: async () => {},
+  updateQuantity: async () => {},
+  removeFromCart: async () => {},
   clearCart: async () => {},
   refetchCart: () => {},
 }));
@@ -112,6 +112,24 @@ export const useInitializeCart = (session: Session | null) => {
         },
     });
 
+    const addToCart = useCallback(async (productId: string, quantity: number) => {
+        const command: AddToCartCommand = { productId, quantity };
+        await addToCartMutation.mutateAsync({ data: command });
+    }, [addToCartMutation]);
+
+    const updateQuantity = useCallback(async (productId: string, quantity: number) => {
+        const command: UpdateCartItemQuantityCommand = { productId, quantity };
+        await updateQuantityMutation.mutateAsync({ data: command });
+    }, [updateQuantityMutation]);
+
+    const removeFromCart = useCallback(async (productId: string) => {
+        await removeFromCartMutation.mutateAsync({ productId });
+    }, [removeFromCartMutation]);
+
+    const clearCart = useCallback(async () => {
+        await clearCartMutation.mutateAsync();
+    }, [clearCartMutation]);
+
     React.useEffect(() => {
         useAppStore.setState({
             cart: cart,
@@ -126,24 +144,6 @@ export const useInitializeCart = (session: Session | null) => {
             clearCart,
             refetchCart: refetch,
         });
-    }, [cart, isLoading, error, totalItems, totalAmount, isCartEmpty, refetch]);
-
-    const addToCart = async (productId: string, quantity: number) => {
-        const command: AddToCartCommand = { productId, quantity };
-        await addToCartMutation.mutateAsync({ data: command });
-    };
-    
-    const updateQuantity = async (productId: string, quantity: number) => {
-        const command: UpdateCartItemQuantityCommand = { productId, quantity };
-        await updateQuantityMutation.mutateAsync({ data: command });
-    };
-    
-    const removeFromCart = async (productId: string) => {
-        await removeFromCartMutation.mutateAsync({ productId });
-    };
-    
-    const clearCart = async () => {
-        await clearCartMutation.mutateAsync();
-    };
+    }, [cart, isLoading, error, totalItems, totalAmount, isCartEmpty, refetch, addToCart, updateQuantity, removeFromCart, clearCart]);
 
 }; 

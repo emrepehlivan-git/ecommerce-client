@@ -22,16 +22,12 @@ export default function CheckoutClient() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const { handleError } = useErrorHandler({ context: "CheckoutClient" });
+
   const userId = session?.user?.id || cart?.userId;
-  if (!userId) {
-    return (
-      <div className="container mx-auto py-8 text-center">
-        <h2 className="text-2xl font-bold mb-4">{t("checkout.loginRequired")}</h2>
-      </div>
-    );
-  }
+
   const { data: addressesData, isLoading: addressesLoading } =
-    useGetApiV1UserAddressesUserUserId(userId);
+    useGetApiV1UserAddressesUserUserId(userId || "");
+
   const addresses: UserAddressDto[] = addressesData || [];
   const defaultAddress = addresses.find((a) => a.isDefault) || addresses[0];
   const [selectedAddressId, setSelectedAddressId] = useState<string | undefined>(
@@ -57,6 +53,14 @@ export default function CheckoutClient() {
     },
   });
 
+  if (!userId) {
+    return (
+      <div className="container mx-auto py-8 text-center">
+        <h2 className="text-2xl font-bold mb-4">{t("checkout.loginRequired")}</h2>
+      </div>
+    );
+  }
+
   const handleOrder = async () => {
     if (!cart || !cart.items || cart.items.length === 0) {
       handleError();
@@ -77,7 +81,7 @@ export default function CheckoutClient() {
       quantity: item.quantity || 1,
     }));
     const order: OrderPlaceCommand = {
-      userId: cart.userId,
+      userId: userId,
       shippingAddress: {
         street: address.street!,
         city: address.city!,

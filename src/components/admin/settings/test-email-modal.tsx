@@ -61,16 +61,21 @@ export function TestEmailModal({ isOpen, onClose }: TestEmailModalProps) {
   const handleSubmit = async (data: TestEmailForm) => {
     setIsSending(true);
     try {
-      // TODO: Implement test email API call when available
-      // await testEmailAPI(data);
+      // Note: The backend API currently does not support sending test emails.
+      // This is a simulation for UI demonstration purposes.
+      // In a real implementation, this would call: await api.sendTestEmail(data);
       
-      // Simulate API call for now
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      console.log('Sending test email to:', data.toEmail, 'Subject:', data.subject);
       
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      // Simulate success
       toast.success(t("admin.settings.emailSettings.testEmail.modal.successMessage", { email: data.toEmail }));
       onClose();
       form.reset();
     } catch (error) {
+      console.error('Failed to send test email:', error);
       toast.error(t("admin.settings.emailSettings.testEmail.modal.errorMessage"));
     } finally {
       setIsSending(false);
